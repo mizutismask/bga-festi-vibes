@@ -45,7 +45,7 @@ $this->EVENTS = [
 
     18 => new EventInfo(-1, ACTION_SWAP_ANY_TICKETS),
     19 => new EventInfo(-1, ACTION_DISCARD_EVENT),
-    
+
     20 => new EventInfo(-2, ACTION_SWAP_EVENT),
     21 => new EventInfo(-2, ACTION_SWAP_EVENT),
     22 => new EventInfo(-2, ACTION_SWAP_EVENT),
@@ -56,5 +56,16 @@ $this->EVENTS = [
     25 => new EventInfo(-4, NO_ACTION),
 
     26 => new EventInfo(-5, NO_ACTION),
-    ]
+  ]
+];
+
+$this->FESTIVALS = [
+  1 => [
+    1 => new FestivalInfo(2),
+    2 => new FestivalInfo(2),
+    3 => new FestivalInfo(3),
+    4 => new FestivalInfo(3),
+    5 => new FestivalInfo(4),
+    6 => new FestivalInfo(5),
+  ]
 ];
