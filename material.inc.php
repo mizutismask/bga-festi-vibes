@@ -1,8 +1,9 @@
 <?php
+
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * festivibes implementation : © <Your name here> <Your email address here>
+ * Festivibes implementation : © Séverine Kamycki <mizutismask@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -10,7 +11,7 @@
  *
  * material.inc.php
  *
- * festivibes game material description
+ * Festivibes game material description
  *
  * Here, you can describe the material of your game with PHP variables.
  *   

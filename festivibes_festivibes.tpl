@@ -1,44 +1,34 @@
 {OVERALL_GAME_HEADER}
 
-<!-- 
---------
--- BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
--- festivibes implementation : © <Your name here> <Your email address here>
--- 
--- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
--- See http://en.boardgamearena.com/#!doc/Studio for more information.
--------
+<audio id="audiosrc_sound1" src="{GAMETHEMEURL}img/sound1.mp3" preload="none"></audio>
+<audio id="audiosrc_o_sound1" src="{GAMETHEMEURL}img/sound1.ogg" preload="none"></audio>
 
-    festivibes_festivibes.tpl
-    
-    This is the HTML template of your game.
-    
-    Everything you are writing in this file will be displayed in the HTML page of your game user interface,
-    in the "main game zone" of the screen.
-    
-    You can use in this template:
-    _ variables, with the format {MY_VARIABLE_ELEMENT}.
-    _ HTML block, with the BEGIN/END format
-    
-    See your "view" PHP file to check how to set variables and control blocks
-    
-    Please REMOVE this comment before publishing your game on BGA
--->
+<div id="score">
+    <div id="table-wrapper">
+        <table>
+            <thead>
+                <tr id="scoretr"></tr>
+            </thead>
+            <tbody id="score-table-body">
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<div id="map-zoom-wrapper">
+    <div id="resized">
+        <div id="main-line">
+            <div id="map-and-borders">
+                <div id="map-zoom" class="disable-scrollbars">
+                    <div id="map"></div>
+                </div>
+                <div id="zoom-button"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-This is your game interface. You can edit this HTML in your ".tpl" file.
-
-
-<script type="text/javascript">
-
-// Javascript HTML templates
-
-/*
-// Example:
-var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_ID}"></div>';
-
-*/
-
-</script>  
+<div id="player-tables">
+</div>
 
 {OVERALL_GAME_FOOTER}

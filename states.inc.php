@@ -1,8 +1,9 @@
 <?php
+
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * festivibes implementation : © <Your name here> <Your email address here>
+ * Festivibes implementation : © Séverine Kamycki <mizutismask@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -10,7 +11,7 @@
  * 
  * states.inc.php
  *
- * festivibes game states description
+ * Festivibes game states description
  *
  */
 
@@ -48,64 +49,94 @@
 */
 
 //    !! It is not a good idea to modify this file when a game is running !!
-
+require_once("modules/php/constants.inc.php");
  
-$machinestates = array(
+$basicGameStates = [
 
     // The initial state. Please do not modify.
-    1 => array(
+    ST_BGA_GAME_SETUP => [
         "name" => "gameSetup",
-        "description" => "",
+        "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => 2 )
-    ),
-    
-    // Note: ID=2 => your first state
+        "transitions" => ["" => ST_DEAL_INITIAL_SETUP]
+    ],
 
-    2 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-    		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
-    ),
-    
-/*
-    Examples:
-    
-    2 => array(
-        "name" => "nextPlayer",
-        "description" => '',
-        "type" => "game",
-        "action" => "stNextPlayer",
-        "updateGameProgression" => true,   
-        "transitions" => array( "endGame" => 99, "nextPlayer" => 10 )
-    ),
-    
-    10 => array(
-        "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card or pass'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-        "type" => "activeplayer",
-        "possibleactions" => array( "playCard", "pass" ),
-        "transitions" => array( "playCard" => 2, "pass" => 2 )
-    ), 
+    ST_DEBUG_END_GAME => [
+        "name" => "debugGameEnd",
+        "description" => clienttranslate("Debug end of game"),
+        "type" => "manager",
+        "args" => "argGameEnd",
+        "transitions" => ["endGame" => ST_END_GAME],
+    ],
 
-*/    
-   
     // Final state.
-    // Please do not modify (and do not overload action/args methods).
-    99 => array(
+    // Please do not modify.
+    ST_END_GAME => [
         "name" => "gameEnd",
         "description" => clienttranslate("End of game"),
         "type" => "manager",
         "action" => "stGameEnd",
-        "args" => "argGameEnd"
-    )
+        "args" => "argGameEnd",
+    ],
+];
 
-);
+$playerActionsGameStates = [
+
+    ST_PLAYER_CHOOSE_ACTION => [
+        "name" => "chooseAction",
+        "description" => clienttranslate('${actplayer} must start/continue an expedition or use tickets'),
+        "descriptionmyturn" => clienttranslate('${you} must start/continue an expedition or use tickets'),
+        "descriptionLoop" => clienttranslate('${actplayer} made a loop and has to continue the expedition'),
+        "descriptionmyturnLoop" => clienttranslate('${you} made a loop and have to continue the expedition from any point'),
+        "type" => "activeplayer",
+        "args" => "argChooseAction",
+        "possibleactions" => [
+            "pass",
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+            "continue" => ST_PLAYER_CHOOSE_ACTION,
+        ]
+    ],
+];
+
+$gameGameStates = [
+    ST_DEAL_INITIAL_SETUP => [
+        "name" => "dealInitialSetup",
+        "description" => "",
+        "type" => "game",
+        "action" => "stDealInitialSetup",
+        "transitions" => [
+            "" => ST_NEXT_PLAYER,
+        ],
+    ],
+
+    ST_NEXT_PLAYER => [
+        "name" => "nextPlayer",
+        "description" => "",
+        "type" => "game",
+        "action" => "stNextPlayer",
+        "updateGameProgression" => true,
+        "transitions" => [
+            "nextPlayer" => ST_PLAYER_CHOOSE_ACTION,
+            "endScore" => ST_END_SCORE,
+        ],
+    ],
+
+    ST_END_SCORE => [
+        "name" => "endScore",
+        "description" => "",
+        "type" => "game",
+        "action" => "stEndScore",
+        "transitions" => [
+            "endGame" => ST_END_GAME,
+            "debugEndGame" => ST_DEBUG_END_GAME,
+        ],
+    ],
+];
+
+$machinestates = $basicGameStates + $playerActionsGameStates + $gameGameStates;
 
 
 

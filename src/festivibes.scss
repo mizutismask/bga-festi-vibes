@@ -1,0 +1,68 @@
+//(classic BGA colors) :
+$player-colors: (
+    'red': 'ff0000',
+    'green': '008000',
+    'blue': '0000ff',
+    'yellow': 'ffa500',
+    'purple': '982fff',
+);
+
+@import "playerboards";
+@import 'game-steps/game-steps';
+@import 'bga-hacks/bga-hacks';
+@import 'end-score/end-score';
+@import 'map/map';
+@import 'player-table/player-table';
+@import "settings";
+@import "../node_modules/bga-cards/bga-cards";
+
+html {
+    background: rgb(21, 104, 134);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+
+.stockitem {
+    border-radius: 6px;
+    background-size: 1000%;
+    &.disabled {
+        filter: contrast(0.6);
+        cursor: not-allowed;
+    }
+}
+
+.festivibes-card {
+	.card-side {
+		border-radius: 3%;
+	}
+}
+
+.css-icon {
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: bolder;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(21, 104, 134);
+    cursor: pointer;
+    pointer-events: auto;
+
+    &.card-info {
+        width: 25px;
+        height: 25px;
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: white;
+        background-color: rgb(21, 104, 134);
+    }
+}
+
+.card .card-sides .card-side.front .card-info {
+    pointer-events: all;
+}

@@ -1,0 +1,90 @@
+$color_1: grey;
+$color_2: black;
+
+/*
+ * Controls in the top bar
+ */
+#player_config {
+	margin: 10px 0px;
+	#player_config_row {
+		display: flex;
+		justify-content: right;
+		align-items: center;
+	}
+	#player_info_row {
+		display: flex;
+		justify-content: right;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+	#show-settings {
+		height: 40px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		&:hover {
+			color: $color_1;
+			.fa-primary {
+				transform: rotate(180deg);
+			}
+		}
+		svg {
+			width: 23px;
+			height: 23px;
+			opacity: 0.5;
+		}
+		.fa-primary {
+			transform-origin: 216px 255px;
+			transition: transform 1s;
+		}
+	}
+}
+
+#settings-controls-container {
+	position: relative;
+	text-align: center;
+	margin-top: 10px;
+	background: linear-gradient(180deg, #f8f8f8, #e7e9e8);
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-top: none;
+	box-shadow: 0 3px 8px rgb(0 0 0 / 30%);
+	padding: 10px 20px;
+	.row-data {
+		border: none;
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
+		align-items: center;
+		border-bottom: 1px solid gray;
+		.row-label {
+			width: 100%;
+			float: none;
+			color: $color_2;
+			padding-bottom: 0px;
+			text-overflow: initial;
+			white-space: normal;
+			padding: 2px 4px 0px;
+		}
+		.row-value {
+			width: 85%;
+			margin: 0;
+		}
+		#layout-control-card-animation {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			svg {
+				height: 30px;
+				width: auto;
+			}
+			#layout-control-card-animation-speed {
+				flex-grow: 1;
+				margin: 5px;
+			}
+		}
+	}
+}
+#settings-controls-container.settingsControlsHidden {
+	display: none;
+}

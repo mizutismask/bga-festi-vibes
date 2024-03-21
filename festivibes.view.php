@@ -1,8 +1,9 @@
 <?php
+
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * festivibes implementation : © <Your name here> <Your email address here>
+ * Festivibes implementation : © Séverine Kamycki <mizutismask@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -24,16 +25,13 @@
  *
  */
   
-require_once( APP_BASE_PATH."view/common/game.view.php" );
+  require_once( APP_BASE_PATH."view/common/game.view.php" );
   
-class view_festivibes_festivibes extends game_view
-{
-    protected function getGameName()
-    {
-        // Used for translations and stuff. Please do not modify.
+  class view_festivibes_festivibes extends game_view
+  {
+    function getGameName() {
         return "festivibes";
-    }
-    
+    }    
   	function build_page( $viewArgs )
   	{		
   	    // Get players & players number
@@ -83,4 +81,6 @@ class view_festivibes_festivibes extends game_view
 
         /*********** Do not change anything below this line  ************/
   	}
-}
+  }
+  
+

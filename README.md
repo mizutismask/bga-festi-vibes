@@ -1,7 +1,18 @@
-# bga-festi-vibes
-Festi’vibes board game adaptation for BoardGameArena.com
+# bga-game-template
+Template for new BoardGameArena games using typescript and scss
 
-mogrify -path ./cropped -shave 30x30 -quality 100 \*.jpg
-montage `ls -v .` -tile 6 -geometry 238x439+0+0 festivalCardsFront.jpg
-montage `ls -v .` -tile 13 -geometry 238x439+0+0 eventCards.jpg
-montage `ls -v .` -tile 4 -geometry 171x262+0+0 ticketsCards.jpg
+## To use this template
+- Delete files containing yourGameName in their filename
+- Copy this code into your game directory (include hidden directories .*)
+- Add .vscode to .gitignore
+- Rename the game following the next chapter guidance
+- Don’t forget to mention your password in sftp.json
+
+## To rename the game :
+- open powershell in the project directory
+- replace variables in renameGame.ps1 (ALL of them)
+- launch ./renameGame.ps1
+
+## Configure
+Open file gamefeatureconfig.ts and start to disable default features if not useful.
+
