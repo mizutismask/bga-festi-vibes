@@ -69,3 +69,12 @@ $this->FESTIVALS = [
     6 => new FestivalInfo(5),
   ]
 ];
+
+$this->TICKETS = [
+  1 => [
+    1 => new TicketInfo(),
+    2 => new TicketInfo(),
+    3 => new TicketInfo(),
+    4 => new TicketInfo(),
+  ]
+];

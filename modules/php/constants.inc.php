@@ -28,6 +28,11 @@ const ACTION_INC_FESTIVAL_SIZE = "ACTION_INC_FESTIVAL_SIZE";
 const ACTION_SWAP_EVENT_WITH_HAND = "ACTION_SWAP_EVENT_WITH_HAND";
 const NO_ACTION = "NO_ACTION";
 
+const PINK = 1;
+const RED = 2;
+const YELLOW = 3;
+const BROWN = 4;
+
 
 /**
  * Options
