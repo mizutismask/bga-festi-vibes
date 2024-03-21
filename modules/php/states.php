@@ -79,21 +79,21 @@ trait StateTrait {
 
         //end of game points
 
-        // failed destinations 
-        /* $destinationsResults = [];
-        $completedDestinationsCount = [];
+        // failed events 
+        /* $eventsResults = [];
+        $completedEventsCount = [];
         foreach ($players as $playerId => $playerDb) {
-            $completedDestinationsCount[$playerId] = 0;
-            $uncompletedDestinations = [];
-            $completedDestinations = [];
+            $completedEventsCount[$playerId] = 0;
+            $uncompletedEvents = [];
+            $completedEvents = [];
 
-            $destinations = $this->getDestinationsFromDb($this->destinations->getCardsInLocation('hand', $playerId));
+            $events = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $playerId));
 
-            foreach ($destinations as &$destination) {
+            foreach ($events as &$destination) {
                 $completed = boolval(self::getUniqueValueFromDb("SELECT `completed` FROM `destination` WHERE `card_id` = $destination->id"));
                 if ($completed) {
-                    $completedDestinationsCount[$playerId]++;
-                    $completedDestinations[] = $destination;
+                    $completedEventsCount[$playerId]++;
+                    $completedEvents[] = $destination;
                     self::incStat(1, STAT_POINTS_WITH_PLAYER_COMPLETED_DESTINATIONS, $playerId);
                 } else {
                     $totalScore[$playerId] += -1;
@@ -104,11 +104,11 @@ trait StateTrait {
                         self::incStat(-1, STAT_POINTS_WITH_REVEALED_DESTINATIONS, $playerId);
                     }
                     self::incStat(1, STAT_POINTS_LOST_WITH_UNCOMPLETED_DESTINATIONS, $playerId);
-                    $uncompletedDestinations[] = $destination;
+                    $uncompletedEvents[] = $destination;
                 }
             }
 
-            $destinationsResults[$playerId] = $uncompletedDestinations;
+            $eventsResults[$playerId] = $uncompletedEvents;
         }
 */
         foreach ($players as $playerId => $playerDb) {

@@ -1,6 +1,7 @@
 <?php
-//require_once(__DIR__ . '/objects/destination.php');
-//require_once(__DIR__ . '/objects/route.php');
+require_once(__DIR__ . '/objects/event.php');
+require_once(__DIR__ . '/objects/festival.php');
+require_once(__DIR__ . '/objects/ticket.php');
 
 trait UtilTrait {
 
@@ -89,23 +90,25 @@ trait UtilTrait {
     }
 
     /**
-     * Transforms a Destination Db object to Destination class.
+     * Transforms a Db object to instance of class.
      */
-    /* function getDestinationFromDb($dbObject) {
+    function getEventFromDb($dbObject) {
         if (!$dbObject || !array_key_exists('id', $dbObject)) {
-            throw new BgaSystemException("Destination doesn't exists " . json_encode($dbObject));
+            throw new BgaSystemException("Event doesn't exists " . json_encode($dbObject));
         }
 
         //self::dump('************type_arg*******', $dbObject["type_arg"]);
-        //self::dump('*******************', $this->DESTINATIONS[$dbObject["type"]][$dbObject["type_arg"]]);
-        return new Destination($dbObject, $this->DESTINATIONS);
-    }*/
+        //self::dump('*******************', $this->EVENTS[$dbObject["type"]][$dbObject["type_arg"]]);
+        return new EventCard($dbObject, $this->EVENTS);
+    }
 
     /**
-     * Transforms a Destination Db object array to Destination class array.
+     * Transforms a Db object array to instance of class array.
      */
-    function getDestinationsFromDb(array $dbObjects) {
-        return array_map(fn ($dbObject) => $this->getDestinationFromDb($dbObject), array_values($dbObjects));
+    function getEventsFromDb(array $dbObjects) {
+        return array_map(fn ($dbObject) => $this->getEventFromDb($dbObject),
+            array_values($dbObjects)
+        );
     }
 
     /**

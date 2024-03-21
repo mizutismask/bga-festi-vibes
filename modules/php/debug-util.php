@@ -16,12 +16,12 @@ trait DebugUtilTrait {
     }
 
     /*function cd() {
-        $this->debugCompleteDestinations();
+        $this->debugCompleteEvents();
     }*/
 
-    /*function debugCompleteDestinations() {
+    /*function debugCompleteEvents() {
         $players = $this->getPlayersIds();
-        $restriction = " limit " . ($this->getInitialDestinationCardNumber() - 1);
+        $restriction = " limit " . ($this->getInitialEventCardNumber() - 1);
         foreach ($players as $playerId) {
             self::DbQuery("UPDATE `destination` set `completed` = true WHERE `card_location_arg`= $playerId" . $restriction);
         }
@@ -29,12 +29,12 @@ trait DebugUtilTrait {
     }*/
 
     /*function debugEmptyDestinationDeck() {
-        $this->destinations->moveAllCardsInLocation('deck', 'void');
+        $this->events->moveAllCardsInLocation('deck', 'void');
     }*/
 
     /*function debugAlmostEmptyDestinationDeck() {
         $moveNumber = $this->getRemainingDestinationCardsInDeck() - 1;
-        $this->destinations->pickCardsForLocation($moveNumber, 'deck', 'discard');
+        $this->events->pickCardsForLocation($moveNumber, 'deck', 'discard');
     }*/
 
 

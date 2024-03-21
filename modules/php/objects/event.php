@@ -5,9 +5,9 @@
  */
 class EventInfo {
     public int $points;
-    public int $action;
+    public string $action;
   
-    public function __construct(int $points,int $action) {
+    public function __construct(int $points,string $action) {
         $this->points = $points;
         $this->action = $action;
     } 

@@ -54,8 +54,8 @@ class CardsManager extends CardManager<FestivibesCard> {
     }
 
     private setFrontBackground(cardDiv: HTMLDivElement, cardType: number) {
-        const destinationsUrl = `${g_gamethemeurl}img/destinations.jpg`;
-        cardDiv.style.backgroundImage = `url('${destinationsUrl}')`;
+        const eventsUrl = `${g_gamethemeurl}img/events.jpg`
+		cardDiv.style.backgroundImage = `url('${eventsUrl}')`
         const imagePosition = cardType - 1;
         const row = Math.floor(imagePosition / IMAGE_ITEMS_PER_ROW);
         const xBackgroundPercent = (imagePosition - row * IMAGE_ITEMS_PER_ROW) * 100;

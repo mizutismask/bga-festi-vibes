@@ -24,7 +24,7 @@ require_once('modules/php/utils.php');
 require_once('modules/php/states.php');
 require_once('modules/php/args.php');
 require_once('modules/php/actions.php');
-//require_once('modules/php/destination-deck.php');
+require_once('modules/php/event-deck.php');
 require_once('modules/php/debug-util.php');
 require_once('modules/php/expansion.php');
 
@@ -33,7 +33,7 @@ class Festivibes extends Table {
     use ActionTrait;
     use StateTrait;
     use ArgsTrait;
-    //use DestinationDeckTrait;
+    use EventDeckTrait;
     use DebugUtilTrait;
     use ExpansionTrait;
 
@@ -54,9 +54,9 @@ class Festivibes extends Table {
             //    "my_second_game_variant" => 101,
             //      ...
         ));
-        /*$this->destinations = $this->getNew("module.common.deck");
-        $this->destinations->init("destination");
-        $this->destinations->autoreshuffle = true;    */
+        $this->events = $this->getNew("module.common.deck");
+        $this->events->init("event");
+        $this->events->autoreshuffle = true;
     }
 
     protected function getGameName() {
@@ -97,14 +97,21 @@ class Festivibes extends Table {
         //self::setGameStateInitialValue( 'my_first_global_variable', 0 );
         //initialize everything to be compliant with undo framework
         //foreach ($this->GAMESTATELABELS as $value_label => $ID) if ($ID >= 10 && $ID < 90) $this->setGameStateInitialValue($value_label, 0);
-
         $this->initStats();
 
         // TODO: setup the initial game situation here
+        $this->setupTable($players);
 
         // does not activate player since it’s done within stNextPlayer
 
         /************ End of the game initialization *****/
+    }
+
+    function setupTable($players) {
+        $this->createEvents();
+        foreach ($players as $playerId => $player) {
+            $this->dealEvents($playerId);
+        }
     }
 
     /*
@@ -168,7 +175,7 @@ class Festivibes extends Table {
             // game is over
             return 100;
         }
-        //return 100 * $this->getHighestCompletedDestinationsCount() / $this->getInitialDestinationCardNumber();
+        //return 100 * $this->getHighestCompletedEventsCount() / $this->getInitialEventCardNumber();
         return 0;
     }
 

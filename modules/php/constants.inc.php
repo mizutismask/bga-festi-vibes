@@ -72,4 +72,4 @@ define('LAST_TURN', 'LAST_TURN');
 /*
     Stats
 */
-//define('STAT_POINTS_WITH_PLAYER_COMPLETED_DESTINATIONS', 'pointsWithPlayerCompletedDestinations');
+//define('STAT_POINTS_WITH_PLAYER_COMPLETED_DESTINATIONS', 'pointsWithPlayerCompletedEvents');

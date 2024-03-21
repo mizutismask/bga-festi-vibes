@@ -2320,8 +2320,8 @@ var CardsManager = /** @class */ (function (_super) {
         return tooltip;
     };
     CardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
-        var destinationsUrl = "".concat(g_gamethemeurl, "img/destinations.jpg");
-        cardDiv.style.backgroundImage = "url('".concat(destinationsUrl, "')");
+        var eventsUrl = "".concat(g_gamethemeurl, "img/events.jpg");
+        cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
         var imagePosition = cardType - 1;
         var row = Math.floor(imagePosition / IMAGE_ITEMS_PER_ROW);
         var xBackgroundPercent = (imagePosition - row * IMAGE_ITEMS_PER_ROW) * 100;
@@ -3197,7 +3197,7 @@ var ScoreBoard = /** @class */ (function () {
         this.players = players;
         var headers = document.getElementById('scoretr');
         if (!headers.childElementCount) {
-            dojo.place("\n                <th></th>\n                <th id=\"th-destination-reached-score\" class=\"\">_(\"Destinations reached\")</th>\n                <th id=\"th-revealed-tokens-back-score\" class=\"\">_(\"Revealed destinations reached\")</th>\n                <th id=\"th-destination-unreached-score\" class=\"\">_(\"Destinations not reached\")</th>\n                <th id=\"th-revelead-tokens-left-score\" class=\"\">$(\"Revealed destinations not reached\")</th>\n                <th id=\"th-total-score\" class=\"total-score\">_(\"Total\")</th>\n            ", headers);
+            dojo.place("\n                <th></th>\n                <th id=\"th-destination-reached-score\" class=\"\">_(\"Events reached\")</th>\n                <th id=\"th-revealed-tokens-back-score\" class=\"\">_(\"Revealed events reached\")</th>\n                <th id=\"th-destination-unreached-score\" class=\"\">_(\"Events not reached\")</th>\n                <th id=\"th-revelead-tokens-left-score\" class=\"\">$(\"Revealed events not reached\")</th>\n                <th id=\"th-total-score\" class=\"total-score\">_(\"Total\")</th>\n            ", headers);
         }
         players.forEach(function (player) {
             var playerId = Number(player.id);
@@ -3207,13 +3207,13 @@ var ScoreBoard = /** @class */ (function () {
                     player.color
                 }"><span id="score-winner-${player.id}"/> <span>${player.name}</span></td>
                     <td id="destination-reached${player.id}" class="score-number">${
-                    player.completedDestinations.length + player.sharedCompletedDestinationsCount
+                    player.completedEvents.length + player.sharedCompletedEventsCount
                 }</td>
                     <td id="revealed-tokens-back${player.id}" class="score-number">${
                     player.revealedTokensBackCount
                 }</td>
                     <td id="destination-unreached${player.id}" class="score-number">${this.preventMinusZero(
-                    player.uncompletedDestinations?.length
+                    player.uncompletedEvents?.length
                 )}</td>
                     <td id="revealed-tokens-left${player.id}" class="score-number">${this.preventMinusZero(
                     player.revealedTokensLeftCount
@@ -3227,11 +3227,11 @@ var ScoreBoard = /** @class */ (function () {
     ScoreBoard.prototype.updateScores = function (players) {
         /*players.forEach((p) => {
             document.getElementById(`destination-reached${p.id}`).innerHTML = (
-                p.completedDestinations.length + p.sharedCompletedDestinationsCount
+                p.completedEvents.length + p.sharedCompletedEventsCount
             ).toString();
             document.getElementById(`revealed-tokens-back${p.id}`).innerHTML = p.revealedTokensBackCount.toString();
             document.getElementById(`destination-unreached${p.id}`).innerHTML = this.preventMinusZero(
-                p.uncompletedDestinations?.length
+                p.uncompletedEvents?.length
             );
             document.getElementById(`revealed-tokens-left${p.id}`).innerHTML = this.preventMinusZero(
                 p.revealedTokensLeftCount
