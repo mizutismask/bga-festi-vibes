@@ -20,19 +20,41 @@
  *
  */
 
+$this->EVENTS = [
+  1 => [
+    1 => new EventInfo(1, ACTION_REPLACE_TICKET),
+    2 => new EventInfo(1, ACTION_SWAP_MY_TICKET),
+    3 => new EventInfo(1, ACTION_DISCARD_EVENT),
+    4 => new EventInfo(1, ACTION_SWAP_EVENT),
+    5 => new EventInfo(1, ACTION_SWAP_ANY_TICKETS),
+    6 => new EventInfo(1, ACTION_SWAP_ANY_TICKETS),
 
-/*
+    7 => new EventInfo(2, ACTION_INC_FESTIVAL_SIZE),
+    8 => new EventInfo(2, ACTION_SWAP_ANY_TICKETS),
+    9 => new EventInfo(2, ACTION_SWAP_ANY_TICKETS),
+    10 => new EventInfo(2, NO_ACTION),
+    11 => new EventInfo(2, NO_ACTION),
 
-Example:
+    12 => new EventInfo(3, NO_ACTION),
+    13 => new EventInfo(3, NO_ACTION),
+    14 => new EventInfo(3, NO_ACTION),
+    15 => new EventInfo(3, NO_ACTION),
 
-$this->card_types = array(
-    1 => array( "card_name" => ...,
-                ...
-              )
-);
+    16 => new EventInfo(4, ACTION_SWAP_ANY_TICKETS),
+    17 => new EventInfo(4, NO_ACTION),
 
-*/
+    18 => new EventInfo(-1, ACTION_SWAP_ANY_TICKETS),
+    19 => new EventInfo(-1, ACTION_DISCARD_EVENT),
+    
+    20 => new EventInfo(-2, ACTION_SWAP_EVENT),
+    21 => new EventInfo(-2, ACTION_SWAP_EVENT),
+    22 => new EventInfo(-2, ACTION_SWAP_EVENT),
 
+    23 => new EventInfo(-3, ACTION_SWAP_EVENT_WITH_HAND),
+    24 => new EventInfo(-3, NO_ACTION),
 
+    25 => new EventInfo(-4, NO_ACTION),
 
-
+    26 => new EventInfo(-5, NO_ACTION),
+    ]
+];
