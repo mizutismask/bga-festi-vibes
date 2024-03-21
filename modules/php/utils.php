@@ -158,6 +158,15 @@ trait UtilTrait {
         return array_keys($this->loadPlayersBasicInfos());
     }
 
+    function getPlayers() {
+        return $this->loadPlayersBasicInfos();
+    }
+
+    function getPlayerColor($playerId) {
+        $sql = "SELECT player_color FROM player WHERE player_id = $playerId";
+        return self::getUniqueValueFromDB($sql);
+    }
+
     function getPlayerIdsInOrder($starting) {
         $player_ids = $this->getPlayersIds();
         $rotate_count = array_search($starting, $player_ids);

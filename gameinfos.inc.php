@@ -76,12 +76,14 @@ $gameinfos = array(
 // NB: the default will be the first language in this list spoken by the player, so you should list them by popularity/preference.
 'language_dependency' => false,
 
-// Colors attributed to players
-'player_colors' => array( "ff0000", "008000", "0000ff", "ffa500", "773300" ),
+    // Colors attributed to players
+    'player_colors' => array(
+        "fbbd0a", "f04623", "de71c0", "8a4921"
+    ),
 
-// Favorite colors support : if set to "true", support attribution of favorite colors based on player's preferences (see reattributeColorsBasedOnPreferences PHP method)
-// NB: this parameter is used only to flag games supporting this feature; you must use (or not use) reattributeColorsBasedOnPreferences PHP method to actually enable or disable the feature.
-'favorite_colors_support' => true,
+    // Favorite colors support : if set to "true", support attribution of favorite colors based on player's preferences (see reattributeColorsBasedOnPreferences PHP method)
+    // NB: this parameter is used only to flag games supporting this feature; you must use (or not use) reattributeColorsBasedOnPreferences PHP method to actually enable or disable the feature.
+    'favorite_colors_support' => false,
 
 // When doing a rematch, the player order is swapped using a "rotation" so the starting player is not the same
 // If you want to disable this, set this to true

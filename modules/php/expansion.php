@@ -3,7 +3,7 @@
 trait ExpansionTrait {
 
     /**
-     * List the destination tickets that will be used for the game.
+     * List the events that will be used for the game.
      */
     function getEventsToGenerate() {
         $cards = [];
@@ -17,6 +17,29 @@ trait ExpansionTrait {
                 break;
         }
 
+        return $cards;
+    }
+
+    function getTicketsToGenerate() {
+        $cards = [];
+        $expansion = EXPANSION;
+        $players = $this->getPlayers();
+        $colors = array_flip(PLAYER_COLORS);
+        switch ($expansion) {
+            default:
+                $used = [];
+                foreach ($players as $playerId => $player) {
+                    $color = $player["player_color"];
+                    $cards[] = ['type' => 1, 'type_arg' => $colors[$color], 'nbr' => 3];
+                    $used[] = $colors[$color];
+                }
+                if (count($players) == 2) {
+                    //adds 3 of some unused color
+                    $unused = array_diff([YELLOW, RED, PINK, BROWN], $used);
+                    $cards[] = ['type' => 1, 'type_arg' => reset($unused), 'nbr' => 3];
+                }
+                break;
+        }
         return $cards;
     }
 

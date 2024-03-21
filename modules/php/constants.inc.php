@@ -33,6 +33,13 @@ const RED = 2;
 const YELLOW = 3;
 const BROWN = 4;
 
+const PLAYER_COLORS = [
+    YELLOW => "fbbd0a",
+    RED => "f04623",
+    PINK => "de71c0",
+    BROWN => "8a4921",
+];
+
 
 /**
  * Options
