@@ -167,7 +167,7 @@ class Festivibes implements FestivibesGame {
 		if (this.isNotSpectator()) {
 			this.setupMiniPlayerBoard(player)
 		}
-		this.playerTables[player.id] = new PlayerTable(this, player)
+		this.playerTables[player.id] = new PlayerTable(this, player, this.gamedatas.hand)
 	}
 
 	private setupMiniPlayerBoard(player: FestivibesPlayer) {

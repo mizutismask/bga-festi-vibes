@@ -2324,6 +2324,8 @@ var EventCardsManager = /** @class */ (function (_super) {
                 div.dataset.cardId = '' + card.id;
                 div.dataset.cardType = '' + card.type;
                 div.style.position = 'relative';
+                div.style.width = FESTIVAL_CARD_WIDTH;
+                div.style.height = FESTIVAL_CARD_HEIGHT;
             },
             setupFrontDiv: function (card, div) {
                 _this.setFrontBackground(div, card.type_arg);
@@ -2367,7 +2369,7 @@ var EventCardsManager = /** @class */ (function (_super) {
         return "tooltip";
     };
     EventCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
-        var eventsUrl = "".concat(g_gamethemeurl, "img/eventsCards.jpg");
+        var eventsUrl = "".concat(g_gamethemeurl, "img/eventCards.jpg");
         cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
         var imagePosition = cardType - 1;
         var row = Math.floor(imagePosition / IMAGE_EVENTS_PER_ROW);
@@ -2517,7 +2519,7 @@ var Festivibes = /** @class */ (function () {
         if (this.isNotSpectator()) {
             this.setupMiniPlayerBoard(player);
         }
-        this.playerTables[player.id] = new PlayerTable(this, player);
+        this.playerTables[player.id] = new PlayerTable(this, player, this.gamedatas.hand);
     };
     Festivibes.prototype.setupMiniPlayerBoard = function (player) {
         var playerId = Number(player.id);
@@ -3194,7 +3196,7 @@ var ScoreBoard = /** @class */ (function () {
  * Player table.
  */
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player) {
+    function PlayerTable(game, player, cards) {
         this.game = game;
         var isMyTable = player.id === game.getPlayerId().toString();
         var ownClass = isMyTable ? 'own' : '';
@@ -3203,10 +3205,10 @@ var PlayerTable = /** @class */ (function () {
         if (isMyTable) {
             var handHtml = "\n\t\t\t<div id=\"hand-".concat(player.id, "\" class=\"nml-player-hand\"></div>\n        ");
             dojo.place(handHtml, "player-table-".concat(player.id), 'first');
-            this.initHand(player);
+            this.initHand(player, cards);
         }
     }
-    PlayerTable.prototype.initHand = function (player) {
+    PlayerTable.prototype.initHand = function (player, cards) {
         var smallWidth = window.matchMedia('(max-width: 830px)').matches;
         var baseSettings = {
             center: true,
@@ -3223,6 +3225,7 @@ var PlayerTable = /** @class */ (function () {
         //console.log('smallWidth', smallWidth, baseSettings)
         this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
+        this.handStock.addCards(cards);
     };
     return PlayerTable;
 }());

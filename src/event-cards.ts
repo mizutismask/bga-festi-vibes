@@ -9,6 +9,9 @@ class EventCardsManager extends CardManager<EventCard> {
 				div.dataset.cardId = '' + card.id
 				div.dataset.cardType = '' + card.type
 				div.style.position = 'relative'
+
+				div.style.width = FESTIVAL_CARD_WIDTH
+				div.style.height = FESTIVAL_CARD_HEIGHT
 			},
 			setupFrontDiv: (card: EventCard, div: HTMLElement) => {
 				this.setFrontBackground(div as HTMLDivElement, card.type_arg)
@@ -54,7 +57,7 @@ class EventCardsManager extends CardManager<EventCard> {
 	}
 
 	private setFrontBackground(cardDiv: HTMLDivElement, cardType: number) {
-		const eventsUrl = `${g_gamethemeurl}img/eventsCards.jpg`
+		const eventsUrl = `${g_gamethemeurl}img/eventCards.jpg`
 		cardDiv.style.backgroundImage = `url('${eventsUrl}')`
 		const imagePosition = cardType - 1
 		const row = Math.floor(imagePosition / IMAGE_EVENTS_PER_ROW)

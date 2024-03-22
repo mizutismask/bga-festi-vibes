@@ -160,6 +160,10 @@ class Festivibes extends Table {
         //$result['tickets'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
         //$result['events'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
 
+        // private data : current player hidden informations
+        $result['hand'] = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $currentPlayerId));
+        
+
         if ($isEnd) {
             $maxScore = max(array_map(fn ($player) => intval($player['score']), $result['players']));
             $result['winners'] = array_keys(array_filter($result['players'], fn ($player) => intval($player['score'] == $maxScore)));

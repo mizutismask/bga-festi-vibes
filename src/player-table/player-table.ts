@@ -4,7 +4,7 @@
 class PlayerTable {
 	private handStock: LineStock<EventCard>
 
-	constructor(private game: FestivibesGame, player: FestivibesPlayer) {
+	constructor(private game: FestivibesGame, player: FestivibesPlayer, cards: Array<EventCard>) {
 		const isMyTable = player.id === game.getPlayerId().toString()
 		const ownClass = isMyTable ? 'own' : ''
 		let html = `
@@ -20,11 +20,11 @@ class PlayerTable {
 			<div id="hand-${player.id}" class="nml-player-hand"></div>
         `
 			dojo.place(handHtml, `player-table-${player.id}`, 'first')
-			this.initHand(player)
+			this.initHand(player, cards)
 		}
 	}
 
-	private initHand(player: FestivibesPlayer) {
+	private initHand(player: FestivibesPlayer, cards: Array<EventCard>) {
 		const smallWidth = window.matchMedia('(max-width: 830px)').matches
 		var baseSettings = {
 			center: true,
@@ -46,5 +46,6 @@ class PlayerTable {
 			baseSettings
 		)
 		this.handStock.setSelectionMode('single')
+		this.handStock.addCards(cards)
 	}
 }

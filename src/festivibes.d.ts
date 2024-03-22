@@ -45,6 +45,7 @@ interface FestivibesGamedatas {
 	winners: number[]
 	version: string
 	festivals: Array<FestivalCard>
+	hand: Array<EventCard>
 	// Add here variables you set up in getAllDatas
 }
 
