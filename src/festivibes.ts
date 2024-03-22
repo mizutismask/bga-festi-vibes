@@ -34,7 +34,6 @@ class Festivibes implements FestivibesGame {
 	public eventCardsManager: EventCardsManager
 	private originalTextChooseAction: string
 
-	public map: TtrMap
 	private scoreBoard: ScoreBoard
 	private ticketsCounters: Counter[] = []
 
@@ -75,8 +74,6 @@ class Festivibes implements FestivibesGame {
 		this.gamedatas = gamedatas
 		log('gamedatas', gamedatas)
 
-		this.map = new TtrMap(this)
-
 		this.festivalCardsManager = new FestivalCardsManager(this)
 		this.eventCardsManager = new EventCardsManager(this)
 		this.animationManager = new AnimationManager(this)
@@ -99,7 +96,6 @@ class Festivibes implements FestivibesGame {
 		this.setupSettingsIconInMainBar()
 		this.setupPreferences()
 		this.setupTooltips()
-		;(this as any).onScreenWidthChange = () => this.map.setAutoZoom()
 
 		this.scoreBoard = new ScoreBoard(this, Object.values(this.gamedatas.players))
 		this.gamedatas.scores?.forEach((s) => this.scoreBoard.updateScore(s.playerId, s.scoreType, s.score))
@@ -835,7 +831,7 @@ class Festivibes implements FestivibesGame {
 
 	notif_materialMove(notif: Notif<NotifMaterialMove>) {
 		console.log('notif_materialMove', notif)
-		const cards = notif.args.material as Array<FestivibesCard>
+		const cards = notif.args.material as Array<FestivalCard>
 		cards.forEach((c) => console.log('c', c.id))
 	}
 
@@ -883,7 +879,7 @@ class Festivibes implements FestivibesGame {
 	 * Get current zoom.
 	 */
 	public getZoom(): number {
-		return this.map.getZoom()
+		return 1
 	}
 
 	/**

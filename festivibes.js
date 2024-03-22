@@ -2379,163 +2379,6 @@ var EventCardsManager = /** @class */ (function (_super) {
     };
     return EventCardsManager;
 }(CardManager));
-var DRAG_AUTO_ZOOM_DELAY = 2000;
-var MAP_WIDTH = 1744;
-var MAP_HEIGHT = 1321;
-var DECK_WIDTH = 0;
-var PLAYER_WIDTH = 305;
-var PLAYER_HEIGHT = 150; // avg height (4 destination cards)
-var BOTTOM_RATIO = (MAP_WIDTH + DECK_WIDTH) / (MAP_HEIGHT + PLAYER_HEIGHT);
-var LEFT_RATIO = (PLAYER_WIDTH + MAP_WIDTH + DECK_WIDTH) / MAP_HEIGHT;
-/**
- * Manager for in-map zoom.
- */
-var InMapZoomManager = /** @class */ (function () {
-    function InMapZoomManager() {
-        var _this = this;
-        this.pos = { dragging: false, top: 0, left: 0, x: 0, y: 0 }; // for map drag (if zoomed)
-        this.zoomed = false; // indicates if in-map zoom is active
-        this.mapZoomDiv = document.getElementById('map-zoom');
-        this.mapDiv = document.getElementById('map');
-        // Attach the handler
-        this.mapDiv.addEventListener('mousedown', function (e) { return _this.mouseDownHandler(e); });
-        document.addEventListener('mousemove', function (e) { return _this.mouseMoveHandler(e); });
-        document.addEventListener('mouseup', function (e) { return _this.mouseUpHandler(); });
-        document.getElementById('zoom-button').addEventListener('click', function () { return _this.toggleZoom(); });
-        this.mapDiv.addEventListener('dragover', function (e) {
-            if (e.offsetX !== _this.dragClientX || e.offsetY !== _this.dragClientY) {
-                _this.dragClientX = e.offsetX;
-                _this.dragClientY = e.offsetY;
-                _this.dragOverMouseMoved(e.offsetX, e.offsetY);
-            }
-        });
-        this.mapDiv.addEventListener('dragleave', function (e) {
-            clearTimeout(_this.autoZoomTimeout);
-            _this.autoZoomTimeout = null;
-        });
-        this.mapDiv.addEventListener('drop', function (e) {
-            clearTimeout(_this.autoZoomTimeout);
-            _this.autoZoomTimeout = null;
-        });
-    }
-    InMapZoomManager.prototype.dragOverMouseMoved = function (clientX, clientY) {
-        var _this = this;
-        if (this.autoZoomTimeout) {
-            clearTimeout(this.autoZoomTimeout);
-        }
-        this.autoZoomTimeout = setTimeout(function () {
-            // do not automatically change the zoom when player is dragging over a route!
-            _this.toggleZoom(clientX / _this.mapDiv.clientWidth, clientY / _this.mapDiv.clientHeight);
-            _this.autoZoomTimeout = null;
-        }, DRAG_AUTO_ZOOM_DELAY);
-    };
-    /**
-     * Handle click on zoom button. Toggle between full map and in-map zoom.
-     */
-    InMapZoomManager.prototype.toggleZoom = function (scrollRatioX, scrollRatioY) {
-        if (scrollRatioX === void 0) { scrollRatioX = null; }
-        if (scrollRatioY === void 0) { scrollRatioY = null; }
-        this.zoomed = !this.zoomed;
-        this.mapDiv.style.transform = this.zoomed ? "scale(1.8)" : '';
-        dojo.toggleClass('zoom-button', 'zoomed', this.zoomed);
-        dojo.toggleClass('map-zoom', 'scrollable', this.zoomed);
-        this.mapDiv.style.cursor = this.zoomed ? 'grab' : 'default';
-        if (this.zoomed) {
-            if (scrollRatioX && scrollRatioY) {
-                this.mapZoomDiv.scrollLeft = (this.mapZoomDiv.scrollWidth - this.mapZoomDiv.clientWidth) * scrollRatioX;
-                this.mapZoomDiv.scrollTop =
-                    (this.mapZoomDiv.scrollHeight - this.mapZoomDiv.clientHeight) * scrollRatioY;
-            }
-        }
-        else {
-            this.mapZoomDiv.scrollTop = 0;
-            this.mapZoomDiv.scrollLeft = 0;
-        }
-    };
-    /**
-     * Handle mouse down, to grap map and scroll in it (imitate mobile touch scroll).
-     */
-    InMapZoomManager.prototype.mouseDownHandler = function (e) {
-        if (!this.zoomed) {
-            return;
-        }
-        this.mapDiv.style.cursor = 'grabbing';
-        this.pos = {
-            dragging: true,
-            left: this.mapDiv.scrollLeft,
-            top: this.mapDiv.scrollTop,
-            // Get the current mouse position
-            x: e.clientX,
-            y: e.clientY,
-        };
-    };
-    /**
-     * Handle mouse move, to grap map and scroll in it (imitate mobile touch scroll).
-     */
-    InMapZoomManager.prototype.mouseMoveHandler = function (e) {
-        if (!this.zoomed || !this.pos.dragging) {
-            return;
-        }
-        // How far the mouse has been moved
-        var dx = e.clientX - this.pos.x;
-        var dy = e.clientY - this.pos.y;
-        var factor = 0.1;
-        // Scroll the element
-        this.mapZoomDiv.scrollTop -= dy * factor;
-        this.mapZoomDiv.scrollLeft -= dx * factor;
-    };
-    /**
-     * Handle mouse up, to grap map and scroll in it (imitate mobile touch scroll).
-     */
-    InMapZoomManager.prototype.mouseUpHandler = function () {
-        if (!this.zoomed || !this.pos.dragging) {
-            return;
-        }
-        this.mapDiv.style.cursor = 'grab';
-        this.pos.dragging = false;
-    };
-    return InMapZoomManager;
-}());
-/**
- * Map creation and in-map zoom handler.
- */
-var TtrMap = /** @class */ (function () {
-    /**
-     * Place map illustration and other objects, and bind events.
-     */
-    function TtrMap(game) {
-        this.game = game;
-        // map border
-        dojo.place("\n            <div id=\"cities\"></div>\n        ", 'map', 'first');
-        this.resizedDiv = document.getElementById('resized');
-        this.mapDiv = document.getElementById('map');
-        this.inMapZoomManager = new InMapZoomManager();
-    }
-    /**
-     * Set map size, depending on available screen size.
-     */
-    TtrMap.prototype.setAutoZoom = function () {
-        var _this = this;
-        if (!this.mapDiv.clientWidth) {
-            setTimeout(function () { return _this.setAutoZoom(); }, 200);
-            return;
-        }
-        var gameWidth = MAP_WIDTH + DECK_WIDTH;
-        var gameHeight = MAP_HEIGHT + (PLAYER_HEIGHT * 0.75);
-        var horizontalScale = document.getElementById('game_play_area').clientWidth / gameWidth;
-        var verticalScale = (window.innerHeight - 80) / gameHeight;
-        this.scale = Math.min(1, horizontalScale, verticalScale);
-        this.resizedDiv.style.transform = this.scale === 1 ? '' : "scale(".concat(this.scale, ")");
-        this.resizedDiv.style.marginBottom = "-".concat((1 - this.scale) * gameHeight, "px");
-    };
-    /**
-     * Get current zoom.
-     */
-    TtrMap.prototype.getZoom = function () {
-        return this.scale;
-    };
-    return TtrMap;
-}());
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
@@ -2594,7 +2437,6 @@ var Festivibes = /** @class */ (function () {
         this.gameFeatures = new GameFeatureConfig();
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
-        this.map = new TtrMap(this);
         this.festivalCardsManager = new FestivalCardsManager(this);
         this.eventCardsManager = new EventCardsManager(this);
         this.animationManager = new AnimationManager(this);
@@ -2613,7 +2455,6 @@ var Festivibes = /** @class */ (function () {
         this.setupSettingsIconInMainBar();
         this.setupPreferences();
         this.setupTooltips();
-        this.onScreenWidthChange = function () { return _this.map.setAutoZoom(); };
         this.scoreBoard = new ScoreBoard(this, Object.values(this.gamedatas.players));
         (_a = this.gamedatas.scores) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return _this.scoreBoard.updateScore(s.playerId, s.scoreType, s.score); });
         if (this.gamedatas.winners) {
@@ -3217,7 +3058,7 @@ var Festivibes = /** @class */ (function () {
      * Get current zoom.
      */
     Festivibes.prototype.getZoom = function () {
-        return this.map.getZoom();
+        return 1;
     };
     /**
      * Get current player.
@@ -3247,7 +3088,7 @@ var FestivibesAnimation = /** @class */ (function () {
 }());
 var FESTIVAL_CARD_WIDTH = '143px'; //also change in scss
 var FESTIVAL_CARD_HEIGHT = '263px';
-function getBackgroundInlineStyleForFestivibesCard(destination) {
+function getBackgroundInlineStyleForFestivalCard(destination) {
     var file;
     switch (destination.type) {
         case 1:
@@ -3380,7 +3221,7 @@ var PlayerTable = /** @class */ (function () {
             baseSettings['wrap'] = 'wrap';
         }
         //console.log('smallWidth', smallWidth, baseSettings)
-        this.handStock = new LineStock(this.game.FestivalCardsManager, $('hand-' + player.id), baseSettings);
+        this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
     };
     return PlayerTable;
