@@ -1,6 +1,10 @@
 const FESTIVAL_CARD_WIDTH = '143px' //also change in scss
 const FESTIVAL_CARD_HEIGHT = '263px'
 
+const modifierTicketSize = 0.4
+const TICKET_CARD_WIDTH = 171 * modifierTicketSize + 'px' //also change in scss
+const TICKET_CARD_HEIGHT = 262 * modifierTicketSize + 'px'
+
 function getBackgroundInlineStyleForFestivalCard(destination: FestivalCard) {
 	let file
 	switch (destination.type) {

@@ -2381,6 +2381,44 @@ var EventCardsManager = /** @class */ (function (_super) {
     };
     return EventCardsManager;
 }(CardManager));
+// <reference path="../card-manager.ts"/>
+var TicketCardsManager = /** @class */ (function (_super) {
+    __extends(TicketCardsManager, _super);
+    function TicketCardsManager(game) {
+        var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
+            getId: function (card) { return "festival-card-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('festival-card');
+                div.dataset.cardId = '' + card.id;
+                div.dataset.cardType = '' + card.type;
+                div.style.position = 'relative';
+                div.style.width = TICKET_CARD_WIDTH;
+                div.style.height = TICKET_CARD_HEIGHT;
+            },
+            setupFrontDiv: function (card, div) {
+                _this.setFrontBackground(div, card.type_arg);
+            },
+            setupBackDiv: function (card, div) {
+                div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/festivibes-card-background.jpg')");
+            }
+        }) || this;
+        _this.game = game;
+        return _this;
+    }
+    TicketCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
+        var eventsUrl = "".concat(g_gamethemeurl, "img/ticketsCards.jpg");
+        cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
+        var imagePosition = cardType - 1;
+        var row = Math.floor(imagePosition / IMAGE_TICKETS_PER_ROW);
+        var xBackgroundPercent = (imagePosition - row * IMAGE_TICKETS_PER_ROW) * 100;
+        var yBackgroundPercent = row * 100;
+        cardDiv.style.backgroundPositionX = "-".concat(xBackgroundPercent, "%");
+        cardDiv.style.backgroundPositionY = "-".concat(yBackgroundPercent, "%");
+        cardDiv.style.backgroundSize = "".concat(IMAGE_TICKETS_PER_ROW * 100, "%");
+    };
+    return TicketCardsManager;
+}(CardManager));
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
@@ -2415,6 +2453,7 @@ var Festivibes = /** @class */ (function () {
         this.settings = [new Setting('customSounds', 'pref', 1)];
         this.festivalStocks = [];
         this.eventStocks = [];
+        this.ticketStocks = [];
         console.log('festivibes constructor');
         // Here, you can init the global variables of your user interface
         // Example:
@@ -2441,6 +2480,7 @@ var Festivibes = /** @class */ (function () {
         log('gamedatas', gamedatas);
         this.festivalCardsManager = new FestivalCardsManager(this);
         this.eventCardsManager = new EventCardsManager(this);
+        this.ticketCardsManager = new TicketCardsManager(this);
         this.animationManager = new AnimationManager(this);
         if (gamedatas.lastTurn) {
             this.notif_lastTurn(false);
@@ -2468,6 +2508,18 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
         var _this = this;
+        festivals.forEach(function (fest) {
+            var divId = 'tickets-' + fest.id;
+            dojo.place(_this.createDiv('ticket-slot', divId), 'festivals');
+            _this.ticketStocks[fest.id] = new SlotStock(_this.ticketCardsManager, $(divId), {
+                center: true,
+                gap: '7px',
+                direction: 'row',
+                wrap: 'nowrap',
+                slotsIds: ['ticketSlot1', 'ticketSlot2'],
+                mapCardToSlot: function (card) { return "ticketSlot".concat(card.location_arg + 1); }
+            });
+        });
         festivals.forEach(function (fest) {
             var divId = 'festival-' + fest.id;
             dojo.place(_this.createDiv('', divId), 'festivals');
@@ -3090,6 +3142,9 @@ var FestivibesAnimation = /** @class */ (function () {
 }());
 var FESTIVAL_CARD_WIDTH = '143px'; //also change in scss
 var FESTIVAL_CARD_HEIGHT = '263px';
+var modifierTicketSize = 0.4;
+var TICKET_CARD_WIDTH = 171 * modifierTicketSize + 'px'; //also change in scss
+var TICKET_CARD_HEIGHT = 262 * modifierTicketSize + 'px';
 function getBackgroundInlineStyleForFestivalCard(destination) {
     var file;
     switch (destination.type) {

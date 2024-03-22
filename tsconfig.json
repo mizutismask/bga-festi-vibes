@@ -35,6 +35,7 @@
 		"src/stock.d.ts",
 		"src/festival-cards.ts",
 		"src/event-cards.ts",
+		"src/ticket-cards.ts",
 		"src/festivibes.ts",
 		"src/define.ts",
 		"src/festivibes-animation.ts",

@@ -1,6 +1,10 @@
 $FESTIVAL_CARD_WIDTH: 143px; //also change in stock-utils.ts
 $FESTIVAL_CARD_HEIGHT: 263px;
 
+$modifierTicketSize: 0.4;
+$TICKET_CARD_WIDTH: calc(171px * $modifierTicketSize);
+$TICKET_CARD_HEIGHT: calc(262px * $modifierTicketSize);
+
 //(classic BGA colors) :
 $player-colors: (
 	'red': 'ff0000',
@@ -50,10 +54,17 @@ html {
 		background: hsla(0, 0%, 100%, 0.4);
 		outline: 1px solid hsla(0, 0%, 100%, 0.6);
 	}
+
+	&.ticket-slot {
+		.slot {
+			height: $TICKET_CARD_HEIGHT;
+			width: $TICKET_CARD_WIDTH;
+		}
+	}
 }
 
 .festivibes-card {
-    //height: $FESTIVAL_CARD_HEIGHT;
+	//height: $FESTIVAL_CARD_HEIGHT;
 	//width: $FESTIVAL_CARD_WIDTH;
 	.card-side {
 		border-radius: 3%;

@@ -32,6 +32,7 @@ class Festivibes implements FestivibesGame {
 	private playerNumber: number
 	public festivalCardsManager: FestivalCardsManager
 	public eventCardsManager: EventCardsManager
+	public ticketCardsManager: TicketCardsManager
 	private originalTextChooseAction: string
 
 	private scoreBoard: ScoreBoard
@@ -46,6 +47,7 @@ class Festivibes implements FestivibesGame {
 	public clientActionData: ClientActionData
 	private festivalStocks: { [festId: number]: LineStock<FestivalCard> } = []
 	private eventStocks: { [festId: number]: LineStock<EventCard> } = []
+	private ticketStocks: { [festId: number]: LineStock<EventCard> } = []
 
 	constructor() {
 		console.log('festivibes constructor')
@@ -76,6 +78,7 @@ class Festivibes implements FestivibesGame {
 
 		this.festivalCardsManager = new FestivalCardsManager(this)
 		this.eventCardsManager = new EventCardsManager(this)
+		this.ticketCardsManager = new TicketCardsManager(this)
 		this.animationManager = new AnimationManager(this)
 
 		if (gamedatas.lastTurn) {
@@ -109,6 +112,20 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private setupFestivals(festivals: Array<FestivalCard>) {
+		festivals.forEach((fest) => {
+			const divId = 'tickets-' + fest.id
+			dojo.place(this.createDiv('ticket-slot', divId), 'festivals')
+
+			this.ticketStocks[fest.id] = new SlotStock<TicketCard>(this.ticketCardsManager, $(divId), {
+				center: true,
+				gap: '7px',
+				direction: 'row',
+				wrap: 'nowrap',
+				slotsIds: ['ticketSlot1', 'ticketSlot2'],
+				mapCardToSlot: (card) => `ticketSlot${card.location_arg + 1}`
+			})
+		})
+
 		festivals.forEach((fest) => {
 			const divId = 'festival-' + fest.id
 			dojo.place(this.createDiv('', divId), 'festivals')

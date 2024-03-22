@@ -698,6 +698,10 @@ html {
   background: hsla(0, 0%, 100%, 0.4);
   outline: 1px solid hsla(0, 0%, 100%, 0.6);
 }
+.card-stock.ticket-slot .slot {
+  height: 104.8px;
+  width: 68.4px;
+}
 
 .festivibes-card .card-side {
   border-radius: 3%;
