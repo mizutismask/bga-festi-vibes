@@ -777,8 +777,8 @@ html {
 
 .card-stock .slot {
   border-radius: 8px;
-  height: 439px;
-  width: 238px;
+  height: 263px;
+  width: 143px;
   background: hsla(0, 0%, 100%, 0.4);
   outline: 1px solid hsla(0, 0%, 100%, 0.6);
 }

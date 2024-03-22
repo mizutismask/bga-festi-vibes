@@ -1,5 +1,5 @@
-const FESTIVAL_CARD_WIDTH = '238px' //also change in scss
-const FESTIVAL_CARD_HEIGHT = '439px'
+const FESTIVAL_CARD_WIDTH = '143px' //also change in scss
+const FESTIVAL_CARD_HEIGHT = '263px'
 
 function getBackgroundInlineStyleForFestivibesCard(destination: FestivalCard) {
 	let file

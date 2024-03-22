@@ -156,7 +156,7 @@ class Festivibes extends Table {
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
         $result['expansion'] = EXPANSION;
-        $result['festivals'] = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival"));
+        $result['festivals'] = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival", null, "type_arg"));
         //$result['tickets'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
         //$result['events'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
 
