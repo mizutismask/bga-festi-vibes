@@ -49,10 +49,10 @@ interface FestivibesGamedatas {
 }
 
 interface FestivibesGame extends Game {
+	getZoom(): number
 	festivalCardsManager: FestivalCardsManager
 	eventCardsManager: EventCardsManager
 	animationManager: AnimationManager
-	getZoom(): number
 	getCurrentPlayer(): FestivibesPlayer
 	getPlayerId(): number
 	getPlayerScore(playerId: number): number

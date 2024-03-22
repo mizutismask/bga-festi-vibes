@@ -28,13 +28,11 @@ class Festivibes implements FestivibesGame {
 	private gamedatas: FestivibesGamedatas
 	private player_id: string
 	private players: { [playerId: number]: Player }
-	private playerTables: { [playerId: number]: PlayerTable } = []
 	private playerNumber: number
 	public festivalCardsManager: FestivalCardsManager
 	public eventCardsManager: EventCardsManager
 	private originalTextChooseAction: string
 
-	public map: TtrMap
 	private scoreBoard: ScoreBoard
 	private ticketsCounters: Counter[] = []
 
@@ -75,8 +73,6 @@ class Festivibes implements FestivibesGame {
 		this.gamedatas = gamedatas
 		log('gamedatas', gamedatas)
 
-		this.map = new TtrMap(this)
-
 		this.festivalCardsManager = new FestivalCardsManager(this)
 		this.eventCardsManager = new EventCardsManager(this)
 		this.animationManager = new AnimationManager(this)
@@ -99,7 +95,6 @@ class Festivibes implements FestivibesGame {
 		this.setupSettingsIconInMainBar()
 		this.setupPreferences()
 		this.setupTooltips()
-		;(this as any).onScreenWidthChange = () => this.map.setAutoZoom()
 
 		this.scoreBoard = new ScoreBoard(this, Object.values(this.gamedatas.players))
 		this.gamedatas.scores?.forEach((s) => this.scoreBoard.updateScore(s.playerId, s.scoreType, s.score))
@@ -153,6 +148,10 @@ class Festivibes implements FestivibesGame {
 		return ids
 	}
 
+	public getZoom() {
+		return 1;
+	}
+
 	private setupTooltips() {
 		//todo change counter names
 		this.setTooltipToClass('revealed-tokens-back-counter', _('counter1 tooltip'))
@@ -171,7 +170,6 @@ class Festivibes implements FestivibesGame {
 		if (this.isNotSpectator()) {
 			this.setupMiniPlayerBoard(player)
 		}
-		this.playerTables[player.id] = new PlayerTable(this, player)
 	}
 
 	private setupMiniPlayerBoard(player: FestivibesPlayer) {
@@ -835,7 +833,7 @@ class Festivibes implements FestivibesGame {
 
 	notif_materialMove(notif: Notif<NotifMaterialMove>) {
 		console.log('notif_materialMove', notif)
-		const cards = notif.args.material as Array<FestivibesCard>
+		const cards = notif.args.material as Array<FestivalCard>
 		cards.forEach((c) => console.log('c', c.id))
 	}
 
@@ -878,12 +876,6 @@ class Festivibes implements FestivibesGame {
 			console.error(log, args, 'Exception thrown', e.stack)
 		}
 		return (this as any).inherited(arguments)
-	}
-	/**
-	 * Get current zoom.
-	 */
-	public getZoom(): number {
-		return this.map.getZoom()
 	}
 
 	/**
