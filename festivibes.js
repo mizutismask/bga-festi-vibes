@@ -2540,6 +2540,10 @@ var Festivibes = /** @class */ (function () {
                 slotsIds: ['slot1'],
                 mapCardToSlot: function (card) { return "slot".concat(1); }
             });
+            _this.festivalStocks[fest.id].setSelectionMode('single');
+            _this.festivalStocks[fest.id].onSelectionChange = function (selection, lastChange) {
+                return _this.ensureOnlyOneFestivalSelected(fest.id);
+            };
             _this.festivalStocks[fest.id].addCard(fest);
         });
         festivals.forEach(function (fest) {
@@ -2557,11 +2561,19 @@ var Festivibes = /** @class */ (function () {
             //this.eventStocks[fest.id].addCard(fest)
         });
     };
+    Festivibes.prototype.ensureOnlyOneFestivalSelected = function (festivalId) {
+        if (this.festivalStocks[festivalId].getSelection()) {
+            Object.entries(this.festivalStocks).forEach(function (_a) {
+                var festId = _a[0], s = _a[1];
+                if (festId != festivalId.toString())
+                    s.unselectAll(true);
+            });
+        }
+    };
     Festivibes.prototype.displayTickets = function (tickets) {
         var _this = this;
         Object.entries(tickets).forEach(function (_a) {
             var festId = _a[0], tickets = _a[1];
-            log('fest', festId, 'tickets', tickets);
             _this.ticketStocks[festId].addCards(tickets);
         });
     };

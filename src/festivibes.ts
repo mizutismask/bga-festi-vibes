@@ -147,6 +147,9 @@ class Festivibes implements FestivibesGame {
 				slotsIds: ['slot1'],
 				mapCardToSlot: (card) => `slot${1}`
 			})
+			this.festivalStocks[fest.id].setSelectionMode('single')
+			this.festivalStocks[fest.id].onSelectionChange = (selection: FestivalCard[], lastChange: FestivalCard) =>
+				this.ensureOnlyOneFestivalSelected(fest.id)
 			this.festivalStocks[fest.id].addCard(fest)
 		})
 
@@ -167,9 +170,16 @@ class Festivibes implements FestivibesGame {
 		})
 	}
 
+	private ensureOnlyOneFestivalSelected(festivalId: number) {
+		if (this.festivalStocks[festivalId].getSelection()) {
+			Object.entries(this.festivalStocks).forEach(([festId, s]) => {
+				if (festId != festivalId.toString()) s.unselectAll(true)
+			})
+		}
+	}
+
 	private displayTickets(tickets: { [festivalId: number]: Array<TicketCard> }) {
 		Object.entries(tickets).forEach(([festId, tickets]) => {
-			log('fest', festId, 'tickets', tickets)
 			this.ticketStocks[festId].addCards(tickets)
 		})
 	}
