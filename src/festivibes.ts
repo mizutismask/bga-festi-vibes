@@ -16,7 +16,9 @@
  */
 const ANIMATION_MS = 500
 const SCORE_MS = 1500
-const IMAGE_ITEMS_PER_ROW = 10
+const IMAGE_FESTIVALS_PER_ROW = 6
+const IMAGE_EVENTS_PER_ROW = 13
+const IMAGE_TICKETS_PER_ROW = 4
 
 const isDebug = window.location.host == 'studio.boardgamearena.com'
 const log = isDebug ? console.log.bind(window.console) : function () {}
@@ -28,7 +30,7 @@ class Festivibes implements FestivibesGame {
 	private players: { [playerId: number]: Player }
 	private playerTables: { [playerId: number]: PlayerTable } = []
 	private playerNumber: number
-	public cardsManager: CardsManager
+	public FestivalCardsManager: FestivalCardsManager
 	private originalTextChooseAction: string
 
 	public map: TtrMap
@@ -42,6 +44,7 @@ class Festivibes implements FestivibesGame {
 	private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined
 	private settings = [new Setting('customSounds', 'pref', 1)]
 	public clientActionData: ClientActionData
+	private festivalStocks: { [festId: number]: LineStock<FestivalCard> } = []
 
 	constructor() {
 		console.log('festivibes constructor')
@@ -72,7 +75,7 @@ class Festivibes implements FestivibesGame {
 
 		this.map = new TtrMap(this)
 
-		this.cardsManager = new CardsManager(this)
+		this.FestivalCardsManager = new FestivalCardsManager(this)
 		this.animationManager = new AnimationManager(this)
 
 		if (gamedatas.lastTurn) {
@@ -102,7 +105,25 @@ class Festivibes implements FestivibesGame {
 		}
 		removeClass('animatedScore')
 
+		this.setupFestivals(this.gamedatas.festivals)
 		console.log('Ending game setup')
+	}
+
+	private setupFestivals(festivals: Array<FestivalCard>) {
+		festivals.forEach((fest) => {
+			const divId = 'festival-' + fest.id
+			dojo.place(this.createDiv('', divId), 'festivals')
+
+			this.festivalStocks[fest.id] = new SlotStock<FestivalCard>(this.FestivalCardsManager, $(divId), {
+				center: true,
+				gap: '7px',
+				direction: 'row',
+				wrap: 'nowrap',
+				slotsIds: ['slot1'],
+				mapCardToSlot: (card) => `slot${1}`
+			})
+			this.festivalStocks[fest.id].addCard(fest)
+		})
 	}
 
 	private setupTooltips() {

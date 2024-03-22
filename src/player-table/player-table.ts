@@ -40,7 +40,11 @@ class PlayerTable {
 
 		//console.log('smallWidth', smallWidth, baseSettings)
 
-		this.handStock = new LineStock<FestivibesCard>(this.game.cardsManager, $('hand-' + player.id), baseSettings)
+		this.handStock = new LineStock<FestivibesCard>(
+			this.game.FestivalCardsManager,
+			$('hand-' + player.id),
+			baseSettings
+		)
 		this.handStock.setSelectionMode('single')
 	}
 }

@@ -28,6 +28,9 @@
     </div>
 </div>
 
+<div id="festivals" class="festival-wrapper">
+</div>
+
 <div id="player-tables">
 </div>
 

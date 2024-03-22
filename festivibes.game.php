@@ -156,6 +156,10 @@ class Festivibes extends Table {
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
         $result['expansion'] = EXPANSION;
+        $result['festivals'] = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival"));
+        //$result['tickets'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
+        //$result['events'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
+
         if ($isEnd) {
             $maxScore = max(array_map(fn ($player) => intval($player['score']), $result['players']));
             $result['winners'] = array_keys(array_filter($result['players'], fn ($player) => intval($player['score'] == $maxScore)));

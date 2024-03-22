@@ -16,7 +16,9 @@ interface Card {
 	type: number
 	type_arg: number
 }
-interface FestivibesCard extends Card {}
+interface FestivalCard extends Card {}
+interface EventCard extends Card {}
+interface TicketCard extends Card {}
 
 interface FestivibesPlayer extends Player {
 	playerNo: number
@@ -40,11 +42,12 @@ interface FestivibesGamedatas {
 	scores?: Array<NotifScoreArgs>
 	winners: number[]
 	version: string
+	festivals: Array<FestivalCard>
 	// Add here variables you set up in getAllDatas
 }
 
 interface FestivibesGame extends Game {
-	cardsManager: CardsManager
+	FestivalCardsManager: FestivalCardsManager
 	animationManager: AnimationManager
 	getZoom(): number
 	getCurrentPlayer(): FestivibesPlayer

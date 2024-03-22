@@ -2275,14 +2275,52 @@ var CardManager = /** @class */ (function () {
     return CardManager;
 }());
 // <reference path="../card-manager.ts"/>
-var CardsManager = /** @class */ (function (_super) {
-    __extends(CardsManager, _super);
-    function CardsManager(game) {
+var FestivalCardsManager = /** @class */ (function (_super) {
+    __extends(FestivalCardsManager, _super);
+    function FestivalCardsManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "festivibes-card-".concat(card.id); },
+            getId: function (card) { return "festival-card-".concat(card.id); },
             setupDiv: function (card, div) {
-                div.classList.add('festivibes-card');
+                div.classList.add('festival-card');
+                div.dataset.cardId = '' + card.id;
+                div.dataset.cardType = '' + card.type;
+                div.style.position = 'relative';
+                div.style.width = FESTIVAL_CARD_WIDTH;
+                div.style.height = FESTIVAL_CARD_HEIGHT;
+            },
+            setupFrontDiv: function (card, div) {
+                _this.setFrontBackground(div, card.type_arg);
+            },
+            setupBackDiv: function (card, div) {
+                div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/festivibes-card-background.jpg')");
+            }
+        }) || this;
+        _this.game = game;
+        return _this;
+    }
+    FestivalCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
+        var eventsUrl = "".concat(g_gamethemeurl, "img/festivalCardsFront.jpg");
+        cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
+        var imagePosition = cardType - 1;
+        var row = Math.floor(imagePosition / IMAGE_FESTIVALS_PER_ROW);
+        var xBackgroundPercent = (imagePosition - row * IMAGE_FESTIVALS_PER_ROW) * 100;
+        var yBackgroundPercent = row * 100;
+        cardDiv.style.backgroundPositionX = "-".concat(xBackgroundPercent, "%");
+        cardDiv.style.backgroundPositionY = "-".concat(yBackgroundPercent, "%");
+        cardDiv.style.backgroundSize = "".concat(IMAGE_FESTIVALS_PER_ROW * 100, "%");
+    };
+    return FestivalCardsManager;
+}(CardManager));
+// <reference path="../card-manager.ts"/>
+var EventCardsManager = /** @class */ (function (_super) {
+    __extends(EventCardsManager, _super);
+    function EventCardsManager(game) {
+        var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
+            getId: function (card) { return "event-card-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('event-card');
                 div.dataset.cardId = '' + card.id;
                 div.dataset.cardType = '' + card.type;
                 div.style.position = 'relative';
@@ -2304,33 +2342,42 @@ var CardsManager = /** @class */ (function (_super) {
                 }
             },
             setupBackDiv: function (card, div) {
-                div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/festivibes-card-background.jpg')");
-            },
+                //div.style.backgroundImage = `url('${g_gamethemeurl}img/festivibes-card-background.jpg')`
+            }
         }) || this;
         _this.game = game;
         return _this;
     }
-    CardsManager.prototype.getCardName = function (cardTypeId) {
-        return "todo";
+    EventCardsManager.prototype.getCardName = function (cardTypeId) {
+        return 'todo';
     };
-    CardsManager.prototype.getTooltip = function (card, cardUniqueId) {
-        var tooltip = "\n\t\t<div class=\"xpd-city-zoom-wrapper\">\n\t\t\t<div id=\"xpd-city-".concat(cardUniqueId, "-zoom\" class=\"xpd-city-zoom\" style=\"").concat(getBackgroundInlineStyleForFestivibesCard(card), "\"></div>\n\t\t\t<div class=\"xpd-city-zoom-desc-wrapper\">\n\t\t\t\t<div class=\"xpd-city\">").concat(dojo.string.substitute(_('${to}'), {
-            to: "replace",
-        }), "</div>\n\t\t\t</div>\n\t\t</div>");
-        return tooltip;
+    EventCardsManager.prototype.getTooltip = function (card, cardUniqueId) {
+        /*let tooltip = `
+        <div class="xpd-city-zoom-wrapper">
+            <div id="xpd-city-${cardUniqueId}-zoom" class="xpd-city-zoom" style="${getBackgroundInlineStyleForEventCard(
+            card
+        )}"></div>
+            <div class="xpd-city-zoom-desc-wrapper">
+                <div class="xpd-city">${dojo.string.substitute(_('${to}'), {
+                    to: 'replace'
+                })}</div>
+            </div>
+        </div>`*/
+        //return tooltip
+        return "tooltip";
     };
-    CardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
-        var eventsUrl = "".concat(g_gamethemeurl, "img/events.jpg");
+    EventCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
+        var eventsUrl = "".concat(g_gamethemeurl, "img/eventsCards.jpg");
         cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
         var imagePosition = cardType - 1;
-        var row = Math.floor(imagePosition / IMAGE_ITEMS_PER_ROW);
-        var xBackgroundPercent = (imagePosition - row * IMAGE_ITEMS_PER_ROW) * 100;
+        var row = Math.floor(imagePosition / IMAGE_EVENTS_PER_ROW);
+        var xBackgroundPercent = (imagePosition - row * IMAGE_EVENTS_PER_ROW) * 100;
         var yBackgroundPercent = row * 100;
         cardDiv.style.backgroundPositionX = "-".concat(xBackgroundPercent, "%");
         cardDiv.style.backgroundPositionY = "-".concat(yBackgroundPercent, "%");
-        cardDiv.style.backgroundSize = "1000%";
+        cardDiv.style.backgroundSize = "".concat(IMAGE_EVENTS_PER_ROW * 100, "%");
     };
-    return CardsManager;
+    return EventCardsManager;
 }(CardManager));
 var DRAG_AUTO_ZOOM_DELAY = 2000;
 var MAP_WIDTH = 1744;
@@ -2507,7 +2554,9 @@ var TtrMap = /** @class */ (function () {
  */
 var ANIMATION_MS = 500;
 var SCORE_MS = 1500;
-var IMAGE_ITEMS_PER_ROW = 10;
+var IMAGE_FESTIVALS_PER_ROW = 6;
+var IMAGE_EVENTS_PER_ROW = 13;
+var IMAGE_TICKETS_PER_ROW = 4;
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var Festivibes = /** @class */ (function () {
@@ -2519,6 +2568,7 @@ var Festivibes = /** @class */ (function () {
         this.isTouch = window.matchMedia('(hover: none)').matches;
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
         this.settings = [new Setting('customSounds', 'pref', 1)];
+        this.festivalStocks = [];
         console.log('festivibes constructor');
         // Here, you can init the global variables of your user interface
         // Example:
@@ -2544,7 +2594,7 @@ var Festivibes = /** @class */ (function () {
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
         this.map = new TtrMap(this);
-        this.cardsManager = new CardsManager(this);
+        this.FestivalCardsManager = new FestivalCardsManager(this);
         this.animationManager = new AnimationManager(this);
         if (gamedatas.lastTurn) {
             this.notif_lastTurn(false);
@@ -2568,7 +2618,24 @@ var Festivibes = /** @class */ (function () {
             this.gamedatas.winners.forEach(function (pId) { return _this.scoreBoard.highlightWinnerScore(pId); });
         }
         removeClass('animatedScore');
+        this.setupFestivals(this.gamedatas.festivals);
         console.log('Ending game setup');
+    };
+    Festivibes.prototype.setupFestivals = function (festivals) {
+        var _this = this;
+        festivals.forEach(function (fest) {
+            var divId = 'festival-' + fest.id;
+            dojo.place(_this.createDiv('', divId), 'festivals');
+            _this.festivalStocks[fest.id] = new SlotStock(_this.FestivalCardsManager, $(divId), {
+                center: true,
+                gap: '7px',
+                direction: 'row',
+                wrap: 'nowrap',
+                slotsIds: ['slot1'],
+                mapCardToSlot: function (card) { return "slot".concat(1); }
+            });
+            _this.festivalStocks[fest.id].addCard(fest);
+        });
     };
     Festivibes.prototype.setupTooltips = function () {
         //todo change counter names
@@ -3155,18 +3222,18 @@ var FestivibesAnimation = /** @class */ (function () {
     }
     return FestivibesAnimation;
 }());
-var CARD_WIDTH = 150; //also change in scss
-var CARD_HEIGHT = 209;
+var FESTIVAL_CARD_WIDTH = '238px'; //also change in scss
+var FESTIVAL_CARD_HEIGHT = '439px';
 function getBackgroundInlineStyleForFestivibesCard(destination) {
     var file;
     switch (destination.type) {
         case 1:
-            file = 'festivibescards.jpg';
+            file = 'festivalCardsFront.jpg';
             break;
     }
     var imagePosition = destination.type_arg - 1;
-    var row = Math.floor(imagePosition / IMAGE_ITEMS_PER_ROW);
-    var xBackgroundPercent = (imagePosition - row * IMAGE_ITEMS_PER_ROW) * 100;
+    var row = Math.floor(imagePosition / IMAGE_FESTIVALS_PER_ROW);
+    var xBackgroundPercent = (imagePosition - row * IMAGE_FESTIVALS_PER_ROW) * 100;
     var yBackgroundPercent = row * 100;
     return "background-image: url('".concat(g_gamethemeurl, "img/").concat(file, "'); background-position: -").concat(xBackgroundPercent, "% -").concat(yBackgroundPercent, "%; background-size:1000%;");
 }
@@ -3290,7 +3357,7 @@ var PlayerTable = /** @class */ (function () {
             baseSettings['wrap'] = 'wrap';
         }
         //console.log('smallWidth', smallWidth, baseSettings)
-        this.handStock = new LineStock(this.game.cardsManager, $('hand-' + player.id), baseSettings);
+        this.handStock = new LineStock(this.game.FestivalCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
     };
     return PlayerTable;

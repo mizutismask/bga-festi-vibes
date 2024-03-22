@@ -19,7 +19,7 @@ trait FestivalDeckTrait {
     public function dealFestivals() {
         $festivals = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("deck", null, "card_type_arg"));
         foreach ($festivals as $i => $festival) {
-            $this->festivals->moveCard($festival->id, "festival_" . ($i + 1));
+            $this->festivals->moveCard($festival->id, "festival", $i + 1);
         }
     }
 }

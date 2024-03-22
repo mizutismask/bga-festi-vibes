@@ -757,6 +757,15 @@ html {
   background-size: 100%;
 }
 
+.festival-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.player-count-2 .festival-wrapper {
+  grid-template-columns: repeat(5, 1fr);
+}
+
 .stockitem {
   border-radius: 6px;
   background-size: 1000%;
@@ -764,6 +773,14 @@ html {
 .stockitem.disabled {
   filter: contrast(0.6);
   cursor: not-allowed;
+}
+
+.card-stock .slot {
+  border-radius: 8px;
+  height: 439px;
+  width: 238px;
+  background: hsla(0, 0%, 100%, 0.4);
+  outline: 1px solid hsla(0, 0%, 100%, 0.6);
 }
 
 .festivibes-card .card-side {
