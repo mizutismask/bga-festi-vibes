@@ -691,6 +691,10 @@ html {
   cursor: not-allowed;
 }
 
+.bga-cards_selected-card {
+  box-shadow: 0 0 5px 5px greenyellow;
+}
+
 .card-stock .slot {
   border-radius: 8px;
   height: 263px;
