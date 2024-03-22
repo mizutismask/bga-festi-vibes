@@ -92,7 +92,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argChooseAction",
         "possibleactions" => [
-            "pass", "placeTicket"
+            "pass", "placeTicket", "playCard"
         ],
         "transitions" => [
             "nextPlayer" => ST_NEXT_PLAYER,

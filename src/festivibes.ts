@@ -148,8 +148,10 @@ class Festivibes implements FestivibesGame {
 				mapCardToSlot: (card) => `slot${1}`
 			})
 			this.festivalStocks[fest.id].setSelectionMode('single')
-			this.festivalStocks[fest.id].onSelectionChange = (selection: FestivalCard[], lastChange: FestivalCard) =>
+			this.festivalStocks[fest.id].onSelectionChange = (selection: FestivalCard[], lastChange: FestivalCard) => {
 				this.ensureOnlyOneFestivalSelected(fest.id)
+				this.checkIfPlayCardPossible()
+			}
 			this.festivalStocks[fest.id].addCard(fest)
 		})
 
@@ -175,6 +177,27 @@ class Festivibes implements FestivibesGame {
 			Object.entries(this.festivalStocks).forEach(([festId, s]) => {
 				if (festId != festivalId.toString()) s.unselectAll(true)
 			})
+		}
+	}
+
+	private checkIfPlayCardPossible() {
+		if ((this as any).isCurrentPlayerActive()) {
+			const festivalStocks = Object.values(this.festivalStocks)
+			let i = 0
+			let hasSelection = false
+			let selectedFestival = null
+			while (i < festivalStocks.length && !hasSelection) {
+				const selection = festivalStocks[i].getSelection()
+				hasSelection = selection.length !== 0
+				if (hasSelection) selectedFestival = selection[0]
+				i++
+			}
+			if (hasSelection && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
+				this.takeAction('playCard', {
+					'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+					'festivalId': selectedFestival.id
+				})
+			}
 		}
 	}
 

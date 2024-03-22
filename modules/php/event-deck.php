@@ -21,6 +21,10 @@ trait EventDeckTrait {
         return $this->pickDestinationCards($playerId, $cardsNumber);
     }
 
+    public function placeEventCardOnFestival(int $eventId, int $festivalId) {
+        $this->events->insertCardOnExtremePosition($eventId, "festival_" . $festivalId, true);
+    }
+
     /* public function checkVisibleSharedCardsAreEnough() {
         $visibleCardsCount = intval($this->events->countCardInLocation('shared'));
         if ($visibleCardsCount < NUMBER_OF_SHARED_DESTINATION_CARDS) {

@@ -44,13 +44,22 @@ class action_festivibes extends APP_GameAction {
         self::setAjaxMode();
         self::checkVersion();
 
-        // Retrieve arguments
-        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
         $festivalId = self::getArg("festivalId", AT_posint, true);
         $slotId = self::getArg("slotId", AT_posint, true);
 
-        // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
         $this->game->placeTicket($festivalId, $slotId);
+
+        self::ajaxResponse();
+    }
+
+    public function playCard() {
+        self::setAjaxMode();
+        self::checkVersion();
+
+        $festivalId = intval(self::getArg("festivalId", AT_posint, true));
+        $cardId = intval(self::getArg("cardId", AT_posint, true));
+
+        $this->game->playCard($cardId, $festivalId);
 
         self::ajaxResponse();
     }

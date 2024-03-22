@@ -2542,7 +2542,8 @@ var Festivibes = /** @class */ (function () {
             });
             _this.festivalStocks[fest.id].setSelectionMode('single');
             _this.festivalStocks[fest.id].onSelectionChange = function (selection, lastChange) {
-                return _this.ensureOnlyOneFestivalSelected(fest.id);
+                _this.ensureOnlyOneFestivalSelected(fest.id);
+                _this.checkIfPlayCardPossible();
             };
             _this.festivalStocks[fest.id].addCard(fest);
         });
@@ -2568,6 +2569,27 @@ var Festivibes = /** @class */ (function () {
                 if (festId != festivalId.toString())
                     s.unselectAll(true);
             });
+        }
+    };
+    Festivibes.prototype.checkIfPlayCardPossible = function () {
+        if (this.isCurrentPlayerActive()) {
+            var festivalStocks = Object.values(this.festivalStocks);
+            var i = 0;
+            var hasSelection = false;
+            var selectedFestival = null;
+            while (i < festivalStocks.length && !hasSelection) {
+                var selection = festivalStocks[i].getSelection();
+                hasSelection = selection.length !== 0;
+                if (hasSelection)
+                    selectedFestival = selection[0];
+                i++;
+            }
+            if (hasSelection && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
+                this.takeAction('playCard', {
+                    'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+                    'festivalId': selectedFestival.id
+                });
+            }
         }
     };
     Festivibes.prototype.displayTickets = function (tickets) {
@@ -3322,6 +3344,9 @@ var PlayerTable = /** @class */ (function () {
         this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
         this.handStock.addCards(cards);
+    };
+    PlayerTable.prototype.getSelection = function () {
+        return this.handStock.getSelection();
     };
     return PlayerTable;
 }());

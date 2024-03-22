@@ -48,4 +48,8 @@ class PlayerTable {
 		this.handStock.setSelectionMode('single')
 		this.handStock.addCards(cards)
 	}
+
+	public getSelection() {
+		return this.handStock.getSelection();
+	}
 }
