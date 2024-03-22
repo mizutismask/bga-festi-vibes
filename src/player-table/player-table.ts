@@ -2,29 +2,29 @@
  * Player table.
  */
 class PlayerTable {
-    private handStock: LineStock<FestivibesCard>
+	private handStock: LineStock<EventCard>
 
-    constructor(private game: FestivibesGame, player: FestivibesPlayer) {
-        const isMyTable = player.id === game.getPlayerId().toString();
-        const ownClass = isMyTable ? 'own' : ''
-        let html = `
+	constructor(private game: FestivibesGame, player: FestivibesPlayer) {
+		const isMyTable = player.id === game.getPlayerId().toString()
+		const ownClass = isMyTable ? 'own' : ''
+		let html = `
 			<a id="anchor-player-${player.id}"></a>
             <div id="player-table-${player.id}" class="player-order${player.playerNo} player-table ${ownClass}">
 			    <span class="player-name">${player.name}</span>
             </div>
-        `;
-        dojo.place(html, 'player-tables');
+        `
+		dojo.place(html, 'player-tables')
 
-        if (isMyTable) {
+		if (isMyTable) {
 			const handHtml = `
 			<div id="hand-${player.id}" class="nml-player-hand"></div>
         `
 			dojo.place(handHtml, `player-table-${player.id}`, 'first')
 			this.initHand(player)
 		}
-    }
+	}
 
-    private initHand(player: FestivibesPlayer) {
+	private initHand(player: FestivibesPlayer) {
 		const smallWidth = window.matchMedia('(max-width: 830px)').matches
 		var baseSettings = {
 			center: true,
@@ -40,8 +40,8 @@ class PlayerTable {
 
 		//console.log('smallWidth', smallWidth, baseSettings)
 
-		this.handStock = new LineStock<FestivibesCard>(
-			this.game.FestivalCardsManager,
+		this.handStock = new LineStock<EventCard>(
+			this.game.eventCardsManager,
 			$('hand-' + player.id),
 			baseSettings
 		)
