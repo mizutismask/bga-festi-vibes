@@ -26,6 +26,7 @@ require_once('modules/php/args.php');
 require_once('modules/php/actions.php');
 require_once('modules/php/event-deck.php');
 require_once('modules/php/ticket-deck.php');
+require_once('modules/php/festival-deck.php');
 require_once('modules/php/debug-util.php');
 require_once('modules/php/expansion.php');
 
@@ -36,6 +37,7 @@ class Festivibes extends Table {
     use ArgsTrait;
     use EventDeckTrait;
     use TicketDeckTrait;
+    use FestivalDeckTrait;
     use DebugUtilTrait;
     use ExpansionTrait;
 
@@ -61,6 +63,9 @@ class Festivibes extends Table {
 
         $this->tickets = $this->getNew("module.common.deck");
         $this->tickets->init("ticket");
+
+        $this->festivals = $this->getNew("module.common.deck");
+        $this->festivals->init("festival");
     }
 
     protected function getGameName() {
@@ -114,6 +119,7 @@ class Festivibes extends Table {
     function setupTable($players) {
         $this->createEvents();
         $this->createTickets();
+        $this->createFestivals();
         foreach ($players as $playerId => $player) {
             $this->dealEvents($playerId);
         }

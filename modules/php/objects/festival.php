@@ -25,7 +25,7 @@ class FestivalCard extends FestivalInfo {
     public int $type;
     public int $type_arg;
 
-    public function __construct($dbCard, $EVENTS) {
+    public function __construct($dbCard, $FESTIVALS) {
         array_key_exists('id', $dbCard) ? $this->id = intval($dbCard['id']):null;
         array_key_exists('location', $dbCard) ? $this->location = $dbCard['location']:null;
         array_key_exists('location_arg', $dbCard) ? $this->location_arg = intval($dbCard['location_arg']):null;

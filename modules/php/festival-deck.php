@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/objects/ticket.php');
+require_once(__DIR__ . '/objects/festival.php');
 
 trait FestivalDeckTrait {
 
@@ -14,17 +14,12 @@ trait FestivalDeckTrait {
     }
 
     /**
-     * Deal tickets according to the player color.
+     * Deal festivals according to their column.
      */
-    public function dealTickets() {
-        $players = $this->getPlayers();
-        $colors = array_flip(PLAYER_COLORS);
-        foreach ($players as $playerId => $player) {
-            $color = $player["player_color"];
-            $type = $colors[$color];
-            $sql = "SELECT card_id id FROM `ticket` WHERE `card_type_arg` = $type";
-            $cardIds = array_keys($this->getCollectionFromDb($sql, true));
-            $this->tickets->moveCards($cardIds, "hand", $playerId);
+    public function dealFestivals() {
+        $festivals = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("deck", null, "card_type_arg"));
+        foreach ($festivals as $i => $festival) {
+            $this->festivals->moveCard($festival->id, "festival_" . ($i + 1));
         }
     }
 }

@@ -50,15 +50,12 @@ trait ExpansionTrait {
         switch ($expansion) {
             default:
                 if (count($players) == 2) {
-                    $cards[] = ['type' => 1, 'type_arg' => 1, 'nbr' => 1];
-                    $cards[] = ['type' => 1, 'type_arg' => 3, 'nbr' => 1];
-                    $cards[] = ['type' => 1, 'type_arg' => 4, 'nbr' => 1];
-                    $cards[] = ['type' => 1, 'type_arg' => 5, 'nbr' => 1];
-                    $cards[] = ['type' => 1, 'type_arg' => 6, 'nbr' => 1];
-                }
-                else{
-                    for ($i=0; $i < 6; $i++) { 
-                        $cards[] = ['type' => 1, 'type_arg' => $i+1, 'nbr' => 1];
+                    foreach ($this->FESTIVALS_2PLAYERS[1] as $typeArg => $card) {
+                        $cards[] = ['type' => 1, 'type_arg' => $typeArg, 'nbr' => 1];
+                    }
+                } else {
+                    foreach ($this->FESTIVALS[1] as $typeArg => $card) {
+                        $cards[] = ['type' => 1, 'type_arg' => $typeArg, 'nbr' => 1];
                     }
                 }
                 break;

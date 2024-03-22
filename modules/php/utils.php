@@ -103,10 +103,32 @@ trait UtilTrait {
     }
 
     /**
+     * Transforms a Db object to instance of class.
+     */
+    function getFestivalFromDb($dbObject) {
+        if (!$dbObject || !array_key_exists('id', $dbObject)) {
+            throw new BgaSystemException("Festival doesn't exists " . json_encode($dbObject));
+        }
+
+        //self::dump('************type_arg*******', $dbObject["type_arg"]);
+        //self::dump('*******************', $this->EVENTS[$dbObject["type"]][$dbObject["type_arg"]]);
+        return new FestivalCard($dbObject, $this->FESTIVALS);
+    }
+
+    /**
      * Transforms a Db object array to instance of class array.
      */
     function getEventsFromDb(array $dbObjects) {
         return array_map(fn ($dbObject) => $this->getEventFromDb($dbObject),
+            array_values($dbObjects)
+        );
+    }
+
+    /**
+     * Transforms a Db object array to instance of class array.
+     */
+    function getFestivalsFromDb(array $dbObjects) {
+        return array_map(fn ($dbObject) => $this->getFestivalFromDb($dbObject),
             array_values($dbObjects)
         );
     }
