@@ -16,7 +16,9 @@ interface Card {
 	type: number
 	type_arg: number
 }
-interface FestivalCard extends Card {}
+interface FestivalCard extends Card {
+	cardsCount:number
+}
 interface EventCard extends Card {}
 interface TicketCard extends Card {}
 
@@ -47,7 +49,8 @@ interface FestivibesGamedatas {
 }
 
 interface FestivibesGame extends Game {
-	FestivalCardsManager: FestivalCardsManager
+	festivalCardsManager: FestivalCardsManager
+	eventCardsManager: EventCardsManager
 	animationManager: AnimationManager
 	getZoom(): number
 	getCurrentPlayer(): FestivibesPlayer

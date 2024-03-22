@@ -2569,6 +2569,7 @@ var Festivibes = /** @class */ (function () {
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
         this.settings = [new Setting('customSounds', 'pref', 1)];
         this.festivalStocks = [];
+        this.eventStocks = [];
         console.log('festivibes constructor');
         // Here, you can init the global variables of your user interface
         // Example:
@@ -2594,7 +2595,8 @@ var Festivibes = /** @class */ (function () {
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
         this.map = new TtrMap(this);
-        this.FestivalCardsManager = new FestivalCardsManager(this);
+        this.festivalCardsManager = new FestivalCardsManager(this);
+        this.eventCardsManager = new EventCardsManager(this);
         this.animationManager = new AnimationManager(this);
         if (gamedatas.lastTurn) {
             this.notif_lastTurn(false);
@@ -2626,7 +2628,7 @@ var Festivibes = /** @class */ (function () {
         festivals.forEach(function (fest) {
             var divId = 'festival-' + fest.id;
             dojo.place(_this.createDiv('', divId), 'festivals');
-            _this.festivalStocks[fest.id] = new SlotStock(_this.FestivalCardsManager, $(divId), {
+            _this.festivalStocks[fest.id] = new SlotStock(_this.festivalCardsManager, $(divId), {
                 center: true,
                 gap: '7px',
                 direction: 'row',
@@ -2636,6 +2638,27 @@ var Festivibes = /** @class */ (function () {
             });
             _this.festivalStocks[fest.id].addCard(fest);
         });
+        festivals.forEach(function (fest) {
+            var divId = 'events-' + fest.id;
+            dojo.place(_this.createDiv('', divId), 'festivals');
+            /*this.eventStocks[fest.id] = new SlotStock<EventCard>(this.eventCardsManager, $(divId), {
+                center: true,
+                gap: '0px',
+                direction: 'column',
+                wrap: 'nowrap',
+                //slotsIds: this.generateSlotsIds("eventSlot", fest.cardsCount),
+                slotsIds: ['eventSlot1'],
+                mapCardToSlot: (card) => `eventSlot${card.location_arg}`
+            })*/
+            //this.eventStocks[fest.id].addCard(fest)
+        });
+    };
+    Festivibes.prototype.generateSlotsIds = function (prefix, limit) {
+        var ids = [];
+        for (var index = 0; index < limit; index++) {
+            ids.push(prefix + (index + 1));
+        }
+        return ids;
     };
     Festivibes.prototype.setupTooltips = function () {
         //todo change counter names

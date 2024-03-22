@@ -30,7 +30,8 @@ class Festivibes implements FestivibesGame {
 	private players: { [playerId: number]: Player }
 	private playerTables: { [playerId: number]: PlayerTable } = []
 	private playerNumber: number
-	public FestivalCardsManager: FestivalCardsManager
+	public festivalCardsManager: FestivalCardsManager
+	public eventCardsManager: EventCardsManager
 	private originalTextChooseAction: string
 
 	public map: TtrMap
@@ -45,6 +46,7 @@ class Festivibes implements FestivibesGame {
 	private settings = [new Setting('customSounds', 'pref', 1)]
 	public clientActionData: ClientActionData
 	private festivalStocks: { [festId: number]: LineStock<FestivalCard> } = []
+	private eventStocks: { [festId: number]: LineStock<EventCard> } = []
 
 	constructor() {
 		console.log('festivibes constructor')
@@ -75,7 +77,8 @@ class Festivibes implements FestivibesGame {
 
 		this.map = new TtrMap(this)
 
-		this.FestivalCardsManager = new FestivalCardsManager(this)
+		this.festivalCardsManager = new FestivalCardsManager(this)
+		this.eventCardsManager = new EventCardsManager(this)
 		this.animationManager = new AnimationManager(this)
 
 		if (gamedatas.lastTurn) {
@@ -114,7 +117,7 @@ class Festivibes implements FestivibesGame {
 			const divId = 'festival-' + fest.id
 			dojo.place(this.createDiv('', divId), 'festivals')
 
-			this.festivalStocks[fest.id] = new SlotStock<FestivalCard>(this.FestivalCardsManager, $(divId), {
+			this.festivalStocks[fest.id] = new SlotStock<FestivalCard>(this.festivalCardsManager, $(divId), {
 				center: true,
 				gap: '7px',
 				direction: 'row',
@@ -124,6 +127,30 @@ class Festivibes implements FestivibesGame {
 			})
 			this.festivalStocks[fest.id].addCard(fest)
 		})
+
+		festivals.forEach((fest) => {
+			const divId = 'events-' + fest.id
+			dojo.place(this.createDiv('', divId), 'festivals')
+
+			/*this.eventStocks[fest.id] = new SlotStock<EventCard>(this.eventCardsManager, $(divId), {
+				center: true,
+				gap: '0px',
+				direction: 'column',
+				wrap: 'nowrap',
+				//slotsIds: this.generateSlotsIds("eventSlot", fest.cardsCount),
+				slotsIds: ['eventSlot1'],
+				mapCardToSlot: (card) => `eventSlot${card.location_arg}`
+			})*/
+			//this.eventStocks[fest.id].addCard(fest)
+		})
+	}
+
+	private generateSlotsIds(prefix: string, limit: number) {
+		const ids = []
+		for (let index = 0; index < limit; index++) {
+			ids.push(prefix + (index + 1))
+		}
+		return ids
 	}
 
 	private setupTooltips() {
