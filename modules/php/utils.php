@@ -116,10 +116,31 @@ trait UtilTrait {
     }
 
     /**
+     * Transforms a Db object to instance of class.
+     */
+    function getTicketFromDb($dbObject) {
+        if (!$dbObject || !array_key_exists('id', $dbObject)) {
+            throw new BgaSystemException("Ticket doesn't exists " . json_encode($dbObject));
+        }
+        return new TicketCard($dbObject);
+    }
+
+    /**
+     * Transforms a Db object array to instance of class array.
+     */
+    function getTicketsFromDb(array $dbObjects) {
+        return array_map(
+            fn ($dbObject) => $this->getTicketFromDb($dbObject),
+            array_values($dbObjects)
+        );
+    }
+
+    /**
      * Transforms a Db object array to instance of class array.
      */
     function getEventsFromDb(array $dbObjects) {
-        return array_map(fn ($dbObject) => $this->getEventFromDb($dbObject),
+        return array_map(
+            fn ($dbObject) => $this->getEventFromDb($dbObject),
             array_values($dbObjects)
         );
     }
@@ -128,9 +149,27 @@ trait UtilTrait {
      * Transforms a Db object array to instance of class array.
      */
     function getFestivalsFromDb(array $dbObjects) {
-        return array_map(fn ($dbObject) => $this->getFestivalFromDb($dbObject),
+        return array_map(
+            fn ($dbObject) => $this->getFestivalFromDb($dbObject),
             array_values($dbObjects)
         );
+    }
+
+    function getCardsFromLocationLike(string $tableName, string $likePattern) {
+        $sql = "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg FROM $tableName where card_location like '$likePattern%'";
+        return self::getCollectionFromDb($sql);
+    }
+
+    function arrayGroupBy(array $data, $extractKeyFunction) {
+        $dataByKey = [];
+        foreach (array_values($data) as $token) {
+            $key = $extractKeyFunction($token);
+            if (!isset($dataByKey[$key])) {
+                $dataByKey[$key] = [];
+            }
+            $dataByKey[$key][] = $token;
+        }
+        return $dataByKey;
     }
 
     /**

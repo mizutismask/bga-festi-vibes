@@ -47,7 +47,7 @@ class Festivibes implements FestivibesGame {
 	public clientActionData: ClientActionData
 	private festivalStocks: { [festId: number]: LineStock<FestivalCard> } = []
 	private eventStocks: { [festId: number]: LineStock<EventCard> } = []
-	private ticketStocks: { [festId: number]: LineStock<EventCard> } = []
+	private ticketStocks: { [festId: number]: LineStock<TicketCard> } = []
 
 	constructor() {
 		console.log('festivibes constructor')
@@ -108,6 +108,7 @@ class Festivibes implements FestivibesGame {
 		removeClass('animatedScore')
 
 		this.setupFestivals(this.gamedatas.festivals)
+		this.displayTickets(this.gamedatas.tickets)
 		console.log('Ending game setup')
 	}
 
@@ -121,9 +122,17 @@ class Festivibes implements FestivibesGame {
 				gap: '7px',
 				direction: 'row',
 				wrap: 'nowrap',
-				slotsIds: ['ticketSlot1', 'ticketSlot2'],
-				mapCardToSlot: (card) => `ticketSlot${card.location_arg + 1}`
+				slotsIds: [`${fest.id}-1`, `${fest.id}-2`],
+				mapCardToSlot: (card) => `${fest.id}-${card.location_arg}`
 			})
+		})
+		dojo.query('.ticket-slot .slot').connect('click', this, (evt) => {
+			if ((this as any).isCurrentPlayerActive()) {
+				const festivalId = getPart(evt.target.dataset.slotId, 0)
+				const slotId = getPart(evt.target.dataset.slotId, -1)
+				log('click on festival', festivalId, ' slot ', slotId)
+				this.takeAction('placeTicket', { 'festivalId': festivalId, 'slotId': slotId })
+			}
 		})
 
 		festivals.forEach((fest) => {
@@ -155,6 +164,13 @@ class Festivibes implements FestivibesGame {
 				mapCardToSlot: (card) => `eventSlot${card.location_arg}`
 			})*/
 			//this.eventStocks[fest.id].addCard(fest)
+		})
+	}
+
+	private displayTickets(tickets: { [festivalId: number]: Array<TicketCard> }) {
+		Object.entries(tickets).forEach(([festId, tickets]) => {
+			log('fest', festId, 'tickets', tickets)
+			this.ticketStocks[festId].addCards(tickets)
 		})
 	}
 

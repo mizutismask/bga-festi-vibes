@@ -27,4 +27,28 @@ trait TicketDeckTrait {
             $this->tickets->moveCards($cardIds, "hand", $playerId);
         }
     }
+
+    public function hasTicketInHand($playerId) {
+        return $this->tickets->countCardInLocation("hand", $playerId) > 0;
+    }
+
+    public function placeTicketOnFestivalSlot($playerId, $festivalId, $slotId) {
+        $freeTickets = $this->getTicketsFromDb($this->tickets->getCardsInLocation("hand", $playerId));
+        $ticket = array_pop($freeTickets);
+        $this->tickets->moveCard($ticket->id, "festival_" . $festivalId, $slotId);
+
+        $card = $this->getTicketFromDb($this->tickets->getCard($ticket->id));
+        $this->notifyAllPlayers('materialMove', "", [
+            'type' => MATERIAL_TYPE_TICKET,
+            'from' => MATERIAL_LOCATION_HAND,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'material' => [$card],
+        ]);
+    }
+
+    public function getTicketsOnFestivals() {
+        $tickets = $this->getFestivalsFromDb($this->getCardsFromLocationLike("ticket", "festival_%"));
+        $ticketsByFestivalId = $this->arrayGroupBy($tickets, fn ($t) => self::getPart($t->location, -1));
+        return $ticketsByFestivalId;
+    }
 }

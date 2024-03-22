@@ -3,9 +3,9 @@ class TicketCardsManager extends CardManager<TicketCard> {
 	constructor(public game: FestivibesGame) {
 		super(game, {
 			animationManager: game.animationManager,
-			getId: (card) => `festival-card-${card.id}`,
+			getId: (card) => `ticket-card-${card.id}`,
 			setupDiv: (card: TicketCard, div: HTMLElement) => {
-				div.classList.add('festival-card')
+				div.classList.add('ticket-card')
 				div.dataset.cardId = '' + card.id
 				div.dataset.cardType = '' + card.type
 				div.style.position = 'relative'

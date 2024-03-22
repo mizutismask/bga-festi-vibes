@@ -15,3 +15,16 @@ function removeClass(className: string, rootNode?: HTMLElement | Document): void
 function isReadOnly() {
 	return this.isSpectator || typeof (this as any).g_replayFrom != 'undefined' || (this as any).g_archive_mode
 }
+
+function getPart(haystack: string, i: number, noException: boolean = false): string {
+	const parts: string[] = haystack.split('-')
+	const len: number = parts.length
+
+	if (noException && i >= len) {
+		return ''
+	}
+	if (noException && len + i < 0) {
+		return ''
+	}
+	return parts[i >= 0 ? i : len + i]
+}

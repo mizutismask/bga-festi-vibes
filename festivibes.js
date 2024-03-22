@@ -2387,9 +2387,9 @@ var TicketCardsManager = /** @class */ (function (_super) {
     function TicketCardsManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "festival-card-".concat(card.id); },
+            getId: function (card) { return "ticket-card-".concat(card.id); },
             setupDiv: function (card, div) {
-                div.classList.add('festival-card');
+                div.classList.add('ticket-card');
                 div.dataset.cardId = '' + card.id;
                 div.dataset.cardType = '' + card.type;
                 div.style.position = 'relative';
@@ -2504,6 +2504,7 @@ var Festivibes = /** @class */ (function () {
         }
         removeClass('animatedScore');
         this.setupFestivals(this.gamedatas.festivals);
+        this.displayTickets(this.gamedatas.tickets);
         console.log('Ending game setup');
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
@@ -2516,9 +2517,17 @@ var Festivibes = /** @class */ (function () {
                 gap: '7px',
                 direction: 'row',
                 wrap: 'nowrap',
-                slotsIds: ['ticketSlot1', 'ticketSlot2'],
-                mapCardToSlot: function (card) { return "ticketSlot".concat(card.location_arg + 1); }
+                slotsIds: ["".concat(fest.id, "-1"), "".concat(fest.id, "-2")],
+                mapCardToSlot: function (card) { return "".concat(fest.id, "-").concat(card.location_arg); }
             });
+        });
+        dojo.query('.ticket-slot .slot').connect('click', this, function (evt) {
+            if (_this.isCurrentPlayerActive()) {
+                var festivalId = getPart(evt.target.dataset.slotId, 0);
+                var slotId = getPart(evt.target.dataset.slotId, -1);
+                log('click on festival', festivalId, ' slot ', slotId);
+                _this.takeAction('placeTicket', { 'festivalId': festivalId, 'slotId': slotId });
+            }
         });
         festivals.forEach(function (fest) {
             var divId = 'festival-' + fest.id;
@@ -2546,6 +2555,14 @@ var Festivibes = /** @class */ (function () {
                 mapCardToSlot: (card) => `eventSlot${card.location_arg}`
             })*/
             //this.eventStocks[fest.id].addCard(fest)
+        });
+    };
+    Festivibes.prototype.displayTickets = function (tickets) {
+        var _this = this;
+        Object.entries(tickets).forEach(function (_a) {
+            var festId = _a[0], tickets = _a[1];
+            log('fest', festId, 'tickets', tickets);
+            _this.ticketStocks[festId].addCards(tickets);
         });
     };
     Festivibes.prototype.generateSlotsIds = function (prefix, limit) {
@@ -3174,6 +3191,18 @@ function removeClass(className, rootNode) {
  */
 function isReadOnly() {
     return this.isSpectator || typeof this.g_replayFrom != 'undefined' || this.g_archive_mode;
+}
+function getPart(haystack, i, noException) {
+    if (noException === void 0) { noException = false; }
+    var parts = haystack.split('-');
+    var len = parts.length;
+    if (noException && i >= len) {
+        return '';
+    }
+    if (noException && len + i < 0) {
+        return '';
+    }
+    return parts[i >= 0 ? i : len + i];
 }
 /**
  * End score board.

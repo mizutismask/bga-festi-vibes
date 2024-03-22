@@ -22,4 +22,8 @@ trait FestivalDeckTrait {
             $this->festivals->moveCard($festival->id, "festival", $i + 1);
         }
     }
+
+    public function isFestivalFull($festivalId) {
+        return false;//todo
+    }
 }

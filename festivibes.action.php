@@ -40,28 +40,20 @@ class action_festivibes extends APP_GameAction {
         $this->game->checkVersion($clientVersion);
     }
 
-    // TODO: defines your action entry points there
-    /*
-    
-    Example:
-  	
-    public function myAction()
-    {
-        self::setAjaxMode();    
-        self::checkVersion(); 
+    public function placeTicket() {
+        self::setAjaxMode();
+        self::checkVersion();
 
         // Retrieve arguments
         // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
-        $arg1 = self::getArg( "myArgument1", AT_posint, true );
-        $arg2 = self::getArg( "myArgument2", AT_posint, true );
+        $festivalId = self::getArg("festivalId", AT_posint, true);
+        $slotId = self::getArg("slotId", AT_posint, true);
 
         // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
-        $this->game->myAction( $arg1, $arg2 );
+        $this->game->placeTicket($festivalId, $slotId);
 
-        self::ajaxResponse( );
+        self::ajaxResponse();
     }
-    
-    */
 
     public function pass() {
         self::setAjaxMode();
@@ -71,5 +63,4 @@ class action_festivibes extends APP_GameAction {
 
         self::ajaxResponse();
     }
-
 }

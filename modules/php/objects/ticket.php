@@ -28,14 +28,12 @@ class TicketCard extends TicketInfo {
     public int $type;
     public int $type_arg;
 
-    public function __construct($dbCard, $EVENTS) {
+    public function __construct($dbCard) {
         array_key_exists('id', $dbCard) ? $this->id = intval($dbCard['id']):null;
         array_key_exists('location', $dbCard) ? $this->location = $dbCard['location']:null;
         array_key_exists('location_arg', $dbCard) ? $this->location_arg = intval($dbCard['location_arg']):null;
         array_key_exists('type', $dbCard) ? $this->type = intval($dbCard['type']):null;
         array_key_exists('type_arg', $dbCard) ? $this->type_arg = intval($dbCard['type_arg']):null;
-        //$card = $FESTIVALS[$this->type][$this->type_arg];
-       // $this->cardsCount = $card->cardsCount;
     } 
 }
 ?>
