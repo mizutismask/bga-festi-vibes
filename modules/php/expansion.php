@@ -43,6 +43,29 @@ trait ExpansionTrait {
         return $cards;
     }
 
+    function getFestivalsToGenerate() {
+        $cards = [];
+        $expansion = EXPANSION;
+        $players = $this->getPlayers();
+        switch ($expansion) {
+            default:
+                if (count($players) == 2) {
+                    $cards[] = ['type' => 1, 'type_arg' => 1, 'nbr' => 1];
+                    $cards[] = ['type' => 1, 'type_arg' => 3, 'nbr' => 1];
+                    $cards[] = ['type' => 1, 'type_arg' => 4, 'nbr' => 1];
+                    $cards[] = ['type' => 1, 'type_arg' => 5, 'nbr' => 1];
+                    $cards[] = ['type' => 1, 'type_arg' => 6, 'nbr' => 1];
+                }
+                else{
+                    for ($i=0; $i < 6; $i++) { 
+                        $cards[] = ['type' => 1, 'type_arg' => $i+1, 'nbr' => 1];
+                    }
+                }
+                break;
+        }
+        return $cards;
+    }
+
     /**
      * Return the number of events cards shown at the beginning.
      */

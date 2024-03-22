@@ -70,6 +70,16 @@ $this->FESTIVALS = [
   ]
 ];
 
+$this->FESTIVALS_2PLAYERS = [
+  1 => [
+    1 => new FestivalInfo(2),
+    3 => new FestivalInfo(3),
+    4 => new FestivalInfo(3),
+    5 => new FestivalInfo(4),
+    6 => new FestivalInfo(5),
+  ]
+];
+
 $this->TICKETS = [
   1 => [
     1 => new TicketInfo(),
