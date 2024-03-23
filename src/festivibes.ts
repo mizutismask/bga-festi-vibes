@@ -109,6 +109,7 @@ class Festivibes implements FestivibesGame {
 
 		this.setupFestivals(this.gamedatas.festivals)
 		this.displayTickets(this.gamedatas.tickets)
+		this.displayEvents(this.gamedatas.events)
 		console.log('Ending game setup')
 	}
 
@@ -157,18 +158,19 @@ class Festivibes implements FestivibesGame {
 
 		festivals.forEach((fest) => {
 			const divId = 'events-' + fest.id
-			dojo.place(this.createDiv('', divId), 'festivals')
+			dojo.place(this.createDiv('event-slot', divId), 'festivals')
 
-			/*this.eventStocks[fest.id] = new SlotStock<EventCard>(this.eventCardsManager, $(divId), {
+			this.eventStocks[fest.id] = new SlotStock<EventCard>(this.eventCardsManager, $(divId), {
 				center: true,
 				gap: '0px',
 				direction: 'column',
 				wrap: 'nowrap',
-				//slotsIds: this.generateSlotsIds("eventSlot", fest.cardsCount),
-				slotsIds: ['eventSlot1'],
-				mapCardToSlot: (card) => `eventSlot${card.location_arg}`
-			})*/
-			//this.eventStocks[fest.id].addCard(fest)
+				slotsIds: this.generateSlotsIds(`evt-${fest.id}-`, fest.cardsCount),
+				mapCardToSlot: (card) => `evt-${fest.id}-${card.location_arg}`
+			})
+		})
+		dojo.query('.event-slot .slot').forEach(function ( node:HTMLElement, index, arr) {
+			node.style.zIndex= (100 - index).toString();
 		})
 	}
 
@@ -204,6 +206,12 @@ class Festivibes implements FestivibesGame {
 	private displayTickets(tickets: { [festivalId: number]: Array<TicketCard> }) {
 		Object.entries(tickets).forEach(([festId, tickets]) => {
 			this.ticketStocks[festId].addCards(tickets)
+		})
+	}
+
+	private displayEvents(events: { [festivalId: number]: Array<EventCard> }) {
+		Object.entries(events).forEach(([festId, events]) => {
+			this.eventStocks[festId].addCards(events)
 		})
 	}
 

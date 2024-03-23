@@ -46,6 +46,7 @@ interface FestivibesGamedatas {
 	version: string
 	festivals: Array<FestivalCard>
 	tickets: { [festivalId: number]: Array<TicketCard> }
+	events: { [festivalId: number]: Array<EventCard> }
 	hand: Array<EventCard>
 	// Add here variables you set up in getAllDatas
 }

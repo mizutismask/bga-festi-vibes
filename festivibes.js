@@ -2505,6 +2505,7 @@ var Festivibes = /** @class */ (function () {
         removeClass('animatedScore');
         this.setupFestivals(this.gamedatas.festivals);
         this.displayTickets(this.gamedatas.tickets);
+        this.displayEvents(this.gamedatas.events);
         console.log('Ending game setup');
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
@@ -2549,17 +2550,18 @@ var Festivibes = /** @class */ (function () {
         });
         festivals.forEach(function (fest) {
             var divId = 'events-' + fest.id;
-            dojo.place(_this.createDiv('', divId), 'festivals');
-            /*this.eventStocks[fest.id] = new SlotStock<EventCard>(this.eventCardsManager, $(divId), {
+            dojo.place(_this.createDiv('event-slot', divId), 'festivals');
+            _this.eventStocks[fest.id] = new SlotStock(_this.eventCardsManager, $(divId), {
                 center: true,
                 gap: '0px',
                 direction: 'column',
                 wrap: 'nowrap',
-                //slotsIds: this.generateSlotsIds("eventSlot", fest.cardsCount),
-                slotsIds: ['eventSlot1'],
-                mapCardToSlot: (card) => `eventSlot${card.location_arg}`
-            })*/
-            //this.eventStocks[fest.id].addCard(fest)
+                slotsIds: _this.generateSlotsIds("evt-".concat(fest.id, "-"), fest.cardsCount),
+                mapCardToSlot: function (card) { return "evt-".concat(fest.id, "-").concat(card.location_arg); }
+            });
+        });
+        dojo.query('.event-slot .slot').forEach(function (node, index, arr) {
+            node.style.zIndex = (100 - index).toString();
         });
     };
     Festivibes.prototype.ensureOnlyOneFestivalSelected = function (festivalId) {
@@ -2597,6 +2599,13 @@ var Festivibes = /** @class */ (function () {
         Object.entries(tickets).forEach(function (_a) {
             var festId = _a[0], tickets = _a[1];
             _this.ticketStocks[festId].addCards(tickets);
+        });
+    };
+    Festivibes.prototype.displayEvents = function (events) {
+        var _this = this;
+        Object.entries(events).forEach(function (_a) {
+            var festId = _a[0], events = _a[1];
+            _this.eventStocks[festId].addCards(events);
         });
     };
     Festivibes.prototype.generateSlotsIds = function (prefix, limit) {

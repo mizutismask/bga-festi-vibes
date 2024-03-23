@@ -676,6 +676,8 @@ html {
 .festival-wrapper {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  align-items: flex-start;
+  justify-items: center;
 }
 
 .player-count-2 .festival-wrapper {
@@ -705,6 +707,12 @@ html {
 .card-stock.ticket-slot .slot {
   height: 104.8px;
   width: 68.4px;
+}
+.card-stock.event-slot .slot {
+  margin-top: -206px;
+}
+.card-stock.event-slot .slot:first-child {
+  margin-top: unset;
 }
 
 .festivibes-card .card-side {

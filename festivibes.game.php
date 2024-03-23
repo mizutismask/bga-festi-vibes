@@ -158,7 +158,7 @@ class Festivibes extends Table {
         $result['expansion'] = EXPANSION;
         $result['festivals'] = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival", null, "type_arg"));
         $result['tickets'] = $this->getTicketsOnFestivals();
-        //$result['events'] = $this->getFestivalsFromDb($this->tickets->getCardsInLocation("festival"));
+        $result['events'] = $this->getEventsOnFestivals();
 
         // private data : current player hidden informations
         $result['hand'] = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $currentPlayerId));

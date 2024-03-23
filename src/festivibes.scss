@@ -31,6 +31,8 @@ html {
 .festival-wrapper {
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
+    align-items: flex-start;
+    justify-items: center;
 }
 .player-count-2 {
 	.festival-wrapper {
@@ -62,6 +64,15 @@ html {
 		.slot {
 			height: $TICKET_CARD_HEIGHT;
 			width: $TICKET_CARD_WIDTH;
+		}
+	}
+
+	&.event-slot {
+		.slot {
+			margin-top: -206px;
+            &:first-child{
+                margin-top: unset;
+            }
 		}
 	}
 }
