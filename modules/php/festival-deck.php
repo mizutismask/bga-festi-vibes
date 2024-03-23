@@ -24,6 +24,9 @@ trait FestivalDeckTrait {
     }
 
     public function isFestivalFull($festivalId) {
-        return false;//todo
+        $festival = $this->getFestivalFromDb($this->festivals->getCard($festivalId));
+        $events = $this->getEventsOnFestival($festivalId);
+        $modifier = $this->isEventOnFestival($festivalId, 7);
+        return $festival->cardsCount + ($modifier ? 1 : 0) === count($events);
     }
 }

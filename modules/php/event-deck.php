@@ -31,6 +31,16 @@ trait EventDeckTrait {
         return $byFestivalId;
     }
 
+    public function getEventsOnFestival($festivalId) {
+        $events = $this->getEventsFromDb($this->events->getCardsInLocation("festival_${festivalId}"));
+        return $events;
+    }
+
+    public function isEventOnFestival($festivalId, $cardTypeArg) {
+        $events = $this->events->getCardsOfTypeInLocation(1, $cardTypeArg, "festival_${festivalId}");
+        return count($events)===1;
+    }
+
     /* public function checkVisibleSharedCardsAreEnough() {
         $visibleCardsCount = intval($this->events->countCardInLocation('shared'));
         if ($visibleCardsCount < NUMBER_OF_SHARED_DESTINATION_CARDS) {
