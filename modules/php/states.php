@@ -38,6 +38,7 @@ trait StateTrait {
             $this->gamestate->nextState('endScore');
         } else {
             //finishing round or playing normally
+            $this->pickAdditionalEvent();
             $this->activateNextPlayerCustom();
             $this->gamestate->nextState('nextPlayer');
         }

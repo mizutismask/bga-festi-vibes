@@ -85,12 +85,12 @@ trait ExpansionTrait {
     }
 
     /**
-     * Return the number of events cards shown at pick destination action.
+     * Return the number of events cards to replenish player’s hand.
      */
     function getAdditionalDestinationCardNumber() {
         switch (EXPANSION) {
             default:
-                return 2;
+                return 1;
         }
     }
 }

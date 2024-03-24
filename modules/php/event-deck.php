@@ -18,7 +18,7 @@ trait EventDeckTrait {
      */
     public function dealEvents(int $playerId) {
         $cardsNumber = $this->getInitialEventCardNumber();
-        return $this->pickDestinationCards($playerId, $cardsNumber);
+        return $this->pickEvents($playerId, $cardsNumber);
     }
 
     public function placeEventCardOnFestival(int $eventId, int $festivalId) {
@@ -66,8 +66,8 @@ trait EventDeckTrait {
     /**
      * Pick destination cards for pick destination action.
      */
-    public function pickAdditionalDestinationCards(int $playerId) {
-        return $this->pickDestinationCards($playerId, $this->getAdditionalDestinationCardNumber());
+    public function pickAdditionalEvent(int $playerId) {
+        return $this->pickEvents($playerId, $this->getAdditionalDestinationCardNumber());
     }
 
     /**
@@ -110,7 +110,7 @@ trait EventDeckTrait {
     /**
      * place a number of events cards to pick$playerId.
      */
-    private function pickDestinationCards($playerId, int $number) {
+    private function pickEvents($playerId, int $number) {
         $cards = $this->getEventsFromDb($this->events->pickCardsForLocation($number, 'deck', "hand", "$playerId"));
         return $cards;
     }
