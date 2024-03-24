@@ -276,6 +276,27 @@ trait UtilTrait {
         ] + $messageArgs);
     }
 
+    function notifyPlayerScore(
+        int $playerId,
+        int $score,
+        $message = null,
+        $messageArgs = [],
+        $stat = null
+    ) {
+        if ($stat) {
+            self::incStat($score, $stat, $playerId);
+        }
+        self::notifyAllPlayers('score', $message !== null ? $message : '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'score' => $score,
+        ] + $messageArgs);
+    }
+
+    function getScoreType($festId, $playerId) {
+        return "${$festId}-${playerId}";
+    }
+
     function updatePlayer(int $playerId, String $field, int $newValue) {
         $this->DbQuery("UPDATE player SET $field = $newValue WHERE player_id = $playerId");
     }

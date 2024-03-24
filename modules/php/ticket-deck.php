@@ -51,4 +51,8 @@ trait TicketDeckTrait {
         $ticketsByFestivalId = $this->arrayGroupBy($tickets, fn ($t) => self::getPart($t->location, -1));
         return $ticketsByFestivalId;
     }
+
+    public function getTicketsOnFestival($festivalId) {
+        return $this->getEventsFromDb($this->tickets->getCardsInLocation("festival_${festivalId}"));
+    }
 }

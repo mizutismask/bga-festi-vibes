@@ -59,56 +59,30 @@ trait StateTrait {
         $sql = "SELECT player_id id, player_score score, player_no playerNo FROM player ORDER BY player_no ASC";
         $players = self::getCollectionFromDb($sql);
 
-        // points gained during the game
         $totalScore = [];
         foreach ($players as $playerId => $playerDb) {
-            $totalScore[$playerId] = intval($playerDb['score']);
+            $totalScore[$playerId] = 0;
         }
 
-        //end of game points
-
-        // failed events 
-        /* $eventsResults = [];
-        $completedEventsCount = [];
-        foreach ($players as $playerId => $playerDb) {
-            $completedEventsCount[$playerId] = 0;
-            $uncompletedEvents = [];
-            $completedEvents = [];
-
-            $events = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $playerId));
-
-            foreach ($events as &$destination) {
-                $completed = boolval(self::getUniqueValueFromDb("SELECT `completed` FROM `destination` WHERE `card_id` = $destination->id"));
-                if ($completed) {
-                    $completedEventsCount[$playerId]++;
-                    $completedEvents[] = $destination;
-                    self::incStat(1, STAT_POINTS_WITH_PLAYER_COMPLETED_DESTINATIONS, $playerId);
-                } else {
-                    $totalScore[$playerId] += -1;
-                    self::incScore($playerId, -1);
-                    if ($this->isDestinationRevealed($destination->id)) {
-                        $totalScore[$playerId] += -1;
-                        self::incScore($playerId, -1);
-                        self::incStat(-1, STAT_POINTS_WITH_REVEALED_DESTINATIONS, $playerId);
-                    }
-                    self::incStat(1, STAT_POINTS_LOST_WITH_UNCOMPLETED_DESTINATIONS, $playerId);
-                    $uncompletedEvents[] = $destination;
-                }
+        $festivals=$this->getFestivals();
+        foreach ($festivals as $fest) {
+            $festScore = $this->getFestivalScore();
+            $tickets = $this->getTicketsOnFestival();
+            foreach ($tickets as $tick) {
+                $player = $this->getPlayerIdFromTicketColor($tick->type_arg);
+                $totalScore[$playerId] += $festScore;
+                $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${cardsCount}'), ["cardCount" => $fest->cardsCount, "scoreType" => $this->getScoreType($fest, $playerId)]);
             }
-
-            $eventsResults[$playerId] = $uncompletedEvents;
         }
-*/
+
         foreach ($players as $playerId => $playerDb) {
             self::DbQuery("UPDATE player SET `player_score` = $totalScore[$playerId] where `player_id` = $playerId");
-            self::DbQuery("UPDATE player SET `player_score_aux` = `player_remaining_tickets` where `player_id` = $playerId");
         }
 
         $bestScore = max($totalScore);
         $playersWithScore = [];
         foreach ($players as $playerId => &$player) {
             $player['playerNo'] = intval($player['playerNo']);
-            $player['ticketsCount'] = $this->getRemainingTicketsCount($playerId);
             $player['score'] = $totalScore[$playerId];
             $playersWithScore[$playerId] = $player;
         }
