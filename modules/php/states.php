@@ -22,16 +22,8 @@ trait StateTrait {
     }
 
     function hasReachedEndOfGameRequirements($playerId): bool {
-        $playersIds = $this->getPlayersIds();
-
-        $end = false; //todo
-        if ($end && intval(self::getGameStateValue(LAST_TURN) == 0)) {
-            self::setGameStateValue(LAST_TURN, $this->getLastPlayer()); //we play until the last player to finish the round
-            if (!$this->isLastPlayer($playerId)) {
-                self::notifyWithName('lastTurn', clienttranslate('${player_name} has no more destination cards, finishing round !'), []);
-            }
-        }
-        return $end;
+        $festivals = $this->getFestivals();
+        return $this->array_every($festivals, fn($fest)=>$this->isFestivalFull($fest->id));
     }
 
     function stNextPlayer() {
@@ -42,11 +34,7 @@ trait StateTrait {
             return;
         }
 
-        //$this->setGameStateValue(TICKETS_USED, 0);
-        $lastTurn = intval(self::getGameStateValue(LAST_TURN));
-
-        // check if it was last action from the last player or if there is no arrow left
-        if ($lastTurn == $playerId || ($this->hasReachedEndOfGameRequirements($playerId) && $this->isLastPlayer($playerId))) {
+        if ( $this->hasReachedEndOfGameRequirements($playerId)) {
             $this->gamestate->nextState('endScore');
         } else {
             //finishing round or playing normally

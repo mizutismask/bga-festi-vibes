@@ -51,7 +51,7 @@ class Festivibes extends Table {
         parent::__construct();
 
         self::initGameStateLabels(array(
-            LAST_TURN => 10, // last turn is the id of the last player, 0 if it's not last turn
+            //LAST_TURN => 10, // last turn is the id of the last player, 0 if it's not last turn
             //    "my_second_global_variable" => 11,
             //      ...
             //    "my_first_game_variant" => 100,
@@ -173,7 +173,7 @@ class Festivibes extends Table {
                 $result['winners'] = array_keys(array_filter($tieWinners, fn ($player) => intval($player['scoreAux'] == $maxScore)));
             }
         } else {
-            $result['lastTurn'] = $this->getGameStateValue(LAST_TURN) > 0;
+            $result['lastTurn'] = false;
         }
         return $result;
     }

@@ -29,4 +29,8 @@ trait FestivalDeckTrait {
         $modifier = $this->isEventOnFestival($festivalId, 7);
         return $festival->cardsCount + ($modifier ? 1 : 0) === count($events);
     }
+
+    public function getFestivals() {
+        return $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival", null, "card_type_arg"));
+    }
 }

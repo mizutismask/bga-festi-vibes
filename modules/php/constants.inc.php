@@ -69,8 +69,6 @@ define('END_SCORE', 100);
  * Variables (numbers)
  */
 
-define('LAST_TURN', 'LAST_TURN');
-
 
 /*
  * Global variables (objects)
