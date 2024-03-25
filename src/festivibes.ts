@@ -168,9 +168,12 @@ class Festivibes implements FestivibesGame {
 				slotsIds: this.generateSlotsIds(`evt-${fest.id}-`, fest.cardsCount),
 				mapCardToSlot: (card) => `evt-${fest.id}-${card.location_arg}`
 			})
+			this.eventStocks[fest.id].onSelectionChange = (selection: EventCard[], lastChange: EventCard) => {
+				this.checkIfPlayCardPossible()
+			}
 		})
-		dojo.query('.event-slot .slot').forEach(function ( node:HTMLElement, index, arr) {
-			node.style.zIndex= (100 - index).toString();
+		dojo.query('.event-slot .slot').forEach(function (node: HTMLElement, index, arr) {
+			node.style.zIndex = (100 - index).toString()
 		})
 	}
 
@@ -184,23 +187,55 @@ class Festivibes implements FestivibesGame {
 
 	private checkIfPlayCardPossible() {
 		if ((this as any).isCurrentPlayerActive()) {
-			const festivalStocks = Object.values(this.festivalStocks)
-			let i = 0
-			let hasSelection = false
-			let selectedFestival = null
-			while (i < festivalStocks.length && !hasSelection) {
-				const selection = festivalStocks[i].getSelection()
-				hasSelection = selection.length !== 0
-				if (hasSelection) selectedFestival = selection[0]
-				i++
-			}
-			if (hasSelection && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
-				this.takeAction('playCard', {
-					'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
-					'festivalId': selectedFestival.id
-				})
+			const selectedFestival = this.getSelectedFestival()
+			switch (this.gamedatas.gamestate.name) {
+				case 'chooseAction':
+					if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
+						this.takeAction('playCard', {
+							'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+							'festivalId': selectedFestival.id
+						})
+					}
+					break
+				case 'discardEvent':
+					const selectedEvents = this.getAllSelectedEvents();
+					if (selectedEvents.length==1) {
+						this.takeAction('discardEvent', {
+							'cardId': selectedEvents[0].id
+						})
+					}
+					break
+				default:
+					break
 			}
 		}
+	}
+	private getSelectedEventsByFestival() {
+		const eventsByFest = new Map<string, EventCard[]>()
+		Object.entries(this.eventStocks).forEach(([festId, stock]) => {
+			if (stock.getSelection()) {
+				eventsByFest.set(festId, stock.getSelection())
+			}
+		})
+		return eventsByFest
+	}
+
+	private getAllSelectedEvents() {
+		return Object.values(this.eventStocks).flatMap(s=>s.getSelection())
+	}
+
+	private getSelectedFestival() {
+		let i = 0
+		let hasSelection = false
+		let selectedFestival = null
+		const festivalStocks = Object.values(this.festivalStocks)
+		while (i < festivalStocks.length && !hasSelection) {
+			const selection = festivalStocks[i].getSelection()
+			hasSelection = selection.length !== 0
+			if (hasSelection) selectedFestival = selection[0]
+			i++
+		}
+		return selectedFestival
 	}
 
 	private displayTickets(tickets: { [festivalId: number]: Array<TicketCard> }) {
@@ -346,13 +381,19 @@ class Festivibes implements FestivibesGame {
 	//                  You can use this method to perform some user interface changes at this moment.
 	//
 	public onEnteringState(stateName: string, args: any) {
-		console.log('Entering state: ' + stateName)
+		console.log('Entering state: ' + stateName, args)
 
 		switch (stateName) {
 			case 'chooseAction':
 				if (args?.args) {
 					const dataArgs = args.args as EnteringChooseActionArgs
 					this.onEnteringChooseAction(dataArgs)
+				}
+				break
+			case 'discardEvent':
+				if (args?.args) {
+					const dataArgs = args.args as DiscardEventActionArgs
+					this.onEnteringDiscardEvent(dataArgs)
 				}
 				break
 		}
@@ -363,6 +404,29 @@ class Festivibes implements FestivibesGame {
 
 	private onEnteringChooseAction(args: EnteringChooseActionArgs) {
 		//todo
+	}
+
+	private onEnteringDiscardEvent(args: DiscardEventActionArgs) {
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('single')
+			this.setSelectionModeOnTickets('none')
+			this.setSelectionModeOnFestivals('none')
+			Object.entries(args.selectableCardsByFestival).forEach(([festId, events]) => {
+				this.eventStocks[festId].setSelectableCards(events)
+			})
+		}
+	}
+
+	private setSelectionModeOnEvents(mode: CardSelectionMode) {
+		Object.values(this.eventStocks).forEach((s) => s.setSelectionMode(mode))
+	}
+
+	private setSelectionModeOnTickets(mode: CardSelectionMode) {
+		Object.values(this.ticketStocks).forEach((s) => s.setSelectionMode(mode))
+	}
+
+	private setSelectionModeOnFestivals(mode: CardSelectionMode) {
+		Object.values(this.festivalStocks).forEach((s) => s.setSelectionMode(mode))
 	}
 
 	/**

@@ -2559,6 +2559,9 @@ var Festivibes = /** @class */ (function () {
                 slotsIds: _this.generateSlotsIds("evt-".concat(fest.id, "-"), fest.cardsCount),
                 mapCardToSlot: function (card) { return "evt-".concat(fest.id, "-").concat(card.location_arg); }
             });
+            _this.eventStocks[fest.id].onSelectionChange = function (selection, lastChange) {
+                _this.checkIfPlayCardPossible();
+            };
         });
         dojo.query('.event-slot .slot').forEach(function (node, index, arr) {
             node.style.zIndex = (100 - index).toString();
@@ -2575,24 +2578,55 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.checkIfPlayCardPossible = function () {
         if (this.isCurrentPlayerActive()) {
-            var festivalStocks = Object.values(this.festivalStocks);
-            var i = 0;
-            var hasSelection = false;
-            var selectedFestival = null;
-            while (i < festivalStocks.length && !hasSelection) {
-                var selection = festivalStocks[i].getSelection();
-                hasSelection = selection.length !== 0;
-                if (hasSelection)
-                    selectedFestival = selection[0];
-                i++;
-            }
-            if (hasSelection && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
-                this.takeAction('playCard', {
-                    'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
-                    'festivalId': selectedFestival.id
-                });
+            var selectedFestival = this.getSelectedFestival();
+            switch (this.gamedatas.gamestate.name) {
+                case 'chooseAction':
+                    if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
+                        this.takeAction('playCard', {
+                            'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+                            'festivalId': selectedFestival.id
+                        });
+                    }
+                    break;
+                case 'discardEvent':
+                    var selectedEvents = this.getAllSelectedEvents();
+                    if (selectedEvents.length == 1) {
+                        this.takeAction('discardEvent', {
+                            'cardId': selectedEvents[0].id
+                        });
+                    }
+                    break;
+                default:
+                    break;
             }
         }
+    };
+    Festivibes.prototype.getSelectedEventsByFestival = function () {
+        var eventsByFest = new Map();
+        Object.entries(this.eventStocks).forEach(function (_a) {
+            var festId = _a[0], stock = _a[1];
+            if (stock.getSelection()) {
+                eventsByFest.set(festId, stock.getSelection());
+            }
+        });
+        return eventsByFest;
+    };
+    Festivibes.prototype.getAllSelectedEvents = function () {
+        return Object.values(this.eventStocks).flatMap(function (s) { return s.getSelection(); });
+    };
+    Festivibes.prototype.getSelectedFestival = function () {
+        var i = 0;
+        var hasSelection = false;
+        var selectedFestival = null;
+        var festivalStocks = Object.values(this.festivalStocks);
+        while (i < festivalStocks.length && !hasSelection) {
+            var selection = festivalStocks[i].getSelection();
+            hasSelection = selection.length !== 0;
+            if (hasSelection)
+                selectedFestival = selection[0];
+            i++;
+        }
+        return selectedFestival;
     };
     Festivibes.prototype.displayTickets = function (tickets) {
         var _this = this;
@@ -2682,12 +2716,18 @@ var Festivibes = /** @class */ (function () {
     //                  You can use this method to perform some user interface changes at this moment.
     //
     Festivibes.prototype.onEnteringState = function (stateName, args) {
-        console.log('Entering state: ' + stateName);
+        console.log('Entering state: ' + stateName, args);
         switch (stateName) {
             case 'chooseAction':
                 if (args === null || args === void 0 ? void 0 : args.args) {
                     var dataArgs = args.args;
                     this.onEnteringChooseAction(dataArgs);
+                }
+                break;
+            case 'discardEvent':
+                if (args === null || args === void 0 ? void 0 : args.args) {
+                    var dataArgs = args.args;
+                    this.onEnteringDiscardEvent(dataArgs);
                 }
                 break;
         }
@@ -2697,6 +2737,27 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.onEnteringChooseAction = function (args) {
         //todo
+    };
+    Festivibes.prototype.onEnteringDiscardEvent = function (args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('single');
+            this.setSelectionModeOnTickets('none');
+            this.setSelectionModeOnFestivals('none');
+            Object.entries(args.selectableCardsByFestival).forEach(function (_a) {
+                var festId = _a[0], events = _a[1];
+                _this.eventStocks[festId].setSelectableCards(events);
+            });
+        }
+    };
+    Festivibes.prototype.setSelectionModeOnEvents = function (mode) {
+        Object.values(this.eventStocks).forEach(function (s) { return s.setSelectionMode(mode); });
+    };
+    Festivibes.prototype.setSelectionModeOnTickets = function (mode) {
+        Object.values(this.ticketStocks).forEach(function (s) { return s.setSelectionMode(mode); });
+    };
+    Festivibes.prototype.setSelectionModeOnFestivals = function (mode) {
+        Object.values(this.festivalStocks).forEach(function (s) { return s.setSelectionMode(mode); });
     };
     /**
      * Show score board.

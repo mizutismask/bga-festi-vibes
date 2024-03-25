@@ -24,7 +24,7 @@ trait ContextTrait {
                     $nextState = "nextPlayer";
                     $cardAction = $situation["param3"];
                     if ($cardAction && $this->isActionPossible($situation)) {
-                        $this->dbInsertContextLog($cardAction);
+                        $this->dbInsertContextLog($cardAction, $situation["param1"], $situation["param2"], $situation["param3"]);
                         $nextState = $cardAction;
                     } else {
                         $this->dbResolveContextLog($situation["id"]);
@@ -53,6 +53,7 @@ trait ContextTrait {
         $playerId = $situation["player"];
         switch ($action) {
             case ACTION_INC_FESTIVAL_SIZE:
+            case NO_ACTION:
                 return false; //nothing to do
                 break;
             case ACTION_SWAP_EVENT:
@@ -74,7 +75,7 @@ trait ContextTrait {
             case ACTION_SWAP_ANY_TICKETS:
                 $color = $this->getPlayerColor($playerId);
                 $ticketsByFest = $this->getTicketsOnFestivals();
-                return $this->array_some(fn ($festId) => $festId == $festivalId && count($ticketsByFest[$festId])) > 0 && $this->array_some(fn ($festId) => $festId != $festivalId && count($ticketsByFest[$festId]) > 0);
+                return $this->array_some($ticketsByFest, fn ($festId) => $festId == $festivalId && count($ticketsByFest[$festId]) > 0) && $this->array_some(fn ($festId) => $festId != $festivalId && count($ticketsByFest[$festId]) > 0);
                 break;
             case ACTION_SWAP_EVENT_WITH_HAND:
                 return count($this->getPlayerEvents($playerId)) > 0 && count($this->getEventsOnFestival($festivalId)) > 0;
@@ -83,7 +84,7 @@ trait ContextTrait {
                 throw new BgaVisibleSystemException(self::_("This action does not exist " . $action));
                 break;
         }
-       // return true;
+        // return true;
     }
 
     function dbInsertContextLog($action, $param1 = null, $param2 = null, $param3 = null) {

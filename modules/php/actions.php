@@ -45,6 +45,20 @@ trait ActionTrait {
         $this->changeNextStateFromContext();
     }
 
+    public function discardEvent($cardId) {
+        self::checkAction('discardEvent');
+
+        $args = $this->argDiscardEvent();
+        $selectableCards = reset($args['selectableCardsByFestival']);
+        $this->userAssertTrue(self::_("You can’t discard this card"), $this->array_some($selectableCards, fn ($card) => $card->id == $cardId));
+
+        $this->events->playCard($cardId);
+        $this->resolveLastContextIfAction(ACTION_DISCARD_EVENT);
+        $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+
+        $this->changeNextStateFromContext();
+    }
+
     function pass() {
         self::checkAction('pass');
 

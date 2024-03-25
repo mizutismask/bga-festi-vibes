@@ -17,7 +17,7 @@ interface Card {
 	type_arg: number
 }
 interface FestivalCard extends Card {
-	cardsCount:number
+	cardsCount: number
 }
 interface EventCard extends Card {}
 interface TicketCard extends Card {}
@@ -67,6 +67,10 @@ interface FestivibesGame extends Game {
 
 interface EnteringChooseActionArgs {
 	canPass: boolean
+}
+
+interface DiscardEventActionArgs {
+	selectableCardsByFestival: { [festivalId: number]: Array<EventCard> }
 }
 
 interface NotifPointsArgs {

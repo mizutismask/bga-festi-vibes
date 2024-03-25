@@ -46,10 +46,10 @@ trait ArgsTrait {
     }
     function argDiscardEvent() {
         $playerId = intval(self::getActivePlayerId());
-
-        $canPass = false;
+        $situation = $this->dbGetLastContextToResolve();
+        $festId = $situation["param2"];
         return [
-            'canPass' => $canPass,
+            'selectableCardsByFestival' => [$festId => $this->getEventsOnFestival($festId)],
         ];
     }
     function argReplaceTicket() {
