@@ -22,8 +22,8 @@ trait ActionTrait {
 
         //  if ($keptEventsId)
         //self::incStat(1, STAT_KEPT_ADDITIONAL_DESTINATION_CARDS, $playerId);
-
-        $this->gamestate->nextState('continue');
+        $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
+        $this->changeNextStateFromContext();
     }
 
     public function playCard($cardId, $festivalId) {
@@ -40,8 +40,9 @@ trait ActionTrait {
             !$this->isFestivalFull($festivalId)
         );
         $this->placeEventCardOnFestival($cardId, $festivalId);
+        $this->dbInsertContextLog(ACTION_PLAY_CARD, $cardId, $festivalId, $card->action);
 
-        $this->gamestate->nextState('continue');
+        $this->changeNextStateFromContext();
     }
 
     function pass() {

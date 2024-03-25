@@ -85,18 +85,78 @@ $playerActionsGameStates = [
 
     ST_PLAYER_CHOOSE_ACTION => [
         "name" => "chooseAction",
-        "description" => clienttranslate('${actplayer} must start/continue an expedition or use tickets'),
-        "descriptionmyturn" => clienttranslate('${you} must start/continue an expedition or use tickets'),
-        "descriptionLoop" => clienttranslate('${actplayer} made a loop and has to continue the expedition'),
-        "descriptionmyturnLoop" => clienttranslate('${you} made a loop and have to continue the expedition from any point'),
+        "description" => clienttranslate('${actplayer} must play a card or place a ticket on a festival'),
+        "descriptionmyturn" => clienttranslate('${you} must play a card or place a ticket on a festival'),
         "type" => "activeplayer",
         "args" => "argChooseAction",
         "possibleactions" => [
-            "pass", "placeTicket", "playCard"
+            "placeTicket", "playCard"
         ],
         "transitions" => [
             "nextPlayer" => ST_NEXT_PLAYER,
-            "continue" => ST_PLAYER_CHOOSE_ACTION,
+            ACTION_SWAP_EVENT => ST_PLAYER_SWAP_EVENT,
+            ACTION_DISCARD_EVENT => ST_PLAYER_DISCARD_EVENT,
+            ACTION_REPLACE_TICKET => ST_PLAYER_REPLACE_TICKET,
+            ACTION_SWAP_MY_TICKET => ST_PLAYER_SWAP_TICKET,
+            ACTION_SWAP_ANY_TICKETS => ST_PLAYER_SWAP_TICKET,
+        ]
+    ],
+
+    ST_PLAYER_SWAP_EVENT => [
+        "name" => "swapEvent",
+        "description" => clienttranslate('${actplayer} must swap events from the column he just played to another one'),
+        "descriptionmyturn" => clienttranslate('${you} must swap events from the column you just played to another one'),
+        "type" => "activeplayer",
+        "args" => "argSwapEvent",
+        "possibleactions" => [
+            "swapEvent", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_DISCARD_EVENT => [
+        "name" => "discardEvent",
+        "description" => clienttranslate('${actplayer} must discard an event from the column he just played'),
+        "descriptionmyturn" => clienttranslate('${you} must discard an event from the column he just played'),
+        "type" => "activeplayer",
+        "args" => "argDiscardEvent",
+        "possibleactions" => [
+            "discardEvent", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_REPLACE_TICKET => [
+        "name" => "replaceTicket",
+        "description" => clienttranslate('${actplayer} must replace another players’s ticket with one of his own (not played yet)'),
+        "descriptionmyturn" => clienttranslate('${you} must replace another players’s ticket with one of your own (not played yet)'),
+        "type" => "activeplayer",
+        "args" => "argReplaceTicket",
+        "possibleactions" => [
+            "replaceTicket", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_SWAP_TICKET => [
+        "name" => "swapTicket",
+        "description" => clienttranslate('${actplayer} must swap tickets from the column he just played with another one'),
+        "descriptionmyturn" => clienttranslate('${you} must swap tickets from the column he just played with another one'),
+        "descriptionMyTicket" => clienttranslate('${actplayer} must swap his own ticket from the column he just played with another one'),
+        "descriptionmyturnMyTicket" => clienttranslate('${you} must swap his own ticket from the column he just played with another one'),
+        "type" => "activeplayer",
+        "args" => "argSwapTicket",
+        "possibleactions" => [
+            "swapTicket", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
         ]
     ],
 ];

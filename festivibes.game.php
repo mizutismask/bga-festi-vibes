@@ -29,6 +29,7 @@ require_once('modules/php/ticket-deck.php');
 require_once('modules/php/festival-deck.php');
 require_once('modules/php/debug-util.php');
 require_once('modules/php/expansion.php');
+require_once('modules/php/context.php');
 
 class Festivibes extends Table {
     use UtilTrait;
@@ -40,6 +41,7 @@ class Festivibes extends Table {
     use FestivalDeckTrait;
     use DebugUtilTrait;
     use ExpansionTrait;
+    use ContextTrait;
 
     function __construct() {
         // Your global variables labels:

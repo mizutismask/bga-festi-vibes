@@ -30,7 +30,40 @@ trait ArgsTrait {
     function argChooseAction() {
         $playerId = intval(self::getActivePlayerId());
 
-        $canPass = true;
+        $canPass = false;
+        return [
+            'canPass' => $canPass,
+        ];
+    }
+
+    function argSwapEvent() {
+        $playerId = intval(self::getActivePlayerId());
+
+        $canPass = false;
+        return [
+            'canPass' => $canPass,
+        ];
+    }
+    function argDiscardEvent() {
+        $playerId = intval(self::getActivePlayerId());
+
+        $canPass = false;
+        return [
+            'canPass' => $canPass,
+        ];
+    }
+    function argReplaceTicket() {
+        $playerId = intval(self::getActivePlayerId());
+
+        $canPass = false;
+        return [
+            'canPass' => $canPass,
+        ];
+    }
+    function argSwapTicket() {
+        $playerId = intval(self::getActivePlayerId());
+
+        $canPass = false;
         return [
             'canPass' => $canPass,
         ];

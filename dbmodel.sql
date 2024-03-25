@@ -65,3 +65,16 @@ CREATE TABLE IF NOT EXISTS `global_variables` (
   `value` json,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--Action log to resolve things in correct order
+CREATE TABLE IF NOT EXISTS `context_log` (
+ `id` int NOT NULL AUTO_INCREMENT,
+ `player` int(10) NOT NULL,
+ `state` varchar(32) NOT NULL, 
+ `action` varchar(32) NOT NULL,
+ `param1` varchar(20),
+ `param2` varchar(20),
+ `param3` varchar(20),
+ `resolved` INT(1) UNSIGNED NOT NULL DEFAULT '0',
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
