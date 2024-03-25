@@ -52,6 +52,19 @@ trait ArgsTrait {
         ];
     }
 
+    function argSwapEventWithHand() {
+        $situation = $this->dbGetLastContextToResolve();
+        $cardId = $situation["param1"];
+        $festId = $situation["param2"];
+        $mandatory = $this->getEventsOnFestival($festId);
+        $mandatory = array_values(array_filter($mandatory, fn ($c) => $c->id != $cardId));
+
+        return [
+            'mandatoryFestivalId' => $festId,
+            'mandatoryCardAmong' => $mandatory,
+        ];
+    }
+
     function argDiscardEvent() {
         $playerId = intval(self::getActivePlayerId());
         $situation = $this->dbGetLastContextToResolve();

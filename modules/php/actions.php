@@ -72,8 +72,26 @@ trait ActionTrait {
             $this->array_some($selectableCards, fn ($possibleCards) => $this->array_contains_card($possibleCards, $isCard1Mandatory ? $cardId2 : $cardId1))
         );
 
-        $this->swapEventsFromDifferentColumns($cardId1, $cardId2);
+        $this->swapEventLocations($cardId1, $cardId2);
         $this->resolveLastContextIfAction(ACTION_SWAP_EVENT);
+        $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+
+        $this->changeNextStateFromContext();
+    }
+
+    public function swapEventWithHand($cardId, $cardFromHandId) {
+        self::checkAction('swapEventWithHand');
+        $playerId = intval(self::getActivePlayerId());
+        $args = $this->argSwapEventWithHand();
+        $mandatoryCardAmong = $args['mandatoryCardAmong'];
+        $this->userAssertTrue(self::_("You have to swap a card from the column you just played"), $this->array_contains_card($mandatoryCardAmong, $cardId));
+
+        $card = $this->getEventFromDb($this->events->getCard($cardFromHandId));
+        $this->userAssertTrue(self::_("This card is not in your hand"), $card->location === "hand");
+        $this->userAssertTrue(self::_("This card is not yours"), $card->location_arg === $playerId);
+
+        $this->swapEventLocations($cardId, $cardFromHandId);
+        $this->resolveLastContextIfAction(ACTION_SWAP_EVENT_WITH_HAND);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
 
         $this->changeNextStateFromContext();

@@ -79,6 +79,11 @@ interface SwapEventsActionArgs {
 	mandatoryFestivalId:number
 }
 
+interface SwapEventsWithHandActionArgs {
+	mandatoryCardAmong: Array<EventCard>,
+	mandatoryFestivalId:number
+}
+
 interface NotifPointsArgs {
 	playerId: number
 	points: number

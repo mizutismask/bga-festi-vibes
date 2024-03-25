@@ -95,6 +95,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "nextPlayer" => ST_NEXT_PLAYER,
             ACTION_SWAP_EVENT => ST_PLAYER_SWAP_EVENT,
+            ACTION_SWAP_EVENT_WITH_HAND => ST_PLAYER_SWAP_EVENT_WITH_HAND,
             ACTION_DISCARD_EVENT => ST_PLAYER_DISCARD_EVENT,
             ACTION_REPLACE_TICKET => ST_PLAYER_REPLACE_TICKET,
             ACTION_SWAP_MY_TICKET => ST_PLAYER_SWAP_TICKET,
@@ -110,6 +111,20 @@ $playerActionsGameStates = [
         "args" => "argSwapEvent",
         "possibleactions" => [
             "swapEvent", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_SWAP_EVENT_WITH_HAND => [
+        "name" => "swapEventWithHand",
+        "description" => clienttranslate('${actplayer} must swap an event from the column he just played with one in his hand'),
+        "descriptionmyturn" => clienttranslate('${you} must swap an event from the column you just played with one in your hand'),
+        "type" => "activeplayer",
+        "args" => "argSwapEventWithHand",
+        "possibleactions" => [
+            "swapEventWithHand",
         ],
         "transitions" => [
             "nextPlayer" => ST_NEXT_PLAYER,
