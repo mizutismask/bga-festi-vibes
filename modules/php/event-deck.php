@@ -87,9 +87,9 @@ trait EventDeckTrait {
     }
 
     /**
-     * Get destination cards in player hand.
+     * Get event cards in player hand.
      */
-    public function getPlayerDestinationCards(int $playerId) {
+    public function getPlayerEvents(int $playerId) {
         $cards = $this->getEventsFromDb($this->events->getCardsInLocation("hand", $playerId));
         return $cards;
     }

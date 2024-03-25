@@ -21,6 +21,16 @@ trait ContextTrait {
         } else {
             switch ($situation["action"]) {
                 case ACTION_PLAY_CARD: //main action
+                    $nextState = "nextPlayer";
+                    $cardAction = $situation["param3"];
+                    if ($cardAction && $this->isActionPossible($situation)) {
+                        $this->dbInsertContextLog($cardAction);
+                        $nextState = $cardAction;
+                    } else {
+                        $this->dbResolveContextLog($situation["id"]);
+                    }
+
+                    break;
                 case ACTION_PLAY_TICKET:
                     $nextState = "nextPlayer";
                     $this->dbResolveContextLog($situation["id"]);
@@ -34,6 +44,46 @@ trait ContextTrait {
 
         self::dump('******************nextState*', $nextState);
         $this->gamestate->nextState($nextState);
+    }
+
+    function isActionPossible($situation) {
+        $action = $situation["param3"];
+        $playedCardId = $situation["param1"];
+        $festivalId = $situation["param2"];
+        $playerId = $situation["player"];
+        switch ($action) {
+            case ACTION_INC_FESTIVAL_SIZE:
+                return false; //nothing to do
+                break;
+            case ACTION_SWAP_EVENT:
+                $evtsByFest = $this->getEventsOnFestivals();
+                return count($evtsByFest[$festivalId]) > 1 && $this->array_some(array_keys($evtsByFest), fn ($festId) => $festId != $festivalId && count($evtsByFest[$festId]) > 0);
+                break;
+            case ACTION_DISCARD_EVENT:
+                return true;
+                break;
+            case ACTION_REPLACE_TICKET:
+                $color = $this->getPlayerColor($playerId);
+                return $this->hasTicketInHand($playerId) && $this->array_some($this->getTicketsOnFestival($festivalId), fn ($t) => $t->type_arg != $this->getColorFromHexValue($color));
+                break;
+            case ACTION_SWAP_MY_TICKET:
+                $color = $this->getPlayerColor($playerId);
+                $ticketsByFest = $this->getTicketsOnFestivals();
+                return $this->hasTicketInHand($playerId) && $this->array_some(array_keys($ticketsByFest), fn ($festId) => $festId != $festivalId && $this->array_some($ticketsByFest[$festId], fn ($t) => $t->type_arg != $this->getColorFromHexValue($color)));
+                break;
+            case ACTION_SWAP_ANY_TICKETS:
+                $color = $this->getPlayerColor($playerId);
+                $ticketsByFest = $this->getTicketsOnFestivals();
+                return $this->array_some(fn ($festId) => $festId == $festivalId && count($ticketsByFest[$festId])) > 0 && $this->array_some(fn ($festId) => $festId != $festivalId && count($ticketsByFest[$festId]) > 0);
+                break;
+            case ACTION_SWAP_EVENT_WITH_HAND:
+                return count($this->getPlayerEvents($playerId)) > 0 && count($this->getEventsOnFestival($festivalId)) > 0;
+                break;
+            default:
+                throw new BgaVisibleSystemException(self::_("This action does not exist " . $action));
+                break;
+        }
+       // return true;
     }
 
     function dbInsertContextLog($action, $param1 = null, $param2 = null, $param3 = null) {

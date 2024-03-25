@@ -28,6 +28,12 @@ trait TicketDeckTrait {
         }
     }
 
+    public function getColorFromHexValue($hexColor) {
+        $colors = array_flip(PLAYER_COLORS);
+        return $colors[$hexColor];
+    }
+
+
     public function hasTicketInHand($playerId) {
         return $this->tickets->countCardInLocation("hand", $playerId) > 0;
     }
