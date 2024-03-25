@@ -64,6 +64,18 @@ class action_festivibes extends APP_GameAction {
         self::ajaxResponse();
     }
 
+    public function swapEvent() {
+        self::setAjaxMode();
+        self::checkVersion();
+
+        $cardId2 = intval(self::getArg("cardId2", AT_posint, true));
+        $cardId1 = intval(self::getArg("cardId1", AT_posint, true));
+
+        $this->game->swapEvents($cardId1, $cardId2);
+
+        self::ajaxResponse();
+    }
+
     public function discardEvent() {
         self::setAjaxMode();
         self::checkVersion();

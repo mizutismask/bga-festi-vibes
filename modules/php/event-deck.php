@@ -46,6 +46,13 @@ trait EventDeckTrait {
         return array_reduce($events, fn ($carry, $evt) => $carry + $evt->points, 0);
     }
 
+    public function swapEventsFromDifferentColumns($cardId1, $cardId2): void {
+        $evt1 = $this->getEventFromDb($this->events->getCard($cardId1));
+        $evt2 = $this->getEventFromDb($this->events->getCard($cardId2));
+        $this->events->moveCard($evt1->id, $evt2->location, $evt2->location_arg);
+        $this->events->moveCard($evt2->id, $evt1->location, $evt1->location_arg);
+    }
+
     /* public function checkVisibleSharedCardsAreEnough() {
         $visibleCardsCount = intval($this->events->countCardInLocation('shared'));
         if ($visibleCardsCount < NUMBER_OF_SHARED_DESTINATION_CARDS) {

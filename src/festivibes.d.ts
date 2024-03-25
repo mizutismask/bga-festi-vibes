@@ -73,6 +73,12 @@ interface DiscardEventActionArgs {
 	selectableCardsByFestival: { [festivalId: number]: Array<EventCard> }
 }
 
+interface SwapEventsActionArgs {
+	selectableCardsByFestival: { [festivalId: number]: Array<EventCard> },
+	mandatoryCardAmong: Array<EventCard>,
+	mandatoryFestivalId:number
+}
+
 interface NotifPointsArgs {
 	playerId: number
 	points: number

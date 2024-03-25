@@ -198,10 +198,20 @@ class Festivibes implements FestivibesGame {
 					}
 					break
 				case 'discardEvent':
-					const selectedEvents = this.getAllSelectedEvents();
-					if (selectedEvents.length==1) {
+					const selectedEvents = this.getAllSelectedEvents()
+					if (selectedEvents.length == 1) {
 						this.takeAction('discardEvent', {
 							'cardId': selectedEvents[0].id
+						})
+					}
+					break
+				case 'swapEvent':
+					log('getSelectedEventsByFestival', this.getSelectedEventsByFestival())
+					if (this.getSelectedEventsByFestival().size == 2) {
+						const selectedEvents = this.getAllSelectedEvents()
+						this.takeAction('swapEvent', {
+							'cardId1': selectedEvents[0].id,
+							'cardId2': selectedEvents[1].id
 						})
 					}
 					break
@@ -213,7 +223,7 @@ class Festivibes implements FestivibesGame {
 	private getSelectedEventsByFestival() {
 		const eventsByFest = new Map<string, EventCard[]>()
 		Object.entries(this.eventStocks).forEach(([festId, stock]) => {
-			if (stock.getSelection()) {
+			if (stock.getSelection().length > 0) {
 				eventsByFest.set(festId, stock.getSelection())
 			}
 		})
@@ -221,7 +231,7 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private getAllSelectedEvents() {
-		return Object.values(this.eventStocks).flatMap(s=>s.getSelection())
+		return Object.values(this.eventStocks).flatMap((s) => s.getSelection())
 	}
 
 	private getSelectedFestival() {
@@ -396,6 +406,12 @@ class Festivibes implements FestivibesGame {
 					this.onEnteringDiscardEvent(dataArgs)
 				}
 				break
+			case 'swapEvent':
+				if (args?.args) {
+					const dataArgs = args.args as SwapEventsActionArgs
+					this.onEnteringSwapEvent(dataArgs)
+				}
+				break
 		}
 		if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
 			this.addArrowsToActivePlayer(args)
@@ -414,6 +430,18 @@ class Festivibes implements FestivibesGame {
 			Object.entries(args.selectableCardsByFestival).forEach(([festId, events]) => {
 				this.eventStocks[festId].setSelectableCards(events)
 			})
+		}
+	}
+
+	private onEnteringSwapEvent(args: SwapEventsActionArgs) {
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('single')
+			this.setSelectionModeOnTickets('none')
+			this.setSelectionModeOnFestivals('none')
+			Object.entries(args.selectableCardsByFestival).forEach(([festId, events]) => {
+				this.eventStocks[festId].setSelectableCards(events)
+			})
+			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
 		}
 	}
 

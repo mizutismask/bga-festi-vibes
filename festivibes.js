@@ -2596,6 +2596,16 @@ var Festivibes = /** @class */ (function () {
                         });
                     }
                     break;
+                case 'swapEvent':
+                    log('getSelectedEventsByFestival', this.getSelectedEventsByFestival());
+                    if (this.getSelectedEventsByFestival().size == 2) {
+                        var selectedEvents_1 = this.getAllSelectedEvents();
+                        this.takeAction('swapEvent', {
+                            'cardId1': selectedEvents_1[0].id,
+                            'cardId2': selectedEvents_1[1].id
+                        });
+                    }
+                    break;
                 default:
                     break;
             }
@@ -2605,7 +2615,7 @@ var Festivibes = /** @class */ (function () {
         var eventsByFest = new Map();
         Object.entries(this.eventStocks).forEach(function (_a) {
             var festId = _a[0], stock = _a[1];
-            if (stock.getSelection()) {
+            if (stock.getSelection().length > 0) {
                 eventsByFest.set(festId, stock.getSelection());
             }
         });
@@ -2730,6 +2740,12 @@ var Festivibes = /** @class */ (function () {
                     this.onEnteringDiscardEvent(dataArgs);
                 }
                 break;
+            case 'swapEvent':
+                if (args === null || args === void 0 ? void 0 : args.args) {
+                    var dataArgs = args.args;
+                    this.onEnteringSwapEvent(dataArgs);
+                }
+                break;
         }
         if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
             this.addArrowsToActivePlayer(args);
@@ -2748,6 +2764,19 @@ var Festivibes = /** @class */ (function () {
                 var festId = _a[0], events = _a[1];
                 _this.eventStocks[festId].setSelectableCards(events);
             });
+        }
+    };
+    Festivibes.prototype.onEnteringSwapEvent = function (args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('single');
+            this.setSelectionModeOnTickets('none');
+            this.setSelectionModeOnFestivals('none');
+            Object.entries(args.selectableCardsByFestival).forEach(function (_a) {
+                var festId = _a[0], events = _a[1];
+                _this.eventStocks[festId].setSelectableCards(events);
+            });
+            this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
         }
     };
     Festivibes.prototype.setSelectionModeOnEvents = function (mode) {

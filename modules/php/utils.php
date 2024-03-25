@@ -55,6 +55,10 @@ trait UtilTrait {
         return true;
     }
 
+    function array_contains_card(array $array, string $cardId){
+        return $this->array_some($array, fn ($card) => $card->id == $cardId);
+    }
+
     /**
      * Save (insert or update) any object/array as variable.
      */

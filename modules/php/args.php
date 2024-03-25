@@ -38,12 +38,20 @@ trait ArgsTrait {
 
     function argSwapEvent() {
         $playerId = intval(self::getActivePlayerId());
-
-        $canPass = false;
+        $situation = $this->dbGetLastContextToResolve();
+        $cardId = $situation["param1"];
+        $festId = $situation["param2"];
+        $mandatory = $this->getEventsOnFestival($festId);
+        $mandatory = array_values(array_filter($mandatory, fn ($c) => $c->id != $cardId));
+        $possible = $this->getEventsOnFestivals();
+        unset($possible[$festId]);
         return [
-            'canPass' => $canPass,
+            'mandatoryFestivalId' => $festId,
+            'mandatoryCardAmong' => $mandatory,
+            'selectableCardsByFestival' => $possible,
         ];
     }
+
     function argDiscardEvent() {
         $playerId = intval(self::getActivePlayerId());
         $situation = $this->dbGetLastContextToResolve();
