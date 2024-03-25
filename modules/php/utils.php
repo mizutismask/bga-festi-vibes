@@ -309,6 +309,10 @@ trait UtilTrait {
         return self::getUniqueValueFromDB("select $field from player WHERE player_id = $playerId");
     }
 
+    function dbEmptyTable($tableName) {
+        self::DbQuery("delete from $tableName");
+    }
+
     /**
      * Auto initialize stats. Note for this to work your game stats ids have to be prefixed by game_ (verbatim)
      */
