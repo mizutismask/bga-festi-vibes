@@ -2521,9 +2521,12 @@ var Festivibes = /** @class */ (function () {
                 slotsIds: ["".concat(fest.id, "-1"), "".concat(fest.id, "-2")],
                 mapCardToSlot: function (card) { return "".concat(fest.id, "-").concat(card.location_arg); }
             });
+            _this.ticketStocks[fest.id].onSelectionChange = function (selection, lastChange) {
+                _this.checkIfPlayCardPossible();
+            };
         });
         dojo.query('.ticket-slot .slot').connect('click', this, function (evt) {
-            if (_this.isCurrentPlayerActive()) {
+            if (_this.isCurrentPlayerActive() && _this.gamedatas.gamestate.name === 'chooseAction') {
                 var festivalId = getPart(evt.target.dataset.slotId, 0);
                 var slotId = getPart(evt.target.dataset.slotId, -1);
                 log('click on festival', festivalId, ' slot ', slotId);
@@ -2580,6 +2583,7 @@ var Festivibes = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             var selectedFestival = this.getSelectedFestival();
             var selectedEvents = this.getAllSelectedEvents();
+            var selectedTickets = this.getAllSelectedTickets();
             switch (this.gamedatas.gamestate.name) {
                 case 'chooseAction':
                     if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
@@ -2597,7 +2601,6 @@ var Festivibes = /** @class */ (function () {
                     }
                     break;
                 case 'swapEvent':
-                    log('getSelectedEventsByFestival', this.getSelectedEventsByFestival());
                     if (this.getSelectedEventsByFestival().size == 2) {
                         this.takeAction('swapEvent', {
                             'cardId1': selectedEvents[0].id,
@@ -2612,6 +2615,21 @@ var Festivibes = /** @class */ (function () {
                             'cardFromFestivalId': selectedEvents[0].id,
                             'cardFromHandId': handSelection[0].id
                         });
+                    }
+                    break;
+                case 'swapTicket':
+                    if (this.getSelectedTicketsByFestival().size == 2) {
+                        /*if ((this.gamedatas.gamestate.args.args as SwapTicketsActionArgs).swapMyTicket) {
+                            this.takeAction('swapTicket', {
+                                'cardId1': selectedEvents[0].id,
+                                'cardId2': selectedEvents[1].id
+                            })
+                        } else {*/
+                        this.takeAction('swapTicket', {
+                            'cardId1': selectedTickets[0].id,
+                            'cardId2': selectedTickets[1].id
+                        });
+                        //}
                     }
                     break;
                 default:
@@ -2629,8 +2647,21 @@ var Festivibes = /** @class */ (function () {
         });
         return eventsByFest;
     };
+    Festivibes.prototype.getSelectedTicketsByFestival = function () {
+        var byFest = new Map();
+        Object.entries(this.ticketStocks).forEach(function (_a) {
+            var festId = _a[0], stock = _a[1];
+            if (stock.getSelection().length > 0) {
+                byFest.set(festId, stock.getSelection());
+            }
+        });
+        return byFest;
+    };
     Festivibes.prototype.getAllSelectedEvents = function () {
         return Object.values(this.eventStocks).flatMap(function (s) { return s.getSelection(); });
+    };
+    Festivibes.prototype.getAllSelectedTickets = function () {
+        return Object.values(this.ticketStocks).flatMap(function (s) { return s.getSelection(); });
     };
     Festivibes.prototype.getSelectedFestival = function () {
         var i = 0;
@@ -2760,6 +2791,12 @@ var Festivibes = /** @class */ (function () {
                     this.onEnteringSwapEventWithHand(dataArgs);
                 }
                 break;
+            case 'swapTicket':
+                if (args === null || args === void 0 ? void 0 : args.args) {
+                    var dataArgs = args.args;
+                    this.onEnteringSwapTicket(dataArgs);
+                }
+                break;
         }
         if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
             this.addArrowsToActivePlayer(args);
@@ -2791,6 +2828,19 @@ var Festivibes = /** @class */ (function () {
                 _this.eventStocks[festId].setSelectableCards(events);
             });
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+        }
+    };
+    Festivibes.prototype.onEnteringSwapTicket = function (args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('none');
+            this.setSelectionModeOnTickets('single');
+            this.setSelectionModeOnFestivals('none');
+            Object.entries(args.selectableCardsByFestival).forEach(function (_a) {
+                var festId = _a[0], events = _a[1];
+                _this.ticketStocks[festId].setSelectableCards(events);
+            });
+            this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
         }
     };
     Festivibes.prototype.onEnteringSwapEventWithHand = function (args) {

@@ -126,9 +126,12 @@ class Festivibes implements FestivibesGame {
 				slotsIds: [`${fest.id}-1`, `${fest.id}-2`],
 				mapCardToSlot: (card) => `${fest.id}-${card.location_arg}`
 			})
+			this.ticketStocks[fest.id].onSelectionChange = (selection: TicketCard[], lastChange: TicketCard) => {
+				this.checkIfPlayCardPossible()
+			}
 		})
 		dojo.query('.ticket-slot .slot').connect('click', this, (evt) => {
-			if ((this as any).isCurrentPlayerActive()) {
+			if ((this as any).isCurrentPlayerActive() && this.gamedatas.gamestate.name === 'chooseAction') {
 				const festivalId = getPart(evt.target.dataset.slotId, 0)
 				const slotId = getPart(evt.target.dataset.slotId, -1)
 				log('click on festival', festivalId, ' slot ', slotId)
@@ -189,6 +192,7 @@ class Festivibes implements FestivibesGame {
 		if ((this as any).isCurrentPlayerActive()) {
 			const selectedFestival = this.getSelectedFestival()
 			const selectedEvents = this.getAllSelectedEvents()
+			const selectedTickets = this.getAllSelectedTickets()
 			switch (this.gamedatas.gamestate.name) {
 				case 'chooseAction':
 					if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
@@ -206,7 +210,6 @@ class Festivibes implements FestivibesGame {
 					}
 					break
 				case 'swapEvent':
-					log('getSelectedEventsByFestival', this.getSelectedEventsByFestival())
 					if (this.getSelectedEventsByFestival().size == 2) {
 						this.takeAction('swapEvent', {
 							'cardId1': selectedEvents[0].id,
@@ -221,6 +224,21 @@ class Festivibes implements FestivibesGame {
 							'cardFromFestivalId': selectedEvents[0].id,
 							'cardFromHandId': handSelection[0].id
 						})
+					}
+					break
+				case 'swapTicket':
+					if (this.getSelectedTicketsByFestival().size == 2) {
+						/*if ((this.gamedatas.gamestate.args.args as SwapTicketsActionArgs).swapMyTicket) {
+							this.takeAction('swapTicket', {
+								'cardId1': selectedEvents[0].id,
+								'cardId2': selectedEvents[1].id
+							})
+						} else {*/
+						this.takeAction('swapTicket', {
+							'cardId1': selectedTickets[0].id,
+							'cardId2': selectedTickets[1].id
+						})
+						//}
 					}
 					break
 				default:
@@ -238,8 +256,22 @@ class Festivibes implements FestivibesGame {
 		return eventsByFest
 	}
 
+	private getSelectedTicketsByFestival() {
+		const byFest = new Map<string, TicketCard[]>()
+		Object.entries(this.ticketStocks).forEach(([festId, stock]) => {
+			if (stock.getSelection().length > 0) {
+				byFest.set(festId, stock.getSelection())
+			}
+		})
+		return byFest
+	}
+
 	private getAllSelectedEvents() {
 		return Object.values(this.eventStocks).flatMap((s) => s.getSelection())
+	}
+
+	private getAllSelectedTickets() {
+		return Object.values(this.ticketStocks).flatMap((s) => s.getSelection())
 	}
 
 	private getSelectedFestival() {
@@ -426,6 +458,12 @@ class Festivibes implements FestivibesGame {
 					this.onEnteringSwapEventWithHand(dataArgs)
 				}
 				break
+			case 'swapTicket':
+				if (args?.args) {
+					const dataArgs = args.args as SwapTicketsActionArgs
+					this.onEnteringSwapTicket(dataArgs)
+				}
+				break
 		}
 		if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
 			this.addArrowsToActivePlayer(args)
@@ -456,6 +494,18 @@ class Festivibes implements FestivibesGame {
 				this.eventStocks[festId].setSelectableCards(events)
 			})
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+		}
+	}
+
+	private onEnteringSwapTicket(args: SwapTicketsActionArgs) {
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('none')
+			this.setSelectionModeOnTickets('single')
+			this.setSelectionModeOnFestivals('none')
+			Object.entries(args.selectableCardsByFestival).forEach(([festId, events]) => {
+				this.ticketStocks[festId].setSelectableCards(events)
+			})
+			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
 		}
 	}
 

@@ -61,4 +61,15 @@ trait TicketDeckTrait {
     public function getTicketsOnFestival($festivalId) {
         return $this->getEventsFromDb($this->tickets->getCardsInLocation("festival_${festivalId}"));
     }
+    public function getTicketsFromPlayerOnFestival($playerId, $festivalId){
+        $color = $this->getColorFromHexValue($this->getPlayerColor($playerId));
+        return $this->getEventsFromDb($this->getCardsOfTypeArgFromLocation($color, "festival_${festivalId}"));
+    }
+
+    public function swapTicketLocations($cardId1, $cardId2): void {
+        $evt1 = $this->getTicketFromDb($this->tickets->getCard($cardId1));
+        $evt2 = $this->getTicketFromDb($this->tickets->getCard($cardId2));
+        $this->tickets->moveCard($evt1->id, $evt2->location, $evt2->location_arg);
+        $this->tickets->moveCard($evt2->id, $evt1->location, $evt1->location_arg);
+    }
 }

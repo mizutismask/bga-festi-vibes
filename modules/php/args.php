@@ -65,6 +65,28 @@ trait ArgsTrait {
         ];
     }
 
+    function argSwapTicket() {
+        $playerId = intval(self::getActivePlayerId());
+        $situation = $this->dbGetLastContextToResolve();
+        $festId = $situation["param2"];
+
+        if ($situation["action"] === ACTION_SWAP_MY_TICKET) {
+            $mandatory = $this->getTicketsFromPlayerOnFestival($playerId, $festId);
+        } else {
+            $mandatory = $this->getTicketsOnFestival($festId);
+        }
+
+        $possible = $this->getTicketsOnFestivals();
+        unset($possible[$festId]);
+        return [
+            'mandatoryFestivalId' => $festId,
+            'mandatoryCardAmong' => $mandatory,
+            'selectableCardsByFestival' => $possible,
+            'swapMyTicket' => $situation["action"] === ACTION_SWAP_MY_TICKET,
+        ];
+    }
+
+
     function argDiscardEvent() {
         $playerId = intval(self::getActivePlayerId());
         $situation = $this->dbGetLastContextToResolve();
@@ -74,14 +96,6 @@ trait ArgsTrait {
         ];
     }
     function argReplaceTicket() {
-        $playerId = intval(self::getActivePlayerId());
-
-        $canPass = false;
-        return [
-            'canPass' => $canPass,
-        ];
-    }
-    function argSwapTicket() {
         $playerId = intval(self::getActivePlayerId());
 
         $canPass = false;

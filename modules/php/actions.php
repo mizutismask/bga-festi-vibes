@@ -59,6 +59,26 @@ trait ActionTrait {
         $this->changeNextStateFromContext();
     }
 
+    public function swapTickets($cardId1, $cardId2) {
+        self::checkAction('swapTicket');
+        $args = $this->argSwapTicket();
+        $mandatoryCardAmong = $args['mandatoryCardAmong'];
+        $isCard1Mandatory = $this->array_contains_card($mandatoryCardAmong, $cardId1);
+        $this->userAssertTrue(self::_("You have to swap a ticket from the column you just played"), $isCard1Mandatory || $this->array_contains_card($mandatoryCardAmong, $cardId2));
+
+        $selectableCards = $args['selectableCardsByFestival'];
+        $this->userAssertTrue(
+            self::_("You have to swap with a column different from the one you just played"),
+            $this->array_some($selectableCards, fn ($possibleCards) => $this->array_contains_card($possibleCards, $isCard1Mandatory ? $cardId2 : $cardId1))
+        );
+
+        $this->swapTicketLocations($cardId1, $cardId2);
+        $this->resolveLastContextIfAction($args["swapMyTicket"] ? ACTION_SWAP_MY_TICKET : ACTION_SWAP_ANY_TICKETS);
+        $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+
+        $this->changeNextStateFromContext();
+    }
+
     public function swapEvents($cardId1, $cardId2) {
         self::checkAction('swapEvent');
         $args = $this->argSwapEvent();

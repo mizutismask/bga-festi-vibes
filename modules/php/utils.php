@@ -160,7 +160,12 @@ trait UtilTrait {
     }
 
     function getCardsFromLocationLike(string $tableName, string $likePattern) {
-        $sql = "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg FROM $tableName where card_location like '$likePattern%'";
+        $sql = "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg FROM $tableName where card_location like '$likePattern'";
+        return self::getCollectionFromDb($sql);
+    }
+
+    function getCardsOfTypeArgFromLocation(string $tableName, int $typeArg, string $location) {
+        $sql = "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg FROM $tableName where card_location = '$location' and card_type_arg = '$typeArg'";
         return self::getCollectionFromDb($sql);
     }
 
