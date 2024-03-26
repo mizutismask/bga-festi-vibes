@@ -42,19 +42,45 @@ trait ActionTrait {
         $this->placeEventCardOnFestival($cardId, $festivalId);
         $this->dbInsertContextLog(ACTION_PLAY_CARD, $cardId, $festivalId, $card->action);
 
+        if($this->isFestivalFull($festivalId)){
+            $festival = $this->getFestivalFromDB($this->festivals->getCard($festivalId));
+            $this->notifyWithName('materialMove', clienttranslate('Festival ${festivalOrder} is sold out'), [
+                'type' => MATERIAL_TYPE_FESTIVAL,
+                'from' => MATERIAL_LOCATION_FESTIVAL,
+                'fromArg' =>  true,
+                'to' => MATERIAL_LOCATION_FESTIVAL,
+                'toArg' =>  $festival->id,
+                'material' => [$festival],
+                'festivalOrder' =>  $this->getFestivalOrder($festival),
+            ]);
+        }
+
         $this->changeNextStateFromContext();
     }
 
     public function discardEvent($cardId) {
         self::checkAction('discardEvent');
+        $playerId = $this->getActivePlayerId();
 
         $args = $this->argDiscardEvent();
         $selectableCards = reset($args['selectableCardsByFestival']);
-        $this->userAssertTrue(self::_("You can’t discard this card"), $this->array_some($selectableCards, fn ($card) => $card->id == $cardId));
+        $card = $this->array_find($selectableCards, fn ($card) => $card->id == $cardId);
+        $this->userAssertTrue(self::_("You can’t discard this card"), $card != null);
 
         $this->events->playCard($cardId);
         $this->resolveLastContextIfAction(ACTION_DISCARD_EVENT);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+
+        $festival = $this->getFestivalFromCardLocation($card->location);
+        $this->notifyWithName('materialMove', clienttranslate('${player_name} discards a ${cardValue} in the festival ${festivalOrder}'), [
+            'type' => MATERIAL_TYPE_EVENT,
+            'from' => MATERIAL_LOCATION_FESTIVAL,
+            'to' => MATERIAL_LOCATION_DECK,
+            'toArg' =>  $festival->id,
+            'material' => [$card],
+            'cardValue' => $card->points,
+            'festivalOrder' =>  $this->getFestivalOrder($festival),
+        ]);
 
         $this->changeNextStateFromContext();
     }

@@ -471,7 +471,11 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private onEnteringChooseAction(args: EnteringChooseActionArgs) {
-		//todo
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('single')
+			this.setSelectionModeOnTickets('none')
+			this.setSelectionModeOnFestivals('single')
+		}
 	}
 
 	private onEnteringDiscardEvent(args: DiscardEventActionArgs) {
@@ -1072,8 +1076,67 @@ class Festivibes implements FestivibesGame {
 
 	notif_materialMove(notif: Notif<NotifMaterialMove>) {
 		console.log('notif_materialMove', notif)
-		const cards = notif.args.material as Array<FestivalCard>
-		cards.forEach((c) => console.log('c', c.id))
+		switch (notif.args.type) {
+			case 'EVENT':
+				const cards = notif.args.material as Array<EventCard>
+				this.notif_eventMove(cards, notif)
+				break
+			case 'FESTIVAL':
+				const fests = notif.args.material as Array<FestivalCard>
+				this.notif_festivalMove(fests, notif)
+				break
+			case 'TICKET':
+				const tickets = notif.args.material as Array<TicketCard>
+				this.notif_ticketMove(tickets, notif)
+				break
+			default:
+				console.error('Material type move not handled', notif)
+				break
+		}
+	}
+
+	private notif_eventMove(cards: EventCard[], notif: Notif<NotifMaterialMove>) {
+		const card = cards.at(0)
+		switch (notif.args.to) {
+			case 'FESTIVAL':
+				this.eventStocks[notif.args.toArg].addCard(card)
+				break
+			case 'DECK':
+				this.eventStocks[notif.args.toArg].removeCard(card)
+				break
+
+			default:
+				console.error('Event move destination not handled', notif)
+				break
+		}
+	}
+	private notif_festivalMove(cards: FestivalCard[], notif: Notif<NotifMaterialMove>) {
+		const card = cards.at(0)
+		switch (notif.args.to) {
+			case 'FESTIVAL':
+				//from deck to river
+				this.festivalStocks[notif.args.toArg].addCard(card)
+				break
+
+			default:
+				console.error('Festival move destination not handled', notif)
+				break
+		}
+	}
+	private notif_ticketMove(cards: TicketCard[], notif: Notif<NotifMaterialMove>) {
+		const card = cards.at(0)
+		switch (notif.args.from) {
+			case 'HAND':
+				this.ticketStocks[notif.args.toArg].addCard(card)
+				break
+			case 'FESTIVAL':
+				this.ticketStocks[notif.args.toArg].addCard(card)
+				break
+
+			default:
+				console.error('Ticket move from not handled', notif)
+				break
+		}
 	}
 
 	/**
@@ -1090,14 +1153,13 @@ class Festivibes implements FestivibesGame {
 			if (log && args && !args.processed) {
 				if (typeof args.ticket == 'number') {
 					args.ticket = `<div class="icon expTicket"></div>`
-				}
-
-				// make cities names in bold
-				;['from', 'to', 'cities_names'].forEach((field) => {
+				} /*['from', 'to', 'cities_names'].forEach((field) => {
 					if (args[field] !== null && args[field] !== undefined && args[field][0] != '<') {
 						args[field] = `<span style="color:#2cd51e"><strong>${_(args[field])}</strong></span>`
 					}
-				})
+				})*/
+
+				// make cities names in bold
 				;['you', 'actplayer', 'player_name'].forEach((field) => {
 					if (
 						typeof args[field] === 'string' &&

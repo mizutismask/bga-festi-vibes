@@ -2803,7 +2803,11 @@ var Festivibes = /** @class */ (function () {
         }
     };
     Festivibes.prototype.onEnteringChooseAction = function (args) {
-        //todo
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('single');
+            this.setSelectionModeOnTickets('none');
+            this.setSelectionModeOnFestivals('single');
+        }
     };
     Festivibes.prototype.onEnteringDiscardEvent = function (args) {
         var _this = this;
@@ -3293,8 +3297,63 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.notif_materialMove = function (notif) {
         console.log('notif_materialMove', notif);
-        var cards = notif.args.material;
-        cards.forEach(function (c) { return console.log('c', c.id); });
+        switch (notif.args.type) {
+            case 'EVENT':
+                var cards = notif.args.material;
+                this.notif_eventMove(cards, notif);
+                break;
+            case 'FESTIVAL':
+                var fests = notif.args.material;
+                this.notif_festivalMove(fests, notif);
+                break;
+            case 'TICKET':
+                var tickets = notif.args.material;
+                this.notif_ticketMove(tickets, notif);
+                break;
+            default:
+                console.error('Material type move not handled', notif);
+                break;
+        }
+    };
+    Festivibes.prototype.notif_eventMove = function (cards, notif) {
+        var card = cards.at(0);
+        switch (notif.args.to) {
+            case 'FESTIVAL':
+                this.eventStocks[notif.args.toArg].addCard(card);
+                break;
+            case 'DECK':
+                this.eventStocks[notif.args.toArg].removeCard(card);
+                break;
+            default:
+                console.error('Event move destination not handled', notif);
+                break;
+        }
+    };
+    Festivibes.prototype.notif_festivalMove = function (cards, notif) {
+        var card = cards.at(0);
+        switch (notif.args.to) {
+            case 'FESTIVAL':
+                //from deck to river
+                this.festivalStocks[notif.args.toArg].addCard(card);
+                break;
+            default:
+                console.error('Festival move destination not handled', notif);
+                break;
+        }
+    };
+    Festivibes.prototype.notif_ticketMove = function (cards, notif) {
+        var card = cards.at(0);
+        switch (notif.args.from) {
+            case 'HAND':
+                this.ticketStocks[notif.args.toArg].addCard(card);
+                break;
+            case 'FESTIVAL':
+                this.ticketStocks[notif.args.toArg].addCard(card);
+                break;
+            default:
+                console.error('Ticket move from not handled', notif);
+                break;
+        }
     };
     /**
      * Highlight winner for end score.
@@ -3310,14 +3369,13 @@ var Festivibes = /** @class */ (function () {
             if (log && args && !args.processed) {
                 if (typeof args.ticket == 'number') {
                     args.ticket = "<div class=\"icon expTicket\"></div>";
-                }
+                } /*['from', 'to', 'cities_names'].forEach((field) => {
+                    if (args[field] !== null && args[field] !== undefined && args[field][0] != '<') {
+                        args[field] = `<span style="color:#2cd51e"><strong>${_(args[field])}</strong></span>`
+                    }
+                })*/
                 // make cities names in bold
                 ;
-                ['from', 'to', 'cities_names'].forEach(function (field) {
-                    if (args[field] !== null && args[field] !== undefined && args[field][0] != '<') {
-                        args[field] = "<span style=\"color:#2cd51e\"><strong>".concat(_(args[field]), "</strong></span>");
-                    }
-                });
                 ['you', 'actplayer', 'player_name'].forEach(function (field) {
                     if (typeof args[field] === 'string' &&
                         args[field].indexOf('#df74b2;') !== -1 &&

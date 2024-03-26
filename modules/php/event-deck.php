@@ -23,6 +23,16 @@ trait EventDeckTrait {
 
     public function placeEventCardOnFestival(int $eventId, int $festivalId) {
         $this->events->insertCardOnExtremePosition($eventId, "festival_" . $festivalId, true);
+        $event = $this->getEventFromDB($this->events->getCard($eventId));
+        $this->notifyWithName('materialMove', clienttranslate('${player_name} places a event of value ${cardValue} in the festival ${festivalOrder}'), [
+            'type' => MATERIAL_TYPE_EVENT,
+            'from' => MATERIAL_LOCATION_HAND,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'toArg' => $festivalId,
+            'material' => [$event],
+            'cardValue' => $event->points,
+            'festivalOrder' =>  $this->getFestivalOrder($this->getFestivalFromDB($this->festivals->getCard($festivalId))),
+        ]);
     }
 
     public function getEventsOnFestivals() {
@@ -51,6 +61,29 @@ trait EventDeckTrait {
         $evt2 = $this->getEventFromDb($this->events->getCard($cardId2));
         $this->events->moveCard($evt1->id, $evt2->location, $evt2->location_arg);
         $this->events->moveCard($evt2->id, $evt1->location, $evt1->location_arg);
+
+        $this->notifyAllPlayers('materialMove', "", [
+            'type' => MATERIAL_TYPE_EVENT,
+            'from' => MATERIAL_LOCATION_FESTIVAL,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'toArg' => self::getPart($evt2->location, -1),
+            'material' => [$this->getEventFromDb($this->events->getCard($cardId1))],
+        ]);
+
+        $this->notifyAllPlayers('materialMove', "", [
+            'type' => MATERIAL_TYPE_EVENT,
+            'from' => MATERIAL_LOCATION_FESTIVAL,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'toArg' => self::getPart($evt1->location, -1),
+            'material' => [$this->getEventFromDb($this->events->getCard($cardId2))],
+        ]);
+
+
+        $this->notifyWithName('msg', clienttranslate('${player_name} swaps events between festivals ${festivalOrder1} and ${festivalOrder2}'), [
+            'festivalOrder1' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt1->location)),
+            'festivalOrder2' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt2->location)),
+        ]);
+
     }
 
     /* public function checkVisibleSharedCardsAreEnough() {

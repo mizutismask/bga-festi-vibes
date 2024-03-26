@@ -55,7 +55,7 @@ trait UtilTrait {
         return true;
     }
 
-    function array_contains_card(array $array, string $cardId){
+    function array_contains_card(array $array, string $cardId) {
         return $this->array_some($array, fn ($card) => $card->id == $cardId);
     }
 
@@ -554,5 +554,19 @@ trait UtilTrait {
 
     function getMostlyActivePlayerOrder() {
         return $this->getPlayerPosition($this->getMostlyActivePlayerId());
+    }
+
+    function getFestivalFromCardLocation(string $cardLocation) {
+        return $this->getFestivalFromDb($this->festivals->getCard($this->getFestivalIdFromCardLocation($cardLocation)));
+    }
+
+    function getFestivalIdFromCardLocation(string $cardLocation) {
+        return self::getPart($cardLocation, -1);
+    }
+
+    function getFestivalOrder(FestivalCard $festival) {
+        if ($this->getPlayerCount() == 2 && $festival->type_arg > 1)
+            return $festival->type_arg - 1;
+        return $festival->type_arg;
     }
 }
