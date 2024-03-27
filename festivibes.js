@@ -3356,7 +3356,9 @@ var Festivibes = /** @class */ (function () {
                 this.eventStocks[notif.args.toArg].removeCard(card);
                 break;
             case 'HAND':
-                this.playerTables[notif.args.toArg].addCard(card);
+                if (notif.args.toArg == this.getPlayerId()) {
+                    this.playerTables[notif.args.toArg].addCard(card);
+                }
                 break;
             default:
                 console.error('Event move destination not handled', notif);
@@ -3384,8 +3386,10 @@ var Festivibes = /** @class */ (function () {
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);
-                log("tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)"));
-                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add('used');
+                if (notif.args.from == 'HAND') {
+                    log("tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)"));
+                    dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add('used');
+                }
                 break;
             default:
                 console.error('Ticket move destination not handled', notif);

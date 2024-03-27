@@ -1117,7 +1117,9 @@ class Festivibes implements FestivibesGame {
 				this.eventStocks[notif.args.toArg].removeCard(card)
 				break
 			case 'HAND':
-				this.playerTables[notif.args.toArg].addCard(card)
+				if (notif.args.toArg == this.getPlayerId()) {
+					this.playerTables[notif.args.toArg].addCard(card)
+				}
 				break
 
 			default:
@@ -1147,8 +1149,10 @@ class Festivibes implements FestivibesGame {
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)
-				log(`tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`)
-				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add('used')
+				if (notif.args.from == 'HAND') {
+					log(`tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`)
+					dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add('used')
+				}
 				break
 
 			default:
