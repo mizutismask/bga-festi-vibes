@@ -1,23 +1,27 @@
-.player-board .token {
-  background-image: url("img/tokens.png");
+.player-board .tickets-counter {
+  display: flex;
+  column-gap: 10px;
 }
-.player-board .token[data-player-color=d8d7d7] {
+.player-board .tickets-counter .ticket {
+  background-image: url("img/ticketsCards.jpg");
+  background-size: 400%;
+  width: 33px;
+  height: 51px;
+}
+.player-board .tickets-counter .ticket[data-player-color=de71c0] {
   background-position: 0% 50%;
 }
-.player-board .token[data-player-color=df74b2] {
-  background-position: 20% 50%;
+.player-board .tickets-counter .ticket[data-player-color=f04623] {
+  background-position: 33.3333333333% 50%;
 }
-.player-board .token[data-player-color=eca51c] {
-  background-position: 40% 50%;
+.player-board .tickets-counter .ticket[data-player-color=fbbd0a] {
+  background-position: 66.6666666667% 50%;
 }
-.player-board .token[data-player-color="77bd25"] {
-  background-position: 60% 50%;
-}
-.player-board .token[data-player-color="30b0e1"] {
-  background-position: 80% 50%;
-}
-.player-board .token[data-player-color=df3e33] {
+.player-board .tickets-counter .ticket[data-player-color="8a4921"] {
   background-position: 100% 50%;
+}
+.player-board .tickets-counter .ticket.used {
+  background: none;
 }
 .player-board .additional-icons {
   display: flex;

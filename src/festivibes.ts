@@ -343,14 +343,10 @@ class Festivibes implements FestivibesGame {
 		const playerId = Number(player.id)
 		dojo.place(
 			`<div class="counters">
-                    <div id="tickets-counter-${player.id}-wrapper" class="counter tickets-counter">
-                        <div class="icon expTicket"></div> 
-                        <span id="tickets-counter-${player.id}"></span>
-                    </div>
-                
-                    <div id="revealed-tokens-back-counter-${player.id}-wrapper" class="counter revealed-tokens-back-counter">
-                        <div class="icon token" data-player-color="${player.color}"></div> 
-                        <span id="revealed-tokens-back-counter-${player.id}"></span> / 4
+                    <div id="tickets-${player.id}-wrapper" class="counter tickets-counter">
+                        <div class="icon ticket" data-player-color="${player.color}"></div> 
+                        <div class="icon ticket" data-player-color="${player.color}"></div> 
+                        <div class="icon ticket" data-player-color="${player.color}"></div> 
                     </div>
 				</div>
 				<div id="additional-info-${player.id}" class="counters additional-info">
