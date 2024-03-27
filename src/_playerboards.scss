@@ -1,34 +1,5 @@
 .player-board {
-    color: white;
-    background: url('img/playerboard-background-bottom.jpg');
-    background-position: bottom;
-    background-size: cover;
-
-    @each $name, $color in $player-colors {
-        &[data-player-color='#{$color}']::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 52px;
-            background: url('img/playerboard-background.png'), ##{$color};
-            background-size: cover;
-            background-repeat: no-repeat;
-            box-shadow: 0 0 3px 2px #8181c7;
-            border-radius: 8px;
-        }
-    }
-
-    .player-name,
-    .player-name a {
-        color: white !important; // to override inline color
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-    }
-    .player_score_value {
-        font-weight: bold;
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-    }
+    
     .token {
         background-image: url('img/tokens.png');
 

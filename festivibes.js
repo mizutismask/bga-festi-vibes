@@ -3589,7 +3589,7 @@ var PlayerTable = /** @class */ (function () {
         this.game = game;
         var isMyTable = player.id === game.getPlayerId().toString();
         var ownClass = isMyTable ? 'own' : '';
-        var html = "\n\t\t\t<a id=\"anchor-player-".concat(player.id, "\"></a>\n            <div id=\"player-table-").concat(player.id, "\" class=\"player-order").concat(player.playerNo, " player-table ").concat(ownClass, "\">\n\t\t\t    <span class=\"player-name\">").concat(player.name, "</span>\n            </div>\n        ");
+        var html = "\n\t\t\t<a id=\"anchor-player-".concat(player.id, "\"></a>\n            <div id=\"player-table-").concat(player.id, "\" class=\"player-order").concat(player.playerNo, " player-table ").concat(ownClass, "\">\n            </div>\n        ");
         dojo.place(html, 'player-tables');
         if (isMyTable) {
             var handHtml = "\n\t\t\t<div id=\"hand-".concat(player.id, "\" class=\"nml-player-hand\"></div>\n        ");

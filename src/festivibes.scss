@@ -23,16 +23,26 @@ $player-colors: (
 @import '../node_modules/bga-cards/bga-cards';
 
 html {
-	background: rgb(21, 104, 134);
+	background: #ffe4c2;
 	background-repeat: no-repeat;
 	background-size: 100%;
+}
+
+.festivibes-game-area {
+	display: flex;
+	justify-items: center;
+	align-items: flex-start;
 }
 
 .festival-wrapper {
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
-    align-items: flex-start;
-    justify-items: center;
+	align-items: flex-start;
+	justify-items: center;
+	max-width: fit-content;
+	column-gap: 40px;
+	row-gap: 10px;
+	margin-right: 5px;
 }
 .player-count-2 {
 	.festival-wrapper {
@@ -47,8 +57,8 @@ html {
 		cursor: not-allowed;
 	}
 }
-.bga-cards_selected-card{
-    box-shadow: 0 0 5px 5px greenyellow;
+.bga-cards_selected-card {
+	box-shadow: 0 0 5px 5px greenyellow;
 }
 
 .card-stock {
@@ -57,7 +67,7 @@ html {
 		height: $FESTIVAL_CARD_HEIGHT;
 		width: $FESTIVAL_CARD_WIDTH;
 		background: hsla(0, 0%, 100%, 0.4);
-		outline: 1px solid hsla(0, 0%, 100%, 0.6);
+		outline: 1px solid hsla(0, 0%, 100%, 0.4);
 	}
 
 	&.ticket-slot {
@@ -70,9 +80,9 @@ html {
 	&.event-slot {
 		.slot {
 			margin-top: -206px;
-            &:first-child{
-                margin-top: unset;
-            }
+			&:first-child {
+				margin-top: unset;
+			}
 		}
 	}
 }

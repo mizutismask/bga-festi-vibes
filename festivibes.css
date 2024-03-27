@@ -1,83 +1,3 @@
-.player-board {
-  color: white;
-  background: url("img/playerboard-background-bottom.jpg");
-  background-position: bottom;
-  background-size: cover;
-}
-.player-board[data-player-color=ff0000]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: url("img/playerboard-background.png"), #ff0000;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 3px 2px #8181c7;
-  border-radius: 8px;
-}
-.player-board[data-player-color="008000"]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: url("img/playerboard-background.png"), #008000;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 3px 2px #8181c7;
-  border-radius: 8px;
-}
-.player-board[data-player-color="0000ff"]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: url("img/playerboard-background.png"), #0000ff;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 3px 2px #8181c7;
-  border-radius: 8px;
-}
-.player-board[data-player-color=ffa500]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: url("img/playerboard-background.png"), #ffa500;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 3px 2px #8181c7;
-  border-radius: 8px;
-}
-.player-board[data-player-color="982fff"]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: url("img/playerboard-background.png"), #982fff;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 3px 2px #8181c7;
-  border-radius: 8px;
-}
-.player-board .player-name,
-.player-board .player-name a {
-  color: white !important;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-}
-.player-board .player_score_value {
-  font-weight: bold;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-}
 .player-board .token {
   background-image: url("img/tokens.png");
 }
@@ -668,9 +588,15 @@ body > .card {
 }
 
 html {
-  background: rgb(21, 104, 134);
+  background: #ffe4c2;
   background-repeat: no-repeat;
   background-size: 100%;
+}
+
+.festivibes-game-area {
+  display: flex;
+  justify-items: center;
+  align-items: flex-start;
 }
 
 .festival-wrapper {
@@ -678,6 +604,10 @@ html {
   grid-template-columns: repeat(6, 1fr);
   align-items: flex-start;
   justify-items: center;
+  max-width: fit-content;
+  column-gap: 40px;
+  row-gap: 10px;
+  margin-right: 5px;
 }
 
 .player-count-2 .festival-wrapper {
@@ -702,7 +632,7 @@ html {
   height: 263px;
   width: 143px;
   background: hsla(0, 0%, 100%, 0.4);
-  outline: 1px solid hsla(0, 0%, 100%, 0.6);
+  outline: 1px solid hsla(0, 0%, 100%, 0.4);
 }
 .card-stock.ticket-slot .slot {
   height: 104.8px;
