@@ -35,25 +35,25 @@ trait StateTrait {
         }
 
         $owner = $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER);
-        if($owner){
+        if ($owner) {
             $context = $this->dbGetLastContextToResolve();
             $this->gamestate->changeActivePlayer($context["player"]);
             $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, null);
         }
 
-        if ( $this->hasReachedEndOfGameRequirements($playerId)) {
+        if ($this->hasReachedEndOfGameRequirements($playerId)) {
             $this->gamestate->nextState('endScore');
         } else {
             //finishing round or playing normally
-            $this->pickAdditionalEvent($playerId);
+            if (count($this->getPlayerEvents($playerId)) < 3) {
+                $this->pickAdditionalEvent($playerId);
+            }
             $this->activateNextPlayerCustom();
             $this->gamestate->nextState('nextPlayer');
         }
     }
 
-    function stActivateReplacedTicketOwner()
-    {
-        self::dump('*******************$this->getGlobalVariable(GS_REPLACED_TICKET_OWNER)', $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER));
+    function stActivateReplacedTicketOwner() {
         $this->gamestate->changeActivePlayer($this->getGlobalVariable(GS_REPLACED_TICKET_OWNER));
         $this->gamestate->nextState('repositionTicket');
     }
@@ -79,7 +79,7 @@ trait StateTrait {
             $totalScore[$playerId] = 0;
         }
 
-        $festivals=$this->getFestivals();
+        $festivals = $this->getFestivals();
         foreach ($festivals as $fest) {
             $festScore = $this->getFestivalScore();
             $tickets = $this->getTicketsOnFestival();
