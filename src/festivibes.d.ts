@@ -42,7 +42,6 @@ interface FestivibesGamedatas {
 	lastTurn: boolean
 	turnOrderClockwise: boolean
 	// counters
-	scores?: Array<NotifScoreArgs>
 	winners: number[]
 	version: string
 	festivals: Array<FestivalCard>
@@ -59,7 +58,6 @@ interface FestivibesGame extends Game {
 	getZoom(): number
 	getCurrentPlayer(): FestivibesPlayer
 	getPlayerId(): number
-	getPlayerScore(playerId: number): number
 	setTooltip(id: string, html: string): void
 	setTooltipToClass(className: string, html: string): void
 	clientActionData: ClientActionData

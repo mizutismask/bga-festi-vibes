@@ -35,7 +35,6 @@ class Festivibes implements FestivibesGame {
 	public ticketCardsManager: TicketCardsManager
 	private originalTextChooseAction: string
 
-	private scoreBoard: ScoreBoard
 	private ticketsCounters: Counter[] = []
 
 	private animations: FestivibesAnimation[] = []
@@ -84,10 +83,7 @@ class Festivibes implements FestivibesGame {
 		if (gamedatas.lastTurn) {
 			this.notif_lastTurn(false)
 		}
-		if (Number(gamedatas.gamestate.id) >= 90) {
-			// score or end
-			this.onEnteringEndScore()
-		}
+
 		this.setupNotifications()
 
 		Object.values(this.gamedatas.playerOrderWorkingWithSpectators).forEach((p) => {
@@ -99,13 +95,6 @@ class Festivibes implements FestivibesGame {
 		this.setupSettingsIconInMainBar()
 		this.setupPreferences()
 		this.setupTooltips()
-
-		this.scoreBoard = new ScoreBoard(this, Object.values(this.gamedatas.players))
-		this.gamedatas.scores?.forEach((s) => this.scoreBoard.updateScore(s.playerId, s.scoreType, s.score))
-		if (this.gamedatas.winners) {
-			this.gamedatas.winners.forEach((pId) => this.scoreBoard.highlightWinnerScore(pId))
-		}
-		removeClass('animatedScore')
 
 		this.setupFestivals(this.gamedatas.festivals)
 		this.displayTickets(this.gamedatas.tickets)
@@ -199,6 +188,12 @@ class Festivibes implements FestivibesGame {
 		}
 	}
 
+	private unselectAll() {
+		Object.values(this.eventStocks).forEach((s) => s.unselectAll(true))
+		Object.values(this.festivalStocks).forEach((s) => s.unselectAll(true))
+		Object.values(this.ticketStocks).forEach((s) => s.unselectAll(true))
+	}
+
 	private checkIfPlayCardPossible() {
 		if ((this as any).isCurrentPlayerActive()) {
 			const selectedFestival = this.getSelectedFestival()
@@ -211,6 +206,7 @@ class Festivibes implements FestivibesGame {
 							'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
 							'festivalId': selectedFestival.id
 						})
+						this.unselectAll()
 					}
 					break
 				case 'discardEvent':
@@ -218,6 +214,7 @@ class Festivibes implements FestivibesGame {
 						this.takeAction('discardEvent', {
 							'cardId': selectedEvents[0].id
 						})
+						this.unselectAll()
 					}
 					break
 				case 'swapEvent':
@@ -226,6 +223,7 @@ class Festivibes implements FestivibesGame {
 							'cardId1': selectedEvents[0].id,
 							'cardId2': selectedEvents[1].id
 						})
+						this.unselectAll()
 					}
 					break
 				case 'swapEventWithHand':
@@ -235,6 +233,7 @@ class Festivibes implements FestivibesGame {
 							'cardFromFestivalId': selectedEvents[0].id,
 							'cardFromHandId': handSelection[0].id
 						})
+						this.unselectAll()
 					}
 					break
 				case 'swapTicket':
@@ -243,6 +242,7 @@ class Festivibes implements FestivibesGame {
 							'cardId1': selectedTickets[0].id,
 							'cardId2': selectedTickets[1].id
 						})
+						this.unselectAll()
 					}
 					break
 				case 'replaceTicket':
@@ -250,6 +250,7 @@ class Festivibes implements FestivibesGame {
 						this.takeAction('replaceTicket', {
 							'ticketId': selectedTickets[0].id
 						})
+						this.unselectAll()
 					}
 					break
 				default:
@@ -574,18 +575,6 @@ class Festivibes implements FestivibesGame {
 		Object.values(this.festivalStocks).forEach((s) => s.setSelectionMode(mode))
 	}
 
-	/**
-	 * Show score board.
-	 */
-	private onEnteringEndScore() {
-		const lastTurnBar = document.getElementById('last-round')
-		if (lastTurnBar) {
-			lastTurnBar.style.display = 'none'
-		}
-
-		document.getElementById('score').style.display = 'flex'
-	}
-
 	// onLeavingState: this method is called each time we are leaving a game state.
 	//                 You can use this method to perform some user interface changes at this moment.
 	//
@@ -701,7 +690,7 @@ class Festivibes implements FestivibesGame {
 	 */
 	public playCustomSound(sound: string, playNextMoveSound = true) {
 		if (this.isCustomSoundsOn()) {
-			playSound(sound)
+			;(this as any).playSound(sound)
 			playNextMoveSound && (this as any).disableNextMoveSound()
 		}
 	}
@@ -869,10 +858,6 @@ class Festivibes implements FestivibesGame {
 
 	public getPlayerId(): number {
 		return Number((this as any).player_id)
-	}
-
-	public getPlayerScore(playerId: number): number {
-		return (this as any).scoreCtrl[playerId]?.getValue() ?? Number(this.gamedatas.players[playerId].score)
 	}
 
 	public getPlayersCount(): number {
@@ -1072,8 +1057,6 @@ class Festivibes implements FestivibesGame {
 		const notifs = [
 			//['claimedRoute', ANIMATION_MS],
 			['points', 1],
-			['score', ANIMATION_MS],
-			['highlightWinnerScore', ANIMATION_MS],
 			['materialMove', ANIMATION_MS],
 			['lastTurn', 1]
 		]
@@ -1101,15 +1084,6 @@ class Festivibes implements FestivibesGame {
         </div>`,
 			'page-title'
 		)
-	}
-
-	/**
-	 * Updates a total or subtotal
-	 * @param notif
-	 */
-	notif_score(notif: Notif<NotifScoreArgs>) {
-		console.log('notif_score', notif)
-		this.scoreBoard.updateScore(notif.args.playerId, notif.args.scoreType, notif.args.score)
 	}
 
 	notif_materialMove(notif: Notif<NotifMaterialMove>) {
@@ -1169,12 +1143,12 @@ class Festivibes implements FestivibesGame {
 		switch (notif.args.to) {
 			case 'HAND':
 				this.ticketStocks[notif.args.toArg].removeCard(card)
-				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket.used`).pop().classList.remove("used")
+				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket.used`).pop().classList.remove('used')
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)
 				log(`tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`)
-				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add("used")
+				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add('used')
 				break
 
 			default:
@@ -1184,18 +1158,11 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private updateTicketsInPlayerBoard() {
-		Object.values(this.gamedatas.players).forEach(p => {
+		Object.values(this.gamedatas.players).forEach((p) => {
 			for (let index = 0; index < p.usedTicketsCount; index++) {
-				dojo.query(`#tickets-${p.id}-wrapper .ticket:not(.used)`).pop().classList.add("used")
+				dojo.query(`#tickets-${p.id}-wrapper .ticket:not(.used)`).pop().classList.add('used')
 			}
 		})
-	}
-
-	/**
-	 * Highlight winner for end score.
-	 */
-	notif_highlightWinnerScore(notif: Notif<NotifWinnerArgs>) {
-		this.scoreBoard?.highlightWinnerScore(notif.args.playerId)
 	}
 
 	/* This enable to inject translatable styled things to logs or action bar */

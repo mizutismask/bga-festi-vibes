@@ -67,21 +67,10 @@ trait ActionTrait {
         $card = $this->array_find($selectableCards, fn ($card) => $card->id == $cardId);
         $this->userAssertTrue(self::_("You can’t discard this card"), $card != null);
 
-        $this->events->playCard($cardId);
+        $this->discardEventAndReorderFestival($card);
+        
         $this->resolveLastContextIfAction(ACTION_DISCARD_EVENT);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
-
-        $festival = $this->getFestivalFromCardLocation($card->location);
-        $this->notifyWithName('materialMove', clienttranslate('${player_name} discards a ${cardValue} in the festival ${festivalOrder}'), [
-            'type' => MATERIAL_TYPE_EVENT,
-            'from' => MATERIAL_LOCATION_FESTIVAL,
-            'to' => MATERIAL_LOCATION_DECK,
-            'toArg' =>  $festival->id,
-            'material' => [$card],
-            'cardValue' => $card->points,
-            'festivalOrder' =>  $this->getFestivalOrder($festival),
-        ]);
-
         $this->changeNextStateFromContext();
     }
 
@@ -136,7 +125,7 @@ trait ActionTrait {
         $this->userAssertTrue(self::_("This card is not in your hand"), $card->location === "hand");
         $this->userAssertTrue(self::_("This card is not yours"), $card->location_arg === $playerId);
 
-        $this->swapEventLocations($cardId, $cardFromHandId);
+        $this->swapEventLocationsWithHand($cardId, $cardFromHandId);
         $this->resolveLastContextIfAction(ACTION_SWAP_EVENT_WITH_HAND);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
 

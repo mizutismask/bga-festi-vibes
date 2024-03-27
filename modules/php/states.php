@@ -69,6 +69,10 @@ trait StateTrait {
         $this->notifyWithName('msg', clienttranslate('&#10148; Start of ${player_name}\'s turn'));
     }
 
+    function getPlayerIdFromTicketColor($ticketColor) : string {
+        $player = $this->array_find($this->getPlayers(), fn ($p) => $this->getColorFromHexValue($p["player_color"]) == $ticketColor);
+        return $player["player_id"];
+    }
 
     function stEndScore() {
         $sql = "SELECT player_id id, player_score score, player_no playerNo FROM player ORDER BY player_no ASC";
@@ -81,38 +85,17 @@ trait StateTrait {
 
         $festivals = $this->getFestivals();
         foreach ($festivals as $fest) {
-            $festScore = $this->getFestivalScore();
-            $tickets = $this->getTicketsOnFestival();
+            $festScore = $this->getFestivalScore($fest->id);
+            $tickets = $this->getTicketsOnFestival($fest->id);
             foreach ($tickets as $tick) {
-                $player = $this->getPlayerIdFromTicketColor($tick->type_arg);
+                $playerId = $this->getPlayerIdFromTicketColor($tick->type_arg);
                 $totalScore[$playerId] += $festScore;
-                $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${cardsCount}'), ["cardCount" => $fest->cardsCount, "scoreType" => $this->getScoreType($fest, $playerId)]);
+                $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${festivalOrder}'), ["festivalOrder" => $this->getFestivalOrder($fest)]);
             }
         }
 
         foreach ($players as $playerId => $playerDb) {
             self::DbQuery("UPDATE player SET `player_score` = $totalScore[$playerId] where `player_id` = $playerId");
-        }
-
-        $bestScore = max($totalScore);
-        $playersWithScore = [];
-        foreach ($players as $playerId => &$player) {
-            $player['playerNo'] = intval($player['playerNo']);
-            $player['score'] = $totalScore[$playerId];
-            $playersWithScore[$playerId] = $player;
-        }
-        self::notifyAllPlayers('bestScore', '', [
-            'bestScore' => $bestScore,
-            'players' => array_values($playersWithScore),
-        ]);
-
-        // highlight winner(s)
-        foreach ($totalScore as $playerId => $playerScore) {
-            if ($playerScore == $bestScore) {
-                self::notifyAllPlayers('highlightWinnerScore', '', [
-                    'playerId' => $playerId,
-                ]);
-            }
         }
 
         if ($this->isStudio()) {

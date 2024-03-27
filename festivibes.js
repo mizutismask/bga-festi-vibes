@@ -2489,7 +2489,6 @@ var Festivibes = /** @class */ (function () {
         */
     Festivibes.prototype.setup = function (gamedatas) {
         var _this = this;
-        var _a;
         log('Starting game setup');
         this.gameFeatures = new GameFeatureConfig();
         this.gamedatas = gamedatas;
@@ -2501,10 +2500,6 @@ var Festivibes = /** @class */ (function () {
         if (gamedatas.lastTurn) {
             this.notif_lastTurn(false);
         }
-        if (Number(gamedatas.gamestate.id) >= 90) {
-            // score or end
-            this.onEnteringEndScore();
-        }
         this.setupNotifications();
         Object.values(this.gamedatas.playerOrderWorkingWithSpectators).forEach(function (p) {
             _this.setupPlayer(_this.gamedatas.players[p]);
@@ -2513,12 +2508,6 @@ var Festivibes = /** @class */ (function () {
         this.setupSettingsIconInMainBar();
         this.setupPreferences();
         this.setupTooltips();
-        this.scoreBoard = new ScoreBoard(this, Object.values(this.gamedatas.players));
-        (_a = this.gamedatas.scores) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return _this.scoreBoard.updateScore(s.playerId, s.scoreType, s.score); });
-        if (this.gamedatas.winners) {
-            this.gamedatas.winners.forEach(function (pId) { return _this.scoreBoard.highlightWinnerScore(pId); });
-        }
-        removeClass('animatedScore');
         this.setupFestivals(this.gamedatas.festivals);
         this.displayTickets(this.gamedatas.tickets);
         this.displayEvents(this.gamedatas.events);
@@ -2605,6 +2594,11 @@ var Festivibes = /** @class */ (function () {
             });
         }
     };
+    Festivibes.prototype.unselectAll = function () {
+        Object.values(this.eventStocks).forEach(function (s) { return s.unselectAll(true); });
+        Object.values(this.festivalStocks).forEach(function (s) { return s.unselectAll(true); });
+        Object.values(this.ticketStocks).forEach(function (s) { return s.unselectAll(true); });
+    };
     Festivibes.prototype.checkIfPlayCardPossible = function () {
         if (this.isCurrentPlayerActive()) {
             var selectedFestival = this.getSelectedFestival();
@@ -2617,6 +2611,7 @@ var Festivibes = /** @class */ (function () {
                             'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
                             'festivalId': selectedFestival.id
                         });
+                        this.unselectAll();
                     }
                     break;
                 case 'discardEvent':
@@ -2624,6 +2619,7 @@ var Festivibes = /** @class */ (function () {
                         this.takeAction('discardEvent', {
                             'cardId': selectedEvents[0].id
                         });
+                        this.unselectAll();
                     }
                     break;
                 case 'swapEvent':
@@ -2632,6 +2628,7 @@ var Festivibes = /** @class */ (function () {
                             'cardId1': selectedEvents[0].id,
                             'cardId2': selectedEvents[1].id
                         });
+                        this.unselectAll();
                     }
                     break;
                 case 'swapEventWithHand':
@@ -2641,6 +2638,7 @@ var Festivibes = /** @class */ (function () {
                             'cardFromFestivalId': selectedEvents[0].id,
                             'cardFromHandId': handSelection[0].id
                         });
+                        this.unselectAll();
                     }
                     break;
                 case 'swapTicket':
@@ -2649,6 +2647,7 @@ var Festivibes = /** @class */ (function () {
                             'cardId1': selectedTickets[0].id,
                             'cardId2': selectedTickets[1].id
                         });
+                        this.unselectAll();
                     }
                     break;
                 case 'replaceTicket':
@@ -2656,6 +2655,7 @@ var Festivibes = /** @class */ (function () {
                         this.takeAction('replaceTicket', {
                             'ticketId': selectedTickets[0].id
                         });
+                        this.unselectAll();
                     }
                     break;
                 default:
@@ -2920,16 +2920,6 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.setSelectionModeOnFestivals = function (mode) {
         Object.values(this.festivalStocks).forEach(function (s) { return s.setSelectionMode(mode); });
     };
-    /**
-     * Show score board.
-     */
-    Festivibes.prototype.onEnteringEndScore = function () {
-        var lastTurnBar = document.getElementById('last-round');
-        if (lastTurnBar) {
-            lastTurnBar.style.display = 'none';
-        }
-        document.getElementById('score').style.display = 'flex';
-    };
     // onLeavingState: this method is called each time we are leaving a game state.
     //                 You can use this method to perform some user interface changes at this moment.
     //
@@ -3004,7 +2994,8 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.playCustomSound = function (sound, playNextMoveSound) {
         if (playNextMoveSound === void 0) { playNextMoveSound = true; }
         if (this.isCustomSoundsOn()) {
-            playSound(sound);
+            ;
+            this.playSound(sound);
             playNextMoveSound && this.disableNextMoveSound();
         }
     };
@@ -3138,10 +3129,6 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.getPlayerId = function () {
         return Number(this.player_id);
-    };
-    Festivibes.prototype.getPlayerScore = function (playerId) {
-        var _a, _b;
-        return (_b = (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.getValue()) !== null && _b !== void 0 ? _b : Number(this.gamedatas.players[playerId].score);
     };
     Festivibes.prototype.getPlayersCount = function () {
         return Object.values(this.gamedatas.players).length;
@@ -3318,8 +3305,6 @@ var Festivibes = /** @class */ (function () {
         var notifs = [
             //['claimedRoute', ANIMATION_MS],
             ['points', 1],
-            ['score', ANIMATION_MS],
-            ['highlightWinnerScore', ANIMATION_MS],
             ['materialMove', ANIMATION_MS],
             ['lastTurn', 1]
         ];
@@ -3340,14 +3325,6 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.notif_lastTurn = function (animate) {
         if (animate === void 0) { animate = true; }
         dojo.place("<div id=\"last-round\">\n            <span class=\"last-round-text ".concat(animate ? 'animate' : '', "\">").concat(_('Finishing round before end of game!'), "</span>\n        </div>"), 'page-title');
-    };
-    /**
-     * Updates a total or subtotal
-     * @param notif
-     */
-    Festivibes.prototype.notif_score = function (notif) {
-        console.log('notif_score', notif);
-        this.scoreBoard.updateScore(notif.args.playerId, notif.args.scoreType, notif.args.score);
     };
     Festivibes.prototype.notif_materialMove = function (notif) {
         console.log('notif_materialMove', notif);
@@ -3403,12 +3380,12 @@ var Festivibes = /** @class */ (function () {
         switch (notif.args.to) {
             case 'HAND':
                 this.ticketStocks[notif.args.toArg].removeCard(card);
-                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket.used")).pop().classList.remove("used");
+                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket.used")).pop().classList.remove('used');
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);
                 log("tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)"));
-                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add("used");
+                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add('used');
                 break;
             default:
                 console.error('Ticket move destination not handled', notif);
@@ -3418,16 +3395,9 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.updateTicketsInPlayerBoard = function () {
         Object.values(this.gamedatas.players).forEach(function (p) {
             for (var index = 0; index < p.usedTicketsCount; index++) {
-                dojo.query("#tickets-".concat(p.id, "-wrapper .ticket:not(.used)")).pop().classList.add("used");
+                dojo.query("#tickets-".concat(p.id, "-wrapper .ticket:not(.used)")).pop().classList.add('used');
             }
         });
-    };
-    /**
-     * Highlight winner for end score.
-     */
-    Festivibes.prototype.notif_highlightWinnerScore = function (notif) {
-        var _a;
-        (_a = this.scoreBoard) === null || _a === void 0 ? void 0 : _a.highlightWinnerScore(notif.args.playerId);
     };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
@@ -3536,78 +3506,6 @@ function getPart(haystack, i, noException) {
     }
     return parts[i >= 0 ? i : len + i];
 }
-/**
- * End score board.
- * No notifications.
- */
-var ScoreBoard = /** @class */ (function () {
-    function ScoreBoard(game, players) {
-        this.game = game;
-        this.players = players;
-        var headers = document.getElementById('scoretr');
-        if (!headers.childElementCount) {
-            dojo.place("\n                <th></th>\n                <th id=\"th-destination-reached-score\" class=\"\">_(\"Events reached\")</th>\n                <th id=\"th-revealed-tokens-back-score\" class=\"\">_(\"Revealed events reached\")</th>\n                <th id=\"th-destination-unreached-score\" class=\"\">_(\"Events not reached\")</th>\n                <th id=\"th-revelead-tokens-left-score\" class=\"\">$(\"Revealed events not reached\")</th>\n                <th id=\"th-total-score\" class=\"total-score\">_(\"Total\")</th>\n            ", headers);
-        }
-        players.forEach(function (player) {
-            var playerId = Number(player.id);
-            /*dojo.place(
-                `<tr id="score${player.id}">
-                    <td id="score-name-${player.id}" class="player-name" style="color: #${
-                    player.color
-                }"><span id="score-winner-${player.id}"/> <span>${player.name}</span></td>
-                    <td id="destination-reached${player.id}" class="score-number">${
-                    player.completedEvents.length + player.sharedCompletedEventsCount
-                }</td>
-                    <td id="revealed-tokens-back${player.id}" class="score-number">${
-                    player.revealedTokensBackCount
-                }</td>
-                    <td id="destination-unreached${player.id}" class="score-number">${this.preventMinusZero(
-                    player.uncompletedEvents?.length
-                )}</td>
-                    <td id="revealed-tokens-left${player.id}" class="score-number">${this.preventMinusZero(
-                    player.revealedTokensLeftCount
-                )}</td>
-                    <td id="total${player.id}" class="score-number total">${player.score}</td>
-                </tr>`,
-                "score-table-body"
-            );*/
-        });
-    }
-    ScoreBoard.prototype.updateScores = function (players) {
-        /*players.forEach((p) => {
-            document.getElementById(`destination-reached${p.id}`).innerHTML = (
-                p.completedEvents.length + p.sharedCompletedEventsCount
-            ).toString();
-            document.getElementById(`revealed-tokens-back${p.id}`).innerHTML = p.revealedTokensBackCount.toString();
-            document.getElementById(`destination-unreached${p.id}`).innerHTML = this.preventMinusZero(
-                p.uncompletedEvents?.length
-            );
-            document.getElementById(`revealed-tokens-left${p.id}`).innerHTML = this.preventMinusZero(
-                p.revealedTokensLeftCount
-            );
-            document.getElementById(`total${p.id}`).innerHTML = p.score.toString();
-        });*/
-    };
-    ScoreBoard.prototype.preventMinusZero = function (score) {
-        if (score === 0) {
-            return '0';
-        }
-        return '-' + score.toString();
-    };
-    ScoreBoard.prototype.updateScore = function (playerId, scoreType, score) {
-        var elt = dojo.byId(scoreType);
-        elt.innerHTML = score.toString();
-        dojo.addClass(scoreType, 'animatedScore');
-    };
-    /**
-     * Add trophee icon to top score player(s)
-     */
-    ScoreBoard.prototype.highlightWinnerScore = function (playerId) {
-        document.getElementById("score".concat(playerId)).classList.add('highlight');
-        document.getElementById("score-winner-".concat(playerId)).classList.add('fa', 'fa-trophy', 'fa-lg');
-    };
-    return ScoreBoard;
-}());
 /**
  * Player table.
  */

@@ -165,19 +165,7 @@ class Festivibes extends Table {
 
         // private data : current player hidden informations
         $result['hand'] = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $currentPlayerId));
-
-
-        if ($isEnd) {
-            $maxScore = max(array_map(fn ($player) => intval($player['score']), $result['players']));
-            $result['winners'] = array_keys(array_filter($result['players'], fn ($player) => intval($player['score'] == $maxScore)));
-            if (count($result['winners']) > 1) {
-                $tieWinners =  array_filter($result['players'], fn ($player) => in_array($player["id"], $result['winners']));
-                $maxScore = max(array_map(fn ($player) => intval($player['scoreAux']), $tieWinners));
-                $result['winners'] = array_keys(array_filter($tieWinners, fn ($player) => intval($player['scoreAux'] == $maxScore)));
-            }
-        } else {
-            $result['lastTurn'] = false;
-        }
+        $result['lastTurn'] = false;
         return $result;
     }
 

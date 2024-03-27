@@ -41,7 +41,6 @@
 		"src/festivibes-animation.ts",
 		"src/stock-utils.ts",
 		"src/utils.ts",
-		"src/end-score/end-score.ts",
 		"src/player-table/player-table.ts",
 		"src/settings.ts",
 		"src/gamefeatureconfig.ts"
