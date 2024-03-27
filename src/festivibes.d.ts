@@ -19,12 +19,14 @@ interface Card {
 interface FestivalCard extends Card {
 	cardsCount: number
 }
-interface EventCard extends Card {action: string}
+interface EventCard extends Card {
+	action: string
+}
 interface TicketCard extends Card {}
 
 interface FestivibesPlayer extends Player {
-	playerNo: number,
-	usedTicketsCount: number,
+	playerNo: number
+	usedTicketsCount: number
 }
 
 interface FestivibesGamedatas {
@@ -73,21 +75,21 @@ interface DiscardEventActionArgs {
 }
 
 interface SwapEventsActionArgs {
-	selectableCardsByFestival: { [festivalId: number]: Array<EventCard> },
-	mandatoryCardAmong: Array<EventCard>,
-	mandatoryFestivalId:number
+	selectableCardsByFestival: { [festivalId: number]: Array<EventCard> }
+	mandatoryCardAmong: Array<EventCard>
+	mandatoryFestivalId: number
 }
 
 interface SwapEventsWithHandActionArgs {
-	mandatoryCardAmong: Array<EventCard>,
-	mandatoryFestivalId:number
+	mandatoryCardAmong: Array<EventCard>
+	mandatoryFestivalId: number
 }
 
 interface SwapTicketsActionArgs {
-	selectableCardsByFestival: { [festivalId: number]: Array<TicketCard> },
-	mandatoryCardAmong: Array<TicketCard>,
-	mandatoryFestivalId: number,
-	swapMyTicket:boolean
+	selectableCardsByFestival: { [festivalId: number]: Array<TicketCard> }
+	mandatoryCardAmong: Array<TicketCard>
+	mandatoryFestivalId: number
+	swapMyTicket: boolean
 }
 
 interface ReplaceTicketActionArgs {

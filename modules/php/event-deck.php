@@ -113,7 +113,7 @@ trait EventDeckTrait {
         ]);
     }
 
-    public function discardEventAndReorderFestival(EventCard $card){
+    public function discardEventAndReorderFestival(EventCard $card) {
         $this->events->playCard($card->id);
         $festival = $this->getFestivalFromCardLocation($card->location);
         $this->notifyWithName('materialMove', clienttranslate('${player_name} discards a ${cardValue} in the festival ${festivalOrder}'), [
@@ -127,9 +127,9 @@ trait EventDeckTrait {
         ]);
 
         foreach ($this->getEventsOnFestival($festival->id) as $evt) {
-            if($evt->location_arg > $card->location_arg){
+            if ($evt->location_arg > $card->location_arg) {
                 //move the card in the lower slot
-                $this->events->moveCard($evt->id, $evt->location, $evt->location_arg-1);
+                $this->events->moveCard($evt->id, $evt->location, $evt->location_arg - 1);
                 $this->notifyWithName('materialMove', "", [
                     'type' => MATERIAL_TYPE_EVENT,
                     'from' => MATERIAL_LOCATION_FESTIVAL,

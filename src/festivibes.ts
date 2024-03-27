@@ -45,8 +45,8 @@ class Festivibes implements FestivibesGame {
 	private settings = [new Setting('customSounds', 'pref', 1)]
 	public clientActionData: ClientActionData
 	private festivalStocks: { [festId: number]: LineStock<FestivalCard> } = []
-	private eventStocks: { [festId: number]: LineStock<EventCard> } = []
-	private ticketStocks: { [festId: number]: LineStock<TicketCard> } = []
+	private eventStocks: { [festId: number]: SlotStock<EventCard> } = []
+	private ticketStocks: { [festId: number]: SlotStock<TicketCard> } = []
 
 	constructor() {
 		console.log('festivibes constructor')
@@ -151,7 +151,7 @@ class Festivibes implements FestivibesGame {
 				gap: '0px',
 				direction: 'column',
 				wrap: 'nowrap',
-				slotsIds: this.generateSlotsIds(`evt-${fest.id}-`, fest.cardsCount),
+				slotsIds: this.generateSlotsIds(`evt-${fest.id}-`, fest.cardsCount + 1), //+1 for possible increase
 				mapCardToSlot: (card) => `evt-${fest.id}-${card.location_arg}`
 			})
 			this.eventStocks[fest.id].onSelectionChange = (selection: EventCard[], lastChange: EventCard) => {
@@ -161,6 +161,7 @@ class Festivibes implements FestivibesGame {
 		dojo.query('.event-slot .slot').forEach(function (node: HTMLElement, index, arr) {
 			node.style.zIndex = (100 - index).toString()
 		})
+		dojo.query('.event-slot .slot:last-child').addClass('hidden')
 	}
 
 	private onSlotClick(evt) {
@@ -308,8 +309,21 @@ class Festivibes implements FestivibesGame {
 
 	private displayEvents(events: { [festivalId: number]: Array<EventCard> }) {
 		Object.entries(events).forEach(([festId, events]) => {
+			this.adjustSlotsIfNeeded(festId, events)
 			this.eventStocks[festId].addCards(events)
 		})
+	}
+
+	private setHiddenSlotVisible(festivalId: string, visible: boolean) {
+		dojo.query(`#events-${festivalId} .slot:last-child`).toggleClass('hidden', !visible)
+	}
+
+	private adjustSlotsIfNeeded(festId: string, events: EventCard[]) {
+		if (events.some((evt) => evt.action == ACTION_INC_FESTIVAL_SIZE)) {
+			this.setHiddenSlotVisible(festId, true)
+		} else {
+			this.setHiddenSlotVisible(festId, false)
+		}
 	}
 
 	private generateSlotsIds(prefix: string, limit: number) {
@@ -1112,9 +1126,11 @@ class Festivibes implements FestivibesGame {
 		switch (notif.args.to) {
 			case 'FESTIVAL':
 				this.eventStocks[notif.args.toArg].addCard(card)
+				this.adjustSlotsIfNeeded(notif.args.toArg.toString(), this.eventStocks[notif.args.toArg].getCards())
 				break
 			case 'DECK':
 				this.eventStocks[notif.args.toArg].removeCard(card)
+				this.adjustSlotsIfNeeded(notif.args.toArg.toString(), this.eventStocks[notif.args.toArg].getCards())
 				break
 			case 'HAND':
 				if (notif.args.toArg == this.getPlayerId()) {

@@ -2558,7 +2558,7 @@ var Festivibes = /** @class */ (function () {
                 gap: '0px',
                 direction: 'column',
                 wrap: 'nowrap',
-                slotsIds: _this.generateSlotsIds("evt-".concat(fest.id, "-"), fest.cardsCount),
+                slotsIds: _this.generateSlotsIds("evt-".concat(fest.id, "-"), fest.cardsCount + 1),
                 mapCardToSlot: function (card) { return "evt-".concat(fest.id, "-").concat(card.location_arg); }
             });
             _this.eventStocks[fest.id].onSelectionChange = function (selection, lastChange) {
@@ -2568,6 +2568,7 @@ var Festivibes = /** @class */ (function () {
         dojo.query('.event-slot .slot').forEach(function (node, index, arr) {
             node.style.zIndex = (100 - index).toString();
         });
+        dojo.query('.event-slot .slot:last-child').addClass('hidden');
     };
     Festivibes.prototype.onSlotClick = function (evt) {
         if (this.isCurrentPlayerActive()) {
@@ -2714,8 +2715,20 @@ var Festivibes = /** @class */ (function () {
         var _this = this;
         Object.entries(events).forEach(function (_a) {
             var festId = _a[0], events = _a[1];
+            _this.adjustSlotsIfNeeded(festId, events);
             _this.eventStocks[festId].addCards(events);
         });
+    };
+    Festivibes.prototype.setHiddenSlotVisible = function (festivalId, visible) {
+        dojo.query("#events-".concat(festivalId, " .slot:last-child")).toggleClass('hidden', !visible);
+    };
+    Festivibes.prototype.adjustSlotsIfNeeded = function (festId, events) {
+        if (events.some(function (evt) { return evt.action == ACTION_INC_FESTIVAL_SIZE; })) {
+            this.setHiddenSlotVisible(festId, true);
+        }
+        else {
+            this.setHiddenSlotVisible(festId, false);
+        }
     };
     Festivibes.prototype.generateSlotsIds = function (prefix, limit) {
         var ids = [];
@@ -3351,9 +3364,11 @@ var Festivibes = /** @class */ (function () {
         switch (notif.args.to) {
             case 'FESTIVAL':
                 this.eventStocks[notif.args.toArg].addCard(card);
+                this.adjustSlotsIfNeeded(notif.args.toArg.toString(), this.eventStocks[notif.args.toArg].getCards());
                 break;
             case 'DECK':
                 this.eventStocks[notif.args.toArg].removeCard(card);
+                this.adjustSlotsIfNeeded(notif.args.toArg.toString(), this.eventStocks[notif.args.toArg].getCards());
                 break;
             case 'HAND':
                 if (notif.args.toArg == this.getPlayerId()) {
