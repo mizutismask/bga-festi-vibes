@@ -83,7 +83,6 @@ trait EventDeckTrait {
             'festivalOrder1' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt1->location)),
             'festivalOrder2' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt2->location)),
         ]);
-
     }
 
     /* public function checkVisibleSharedCardsAreEnough() {
@@ -152,6 +151,15 @@ trait EventDeckTrait {
      */
     private function pickEvents($playerId, int $number) {
         $cards = $this->getEventsFromDb($this->events->pickCardsForLocation($number, 'deck', "hand", "$playerId"));
+
+        $this->notifyWithName('materialMove', "", [
+            'type' => MATERIAL_TYPE_EVENT,
+            'from' => MATERIAL_LOCATION_DECK,
+            'to' => MATERIAL_LOCATION_HAND,
+            'toArg' => $playerId,
+            'material' => $cards,
+            $playerId
+        ]);
         return $cards;
     }
 
