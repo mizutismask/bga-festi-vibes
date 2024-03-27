@@ -38,6 +38,10 @@ trait TicketDeckTrait {
         return $this->tickets->countCardInLocation("hand", $playerId) > 0;
     }
 
+    public function getTicketsInHandCount($playerId){
+        return $this->tickets->countCardInLocation("hand", $playerId);
+    }
+
     public function placeTicketOnFestivalSlot($playerId, $festivalId, $slotId) {
         $freeTickets = $this->getTicketsFromDb($this->tickets->getCardsInLocation("hand", $playerId));
         $ticket = array_pop($freeTickets);
@@ -48,6 +52,7 @@ trait TicketDeckTrait {
         $this->notifyWithName('materialMove', clienttranslate('🎟️ ${player_name} places a ticket in the festival ${festivalOrder}'), [
             'type' => MATERIAL_TYPE_TICKET,
             'from' => MATERIAL_LOCATION_HAND,
+            'fromArg' => $playerId,
             'to' => MATERIAL_LOCATION_FESTIVAL,
             'toArg' => $festivalId,
             'material' => [$card],

@@ -2522,6 +2522,7 @@ var Festivibes = /** @class */ (function () {
         this.setupFestivals(this.gamedatas.festivals);
         this.displayTickets(this.gamedatas.tickets);
         this.displayEvents(this.gamedatas.events);
+        this.updateTicketsInPlayerBoard();
         console.log('Ending game setup');
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
@@ -3402,14 +3403,24 @@ var Festivibes = /** @class */ (function () {
         switch (notif.args.to) {
             case 'HAND':
                 this.ticketStocks[notif.args.toArg].removeCard(card);
+                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket.used")).pop().classList.remove("used");
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);
+                log("tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)"));
+                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add("used");
                 break;
             default:
                 console.error('Ticket move destination not handled', notif);
                 break;
         }
+    };
+    Festivibes.prototype.updateTicketsInPlayerBoard = function () {
+        Object.values(this.gamedatas.players).forEach(function (p) {
+            for (var index = 0; index < p.usedTicketsCount; index++) {
+                dojo.query("#tickets-".concat(p.id, "-wrapper .ticket:not(.used)")).pop().classList.add("used");
+            }
+        });
     };
     /**
      * Highlight winner for end score.

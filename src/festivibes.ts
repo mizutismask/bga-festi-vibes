@@ -110,6 +110,7 @@ class Festivibes implements FestivibesGame {
 		this.setupFestivals(this.gamedatas.festivals)
 		this.displayTickets(this.gamedatas.tickets)
 		this.displayEvents(this.gamedatas.events)
+		this.updateTicketsInPlayerBoard()
 		console.log('Ending game setup')
 	}
 
@@ -1168,15 +1169,26 @@ class Festivibes implements FestivibesGame {
 		switch (notif.args.to) {
 			case 'HAND':
 				this.ticketStocks[notif.args.toArg].removeCard(card)
+				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket.used`).pop().classList.remove("used")
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)
+				log(`tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`)
+				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add("used")
 				break
 
 			default:
 				console.error('Ticket move destination not handled', notif)
 				break
 		}
+	}
+
+	private updateTicketsInPlayerBoard() {
+		Object.values(this.gamedatas.players).forEach(p => {
+			for (let index = 0; index < p.usedTicketsCount; index++) {
+				dojo.query(`#tickets-${p.id}-wrapper .ticket:not(.used)`).pop().classList.add("used")
+			}
+		})
 	}
 
 	/**

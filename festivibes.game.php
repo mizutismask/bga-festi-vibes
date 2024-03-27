@@ -154,6 +154,7 @@ class Festivibes extends Table {
 
         foreach ($result['players'] as $playerId => &$player) {
             $player['playerNo'] = intval($player['playerNo']);
+            $player['usedTicketsCount'] = 3 - $this->getTicketsInHandCount($playerId);
         }
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -164,7 +165,7 @@ class Festivibes extends Table {
 
         // private data : current player hidden informations
         $result['hand'] = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $currentPlayerId));
-        
+
 
         if ($isEnd) {
             $maxScore = max(array_map(fn ($player) => intval($player['score']), $result['players']));
@@ -288,7 +289,7 @@ class Festivibes extends Table {
         self::warn("upgradeTableDb complete: from_version=$from_version");
     }
 
-    function notifyMaterialMove($material, $msg="") {
+    function notifyMaterialMove($material, $msg = "") {
 
         $this->notifyAllPlayers('materialMove', $msg, [
             'type' => MATERIAL_TYPE_CARD,

@@ -23,7 +23,8 @@ interface EventCard extends Card {action: string}
 interface TicketCard extends Card {}
 
 interface FestivibesPlayer extends Player {
-	playerNo: number
+	playerNo: number,
+	usedTicketsCount: number,
 }
 
 interface FestivibesGamedatas {
