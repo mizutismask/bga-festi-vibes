@@ -19,7 +19,7 @@ interface Card {
 interface FestivalCard extends Card {
 	cardsCount: number
 }
-interface EventCard extends Card {}
+interface EventCard extends Card {action: string}
 interface TicketCard extends Card {}
 
 interface FestivibesPlayer extends Player {

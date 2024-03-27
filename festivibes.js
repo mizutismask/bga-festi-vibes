@@ -2313,6 +2313,14 @@ var FestivalCardsManager = /** @class */ (function (_super) {
     return FestivalCardsManager;
 }(CardManager));
 // <reference path="../card-manager.ts"/>
+var ACTION_SWAP_ANY_TICKETS = 'SWAP_ANY_TICKETS';
+var ACTION_SWAP_MY_TICKET = 'SWAP_MY_TICKET';
+var ACTION_REPLACE_TICKET = 'REPLACE_TICKET';
+var ACTION_SWAP_EVENT = 'SWAP_EVENT';
+var ACTION_DISCARD_EVENT = 'DISCARD_EVENT';
+var ACTION_INC_FESTIVAL_SIZE = 'INC_FESTIVAL_SIZE';
+var ACTION_SWAP_EVENT_WITH_HAND = 'SWAP_EVENT_WITH_HAND';
+var NO_ACTION = 'NO_ACTION';
 var EventCardsManager = /** @class */ (function (_super) {
     __extends(EventCardsManager, _super);
     function EventCardsManager(game) {
@@ -2348,25 +2356,33 @@ var EventCardsManager = /** @class */ (function (_super) {
             }
         }) || this;
         _this.game = game;
+        _this.actionHelps = _this.initActionHelps();
         return _this;
     }
+    EventCardsManager.prototype.initActionHelps = function () {
+        var map = new Map();
+        map.set(ACTION_DISCARD_EVENT, _('Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'));
+        map.set(ACTION_INC_FESTIVAL_SIZE, _('This card increases the Event card limit by one in whichever column it is used, for as long as it stays there.'));
+        map.set(ACTION_REPLACE_TICKET, _('Replace another player’s Ticket card in this column with one of your own that has not yet been played. The removed Ticket card is placed in another open spot chosen by the other player. <bold>If it is their last card played, two points are taken from their final score.</bold>'));
+        map.set(ACTION_SWAP_ANY_TICKETS, _('Swap one Ticket card from this column, whether it is one of your own or from an opposing player, with a Ticket card taken from another Festival column, whether it belongs to you or not.'));
+        map.set(ACTION_SWAP_EVENT, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from a different column.'));
+        map.set(ACTION_SWAP_EVENT_WITH_HAND, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from your hand.'));
+        map.set(ACTION_SWAP_MY_TICKET, _('Swap one of your Ticket cards from this column with another player’s Ticket card from another column.'));
+        map.set(NO_ACTION, _('This card has no action.'));
+        return map;
+    };
     EventCardsManager.prototype.getCardName = function (cardTypeId) {
         return 'todo';
     };
-    EventCardsManager.prototype.getTooltip = function (card, cardUniqueId) {
-        /*let tooltip = `
-        <div class="xpd-city-zoom-wrapper">
+    /*
+<div class="help-action-wrapper">
             <div id="xpd-city-${cardUniqueId}-zoom" class="xpd-city-zoom" style="${getBackgroundInlineStyleForEventCard(
             card
         )}"></div>
-            <div class="xpd-city-zoom-desc-wrapper">
-                <div class="xpd-city">${dojo.string.substitute(_('${to}'), {
-                    to: 'replace'
-                })}</div>
-            </div>
-        </div>`*/
-        //return tooltip
-        return "tooltip";
+        */
+    EventCardsManager.prototype.getTooltip = function (card, cardUniqueId) {
+        var tooltip = "\n\t\t\n\t\t\t<div class=\"xpd-city-zoom-desc-wrapper\">\n\t\t\t\t<div class=\"xpd-city\">".concat(this.actionHelps.get(card.action), "</div>\n\t\t\t</div>\n\t\t</div>");
+        return tooltip;
     };
     EventCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
         var eventsUrl = "".concat(g_gamethemeurl, "img/eventCards.jpg");
@@ -3645,7 +3661,7 @@ var GameFeatureConfig = /** @class */ (function () {
         /** Adds colored <> around the player name in miniboards to show who are the previous and next players. */
         this._showPlayerOrderHints = true;
         /** Shows a player help card in the player miniboard. */
-        this._showPlayerHelp = true;
+        this._showPlayerHelp = false;
         /** Shows a first player icon in the player miniboard */
         this._showFirstPlayer = false;
     }
