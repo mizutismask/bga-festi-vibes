@@ -82,7 +82,7 @@ trait ContextTrait {
                 return $this->doesFestivalHaveTicket($ticketsByFest, $festivalId)  && $this->doesOtherFestivalHaveTicket($ticketsByFest, $festivalId);
                 break;
             case ACTION_SWAP_EVENT_WITH_HAND:
-                return count($this->getPlayerEvents($playerId)) > 0 && count($this->getEventsOnFestival($festivalId)) > 0;
+                return count($this->getPlayerEvents($playerId)) > 0 && count($this->getEventsOnFestival($festivalId)) > 1;
                 break;
             default:
                 throw new BgaVisibleSystemException(self::_("This action does not exist " . $action));
