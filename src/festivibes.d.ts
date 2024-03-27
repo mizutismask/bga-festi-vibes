@@ -91,6 +91,11 @@ interface SwapTicketsActionArgs {
 	swapMyTicket:boolean
 }
 
+interface ReplaceTicketActionArgs {
+	mandatoryCardAmong: Array<TicketCard>
+	mandatoryFestivalId: number
+}
+
 interface NotifPointsArgs {
 	playerId: number
 	points: number

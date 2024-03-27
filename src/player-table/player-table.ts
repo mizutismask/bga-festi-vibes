@@ -52,4 +52,8 @@ class PlayerTable {
 	public getSelection() {
 		return this.handStock.getSelection();
 	}
+
+	public addCard(card: EventCard) {
+		this.handStock.addCard(card)
+	}
 }

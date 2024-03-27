@@ -2525,14 +2525,7 @@ var Festivibes = /** @class */ (function () {
                 _this.checkIfPlayCardPossible();
             };
         });
-        dojo.query('.ticket-slot .slot').connect('click', this, function (evt) {
-            if (_this.isCurrentPlayerActive() && _this.gamedatas.gamestate.name === 'chooseAction') {
-                var festivalId = getPart(evt.target.dataset.slotId, 0);
-                var slotId = getPart(evt.target.dataset.slotId, -1);
-                log('click on festival', festivalId, ' slot ', slotId);
-                _this.takeAction('placeTicket', { 'festivalId': festivalId, 'slotId': slotId });
-            }
-        });
+        dojo.query('.ticket-slot .slot').connect('click', this, function (evt) { return _this.onSlotClick(evt); });
         festivals.forEach(function (fest) {
             var divId = 'festival-' + fest.id;
             dojo.place(_this.createDiv('', divId), 'festivals');
@@ -2569,6 +2562,22 @@ var Festivibes = /** @class */ (function () {
         dojo.query('.event-slot .slot').forEach(function (node, index, arr) {
             node.style.zIndex = (100 - index).toString();
         });
+    };
+    Festivibes.prototype.onSlotClick = function (evt) {
+        if (this.isCurrentPlayerActive()) {
+            if (this.gamedatas.gamestate.name === 'chooseAction') {
+                this.takeSlotAction('placeTicket', evt);
+            }
+            else if (this.gamedatas.gamestate.name === 'repositionTicket') {
+                this.takeSlotAction('repositionTicket', evt);
+            }
+        }
+    };
+    Festivibes.prototype.takeSlotAction = function (action, evt) {
+        var festivalId = getPart(evt.target.dataset.slotId, 0);
+        var slotId = getPart(evt.target.dataset.slotId, -1);
+        log('click on festival', festivalId, ' slot ', slotId);
+        this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId });
     };
     Festivibes.prototype.ensureOnlyOneFestivalSelected = function (festivalId) {
         if (this.festivalStocks[festivalId].getSelection()) {
@@ -2619,17 +2628,17 @@ var Festivibes = /** @class */ (function () {
                     break;
                 case 'swapTicket':
                     if (this.getSelectedTicketsByFestival().size == 2) {
-                        /*if ((this.gamedatas.gamestate.args.args as SwapTicketsActionArgs).swapMyTicket) {
-                            this.takeAction('swapTicket', {
-                                'cardId1': selectedEvents[0].id,
-                                'cardId2': selectedEvents[1].id
-                            })
-                        } else {*/
                         this.takeAction('swapTicket', {
                             'cardId1': selectedTickets[0].id,
                             'cardId2': selectedTickets[1].id
                         });
-                        //}
+                    }
+                    break;
+                case 'replaceTicket':
+                    if (selectedTickets.length == 1) {
+                        this.takeAction('replaceTicket', {
+                            'ticketId': selectedTickets[0].id
+                        });
                     }
                     break;
                 default:
@@ -2797,6 +2806,18 @@ var Festivibes = /** @class */ (function () {
                     this.onEnteringSwapTicket(dataArgs);
                 }
                 break;
+            case 'replaceTicket':
+                if (args === null || args === void 0 ? void 0 : args.args) {
+                    var dataArgs = args.args;
+                    this.onEnteringReplaceTicket(dataArgs);
+                }
+                break;
+            case 'repositionTicket':
+                //if (args?.args) {
+                //const dataArgs = args.args as ReplaceTicketActionArgs
+                this.onEnteringRepositionTicket();
+                //}
+                break;
         }
         if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
             this.addArrowsToActivePlayer(args);
@@ -2845,6 +2866,22 @@ var Festivibes = /** @class */ (function () {
                 _this.ticketStocks[festId].setSelectableCards(events);
             });
             this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+        }
+    };
+    Festivibes.prototype.onEnteringReplaceTicket = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('none');
+            this.setSelectionModeOnFestivals('none');
+            this.setSelectionModeOnTickets('none');
+            this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single');
+            this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+        }
+    };
+    Festivibes.prototype.onEnteringRepositionTicket = function () {
+        if (this.isCurrentPlayerActive()) {
+            this.setSelectionModeOnEvents('none');
+            this.setSelectionModeOnFestivals('none');
+            this.setSelectionModeOnTickets('none');
         }
     };
     Festivibes.prototype.onEnteringSwapEventWithHand = function (args) {
@@ -3324,6 +3361,9 @@ var Festivibes = /** @class */ (function () {
             case 'DECK':
                 this.eventStocks[notif.args.toArg].removeCard(card);
                 break;
+            case 'HAND':
+                this.playerTables[notif.args.toArg].addCard(card);
+                break;
             default:
                 console.error('Event move destination not handled', notif);
                 break;
@@ -3343,15 +3383,15 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.notif_ticketMove = function (cards, notif) {
         var card = cards.at(0);
-        switch (notif.args.from) {
+        switch (notif.args.to) {
             case 'HAND':
-                this.ticketStocks[notif.args.toArg].addCard(card);
+                this.ticketStocks[notif.args.toArg].removeCard(card);
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);
                 break;
             default:
-                console.error('Ticket move from not handled', notif);
+                console.error('Ticket move destination not handled', notif);
                 break;
         }
     };
@@ -3578,6 +3618,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.getSelection = function () {
         return this.handStock.getSelection();
+    };
+    PlayerTable.prototype.addCard = function (card) {
+        this.handStock.addCard(card);
     };
     return PlayerTable;
 }());

@@ -97,10 +97,11 @@ trait ArgsTrait {
     }
     function argReplaceTicket() {
         $playerId = intval(self::getActivePlayerId());
-
-        $canPass = false;
+        $situation = $this->dbGetLastContextToResolve();
+        $festId = $situation["param2"];
         return [
-            'canPass' => $canPass,
+            'mandatoryFestivalId' => $festId,
+            'mandatoryCardAmong' =>  $this->getTicketsOnFestival($festId),
         ];
     }
 }

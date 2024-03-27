@@ -23,7 +23,7 @@ trait FestivalDeckTrait {
         }
     }
 
-    public function isFestivalFull($festivalId) {
+    public function isFestivalSoldOut($festivalId) {
         $festival = $this->getFestivalFromDb($this->festivals->getCard($festivalId));
         $events = $this->getEventsOnFestival($festivalId);
         $modifier = $this->isEventOnFestival($festivalId, 7);

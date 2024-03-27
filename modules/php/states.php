@@ -23,7 +23,7 @@ trait StateTrait {
 
     function hasReachedEndOfGameRequirements($playerId): bool {
         $festivals = $this->getFestivals();
-        return $this->array_every($festivals, fn($fest)=>$this->isFestivalFull($fest->id));
+        return $this->array_every($festivals, fn ($fest) => $this->isFestivalSoldOut($fest->id));
     }
 
     function stNextPlayer() {
@@ -34,6 +34,13 @@ trait StateTrait {
             return;
         }
 
+        $owner = $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER);
+        if($owner){
+            $context = $this->dbGetLastContextToResolve();
+            $this->gamestate->changeActivePlayer($context["player"]);
+            $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, null);
+        }
+
         if ( $this->hasReachedEndOfGameRequirements($playerId)) {
             $this->gamestate->nextState('endScore');
         } else {
@@ -42,6 +49,13 @@ trait StateTrait {
             $this->activateNextPlayerCustom();
             $this->gamestate->nextState('nextPlayer');
         }
+    }
+
+    function stActivateReplacedTicketOwner()
+    {
+        self::dump('*******************$this->getGlobalVariable(GS_REPLACED_TICKET_OWNER)', $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER));
+        $this->gamestate->changeActivePlayer($this->getGlobalVariable(GS_REPLACED_TICKET_OWNER));
+        $this->gamestate->nextState('repositionTicket');
     }
 
     /**

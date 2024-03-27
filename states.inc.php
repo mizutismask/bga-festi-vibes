@@ -155,7 +155,7 @@ $playerActionsGameStates = [
             "replaceTicket", 
         ],
         "transitions" => [
-            "nextPlayer" => ST_NEXT_PLAYER,
+            "repositionTicket" => ST_PREPARE_REPOSITION_TICKET,
         ]
     ],
 
@@ -169,6 +169,19 @@ $playerActionsGameStates = [
         "args" => "argSwapTicket",
         "possibleactions" => [
             "swapTicket", 
+        ],
+        "transitions" => [
+            "nextPlayer" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_REPOSITION_TICKET => [
+        "name" => "repositionTicket",
+        "description" => clienttranslate('${actplayer} must reposition his ticket on an empty festival slot'),
+        "descriptionmyturn" => clienttranslate('${you} must reposition your ticket on an empty festival slot'),
+        "type" => "activeplayer",
+        "possibleactions" => [
+            "repositionTicket",
         ],
         "transitions" => [
             "nextPlayer" => ST_NEXT_PLAYER,
@@ -207,6 +220,16 @@ $gameGameStates = [
         "transitions" => [
             "endGame" => ST_END_GAME,
             "debugEndGame" => ST_DEBUG_END_GAME,
+        ],
+    ],
+
+    ST_PREPARE_REPOSITION_TICKET => [
+        "name" => "prepareRepositionTicket",
+        "description" => "",
+        "type" => "game",
+        "action" => "stActivateReplacedTicketOwner",
+        "transitions" => [
+            "repositionTicket" => ST_PLAYER_REPOSITION_TICKET,
         ],
     ],
 ];

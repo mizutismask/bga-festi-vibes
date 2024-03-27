@@ -4,6 +4,7 @@
  * BGA constants 
  */
 define("GS_PLAYER_TURN_NUMBER", 'playerturn_nbr');
+define("GS_REPLACED_TICKET_OWNER", 'GS_REPLACED_TICKET_OWNER');
 
 /*
  * Custom framework constants
@@ -64,7 +65,9 @@ define('ST_PLAYER_DISCARD_EVENT', 82);
 define('ST_PLAYER_REPLACE_TICKET', 83);
 define('ST_PLAYER_SWAP_TICKET', 84);
 define('ST_PLAYER_SWAP_EVENT_WITH_HAND', 85);
-//define('ST_PLAYER_SWAP_ANY_TICKETS', 86);
+define('ST_PLAYER_REPOSITION_TICKET', 86);
+define('ST_PREPARE_REPOSITION_TICKET', 87);
+//define('ST_PLAYER_SWAP_ANY_TICKETS', 87);
 
 define('ST_DEBUG_END_GAME', 97);
 define('ST_END_SCORE', 98);

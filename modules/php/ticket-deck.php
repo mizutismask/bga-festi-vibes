@@ -95,6 +95,27 @@ trait TicketDeckTrait {
             'festivalOrder1' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt1->location)),
             'festivalOrder2' => $this->getFestivalOrder($this->getFestivalFromCardLocation($evt2->location)),
         ]);
+    }
 
+    public function playTicketInsteadOfThisOne($removedTicket) {
+        $player = $this->array_find($this->getPlayers(), fn ($p) => $this->getColorFromHexValue($p["player_color"]) == $removedTicket->type_arg);
+        //self::dump('*******************player', $player);
+        $this->tickets->moveCard($removedTicket->id, "toReposition", $player["player_id"]);
+
+        $festivalId = $this->getFestivalIdFromCardLocation($removedTicket->location);
+        $this->notifyWithName('materialMove', clienttranslate('${player_name} removes a ticket from ${other_player_name}'), [
+            'type' => MATERIAL_TYPE_TICKET,
+            'from' => MATERIAL_LOCATION_FESTIVAL,
+            'to' => MATERIAL_LOCATION_HAND,
+            'fromArg' => $festivalId,
+            'material' => [$removedTicket],
+            'other_player_name' => $this->getPlayerName($player["player_id"]),
+        ]);
+        $this->placeTicketOnFestivalSlot($this->getMostlyActivePlayerId(), $festivalId, $removedTicket->location_arg);
+        return $player["player_id"];
+    }
+
+    public function isFestivalFull($festivalId) {
+        return $this->tickets->countCardInLocation("festival_", $festivalId) == 2;
     }
 }

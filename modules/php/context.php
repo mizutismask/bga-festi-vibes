@@ -36,6 +36,10 @@ trait ContextTrait {
                     $this->dbResolveContextLog($situation["id"]);
                     break;
 
+                case ACTION_REPLACE_TICKET:
+                    $nextState = "repositionTicket";
+                    break;
+
                 default:
                     # code...
                     break;

@@ -130,14 +130,7 @@ class Festivibes implements FestivibesGame {
 				this.checkIfPlayCardPossible()
 			}
 		})
-		dojo.query('.ticket-slot .slot').connect('click', this, (evt) => {
-			if ((this as any).isCurrentPlayerActive() && this.gamedatas.gamestate.name === 'chooseAction') {
-				const festivalId = getPart(evt.target.dataset.slotId, 0)
-				const slotId = getPart(evt.target.dataset.slotId, -1)
-				log('click on festival', festivalId, ' slot ', slotId)
-				this.takeAction('placeTicket', { 'festivalId': festivalId, 'slotId': slotId })
-			}
-		})
+		dojo.query('.ticket-slot .slot').connect('click', this, (evt) => this.onSlotClick(evt))
 
 		festivals.forEach((fest) => {
 			const divId = 'festival-' + fest.id
@@ -178,6 +171,23 @@ class Festivibes implements FestivibesGame {
 		dojo.query('.event-slot .slot').forEach(function (node: HTMLElement, index, arr) {
 			node.style.zIndex = (100 - index).toString()
 		})
+	}
+
+	private onSlotClick(evt) {
+		if ((this as any).isCurrentPlayerActive()) {
+			if (this.gamedatas.gamestate.name === 'chooseAction') {
+				this.takeSlotAction('placeTicket', evt)
+			} else if (this.gamedatas.gamestate.name === 'repositionTicket') {
+				this.takeSlotAction('repositionTicket', evt)
+			}
+		}
+	}
+
+	private takeSlotAction(action: 'placeTicket' | 'repositionTicket', evt) {
+		const festivalId = getPart(evt.target.dataset.slotId, 0)
+		const slotId = getPart(evt.target.dataset.slotId, -1)
+		log('click on festival', festivalId, ' slot ', slotId)
+		this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId })
 	}
 
 	private ensureOnlyOneFestivalSelected(festivalId: number) {
@@ -228,17 +238,17 @@ class Festivibes implements FestivibesGame {
 					break
 				case 'swapTicket':
 					if (this.getSelectedTicketsByFestival().size == 2) {
-						/*if ((this.gamedatas.gamestate.args.args as SwapTicketsActionArgs).swapMyTicket) {
-							this.takeAction('swapTicket', {
-								'cardId1': selectedEvents[0].id,
-								'cardId2': selectedEvents[1].id
-							})
-						} else {*/
 						this.takeAction('swapTicket', {
 							'cardId1': selectedTickets[0].id,
 							'cardId2': selectedTickets[1].id
 						})
-						//}
+					}
+					break
+				case 'replaceTicket':
+					if (selectedTickets.length == 1) {
+						this.takeAction('replaceTicket', {
+							'ticketId': selectedTickets[0].id
+						})
 					}
 					break
 				default:
@@ -464,6 +474,18 @@ class Festivibes implements FestivibesGame {
 					this.onEnteringSwapTicket(dataArgs)
 				}
 				break
+			case 'replaceTicket':
+				if (args?.args) {
+					const dataArgs = args.args as ReplaceTicketActionArgs
+					this.onEnteringReplaceTicket(dataArgs)
+				}
+				break
+			case 'repositionTicket':
+				//if (args?.args) {
+				//const dataArgs = args.args as ReplaceTicketActionArgs
+				this.onEnteringRepositionTicket()
+				//}
+				break
 		}
 		if (this.gameFeatures.spyOnActivePlayerInGeneralActions) {
 			this.addArrowsToActivePlayer(args)
@@ -510,6 +532,25 @@ class Festivibes implements FestivibesGame {
 				this.ticketStocks[festId].setSelectableCards(events)
 			})
 			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+		}
+	}
+
+	private onEnteringReplaceTicket(args: ReplaceTicketActionArgs) {
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('none')
+			this.setSelectionModeOnFestivals('none')
+			this.setSelectionModeOnTickets('none')
+
+			this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single')
+			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+		}
+	}
+
+	private onEnteringRepositionTicket() {
+		if ((this as any).isCurrentPlayerActive()) {
+			this.setSelectionModeOnEvents('none')
+			this.setSelectionModeOnFestivals('none')
+			this.setSelectionModeOnTickets('none')
 		}
 	}
 
@@ -1104,6 +1145,9 @@ class Festivibes implements FestivibesGame {
 			case 'DECK':
 				this.eventStocks[notif.args.toArg].removeCard(card)
 				break
+			case 'HAND':
+				this.playerTables[notif.args.toArg].addCard(card)
+				break
 
 			default:
 				console.error('Event move destination not handled', notif)
@@ -1125,16 +1169,16 @@ class Festivibes implements FestivibesGame {
 	}
 	private notif_ticketMove(cards: TicketCard[], notif: Notif<NotifMaterialMove>) {
 		const card = cards.at(0)
-		switch (notif.args.from) {
+		switch (notif.args.to) {
 			case 'HAND':
-				this.ticketStocks[notif.args.toArg].addCard(card)
+				this.ticketStocks[notif.args.toArg].removeCard(card)
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)
 				break
 
 			default:
-				console.error('Ticket move from not handled', notif)
+				console.error('Ticket move destination not handled', notif)
 				break
 		}
 	}
