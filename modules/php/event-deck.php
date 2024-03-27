@@ -152,13 +152,12 @@ trait EventDeckTrait {
     private function pickEvents($playerId, int $number) {
         $cards = $this->getEventsFromDb($this->events->pickCardsForLocation($number, 'deck', "hand", "$playerId"));
 
-        $this->notifyWithName('materialMove', "", [
+        $this->notifyPlayer($playerId, 'materialMove', "", [
             'type' => MATERIAL_TYPE_EVENT,
             'from' => MATERIAL_LOCATION_DECK,
             'to' => MATERIAL_LOCATION_HAND,
             'toArg' => $playerId,
-            'material' => $cards,
-            $playerId
+            'material' => $cards
         ]);
         return $cards;
     }
