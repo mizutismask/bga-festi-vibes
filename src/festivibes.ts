@@ -14,6 +14,8 @@
  * In this file, you are describing the logic of your user interface, in Typescript language.
  *
  */
+declare const playSound;
+ 
 const ANIMATION_MS = 500
 const SCORE_MS = 1500
 const IMAGE_FESTIVALS_PER_ROW = 6
@@ -713,7 +715,7 @@ class Festivibes implements FestivibesGame {
 	 */
 	public playCustomSound(sound: string, playNextMoveSound = true) {
 		if (this.isCustomSoundsOn()) {
-			;(this as any).playSound(sound)
+			playSound(sound)
 			playNextMoveSound && (this as any).disableNextMoveSound()
 		}
 	}
@@ -1158,6 +1160,7 @@ class Festivibes implements FestivibesGame {
 			case 'FESTIVAL':
 				if (notif.args.fromArg == notif.args.toArg) {
 					this.festivalStocks[notif.args.toArg].flipCard(card)
+					this.playCustomSound('clap', false)
 				} else {
 					this.festivalStocks[notif.args.toArg].addCard(card)
 				}
