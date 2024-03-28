@@ -2469,7 +2469,7 @@ var Festivibes = /** @class */ (function () {
         this.festivalStocks = [];
         this.eventStocks = [];
         this.ticketStocks = [];
-        console.log('festivibes constructor');
+        log('festivibes constructor');
         // Here, you can init the global variables of your user interface
         // Example:
         // this.myGlobalValue = 0;
@@ -2511,7 +2511,7 @@ var Festivibes = /** @class */ (function () {
         this.displayTickets(this.gamedatas.tickets);
         this.displayEvents(this.gamedatas.events);
         this.updateTicketsInPlayerBoard();
-        console.log('Ending game setup');
+        log('Ending game setup');
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
         var _this = this;
@@ -2804,7 +2804,7 @@ var Festivibes = /** @class */ (function () {
     //                  You can use this method to perform some user interface changes at this moment.
     //
     Festivibes.prototype.onEnteringState = function (stateName, args) {
-        console.log('Entering state: ' + stateName, args);
+        log('Entering state: ' + stateName, args);
         switch (stateName) {
             case 'chooseAction':
                 if (args === null || args === void 0 ? void 0 : args.args) {
@@ -2945,7 +2945,7 @@ var Festivibes = /** @class */ (function () {
     //                 You can use this method to perform some user interface changes at this moment.
     //
     Festivibes.prototype.onLeavingState = function (stateName) {
-        console.log('Leaving state: ' + stateName);
+        log('Leaving state: ' + stateName);
         switch (stateName) {
             /* Example:
         
@@ -2964,7 +2964,7 @@ var Festivibes = /** @class */ (function () {
     //                        action status bar (ie: the HTML links in the status bar).
     //
     Festivibes.prototype.onUpdateActionButtons = function (stateName, args) {
-        console.log('onUpdateActionButtons: ' + stateName);
+        log('onUpdateActionButtons: ' + stateName);
         if (this.isCurrentPlayerActive()) {
             switch (stateName
             /*
@@ -3084,7 +3084,7 @@ var Festivibes = /** @class */ (function () {
         this.addTooltipHtmlToClass(className, html, this.TOOLTIP_DELAY);
     };
     Festivibes.prototype.isNotSpectator = function () {
-        //console.log('isSpectator', (this as any).isSpectator)
+        //log('isSpectator', (this as any).isSpectator)
         return (this.isSpectator == false ||
             Object.keys(this.gamedatas.players).includes(this.getPlayerId().toString()));
     };
@@ -3313,7 +3313,7 @@ var Festivibes = /** @class */ (function () {
     */
     Festivibes.prototype.setupNotifications = function () {
         var _this = this;
-        console.log('notifications subscriptions setup');
+        log('notifications subscriptions setup');
         // TODO: here, associate your game notifications with local methods
         // Example 1: standard notification handling
         // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
@@ -3348,7 +3348,7 @@ var Festivibes = /** @class */ (function () {
         dojo.place("<div id=\"last-round\">\n            <span class=\"last-round-text ".concat(animate ? 'animate' : '', "\">").concat(_('Finishing round before end of game!'), "</span>\n        </div>"), 'page-title');
     };
     Festivibes.prototype.notif_materialMove = function (notif) {
-        console.log('notif_materialMove', notif);
+        log('notif_materialMove', notif);
         switch (notif.args.type) {
             case 'EVENT':
                 var cards = notif.args.material;
@@ -3567,7 +3567,7 @@ var PlayerTable = /** @class */ (function () {
             baseSettings['direction'] = 'col';
             baseSettings['wrap'] = 'wrap';
         }
-        //console.log('smallWidth', smallWidth, baseSettings)
+        //log('smallWidth', smallWidth, baseSettings)
         this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
         this.handStock.addCards(cards);

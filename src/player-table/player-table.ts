@@ -37,13 +37,9 @@ class PlayerTable {
 			baseSettings['wrap'] = 'wrap' as 'wrap'
 		}
 
-		//console.log('smallWidth', smallWidth, baseSettings)
+		//log('smallWidth', smallWidth, baseSettings)
 
-		this.handStock = new LineStock<EventCard>(
-			this.game.eventCardsManager,
-			$('hand-' + player.id),
-			baseSettings
-		)
+		this.handStock = new LineStock<EventCard>(this.game.eventCardsManager, $('hand-' + player.id), baseSettings)
 		this.handStock.setSelectionMode('single')
 		this.handStock.addCards(cards)
 	}

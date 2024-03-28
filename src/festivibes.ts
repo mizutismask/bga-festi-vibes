@@ -49,7 +49,7 @@ class Festivibes implements FestivibesGame {
 	private ticketStocks: { [festId: number]: SlotStock<TicketCard> } = []
 
 	constructor() {
-		console.log('festivibes constructor')
+		log('festivibes constructor')
 
 		// Here, you can init the global variables of your user interface
 		// Example:
@@ -100,7 +100,7 @@ class Festivibes implements FestivibesGame {
 		this.displayTickets(this.gamedatas.tickets)
 		this.displayEvents(this.gamedatas.events)
 		this.updateTicketsInPlayerBoard()
-		console.log('Ending game setup')
+		log('Ending game setup')
 	}
 
 	private setupFestivals(festivals: Array<FestivalCard>) {
@@ -454,7 +454,7 @@ class Festivibes implements FestivibesGame {
 	//                  You can use this method to perform some user interface changes at this moment.
 	//
 	public onEnteringState(stateName: string, args: any) {
-		console.log('Entering state: ' + stateName, args)
+		log('Entering state: ' + stateName, args)
 
 		switch (stateName) {
 			case 'chooseAction':
@@ -602,7 +602,7 @@ class Festivibes implements FestivibesGame {
 	//                 You can use this method to perform some user interface changes at this moment.
 	//
 	public onLeavingState(stateName: string) {
-		console.log('Leaving state: ' + stateName)
+		log('Leaving state: ' + stateName)
 
 		switch (stateName) {
 			/* Example:
@@ -624,7 +624,7 @@ class Festivibes implements FestivibesGame {
 	//                        action status bar (ie: the HTML links in the status bar).
 	//
 	public onUpdateActionButtons(stateName: string, args: any) {
-		console.log('onUpdateActionButtons: ' + stateName)
+		log('onUpdateActionButtons: ' + stateName)
 
 		if ((this as any).isCurrentPlayerActive()) {
 			switch (
@@ -785,7 +785,7 @@ class Festivibes implements FestivibesGame {
 	}
 
 	public isNotSpectator() {
-		//console.log('isSpectator', (this as any).isSpectator)
+		//log('isSpectator', (this as any).isSpectator)
 		return (
 			(this as any).isSpectator == false ||
 			Object.keys(this.gamedatas.players).includes(this.getPlayerId().toString())
@@ -1063,7 +1063,7 @@ class Festivibes implements FestivibesGame {
     
     */
 	setupNotifications() {
-		console.log('notifications subscriptions setup')
+		log('notifications subscriptions setup')
 
 		// TODO: here, associate your game notifications with local methods
 
@@ -1110,7 +1110,7 @@ class Festivibes implements FestivibesGame {
 	}
 
 	notif_materialMove(notif: Notif<NotifMaterialMove>) {
-		console.log('notif_materialMove', notif)
+		log('notif_materialMove', notif)
 		switch (notif.args.type) {
 			case 'EVENT':
 				const cards = notif.args.material as Array<EventCard>
