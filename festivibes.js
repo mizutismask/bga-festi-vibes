@@ -2434,22 +2434,6 @@ var TicketCardsManager = /** @class */ (function (_super) {
     };
     return TicketCardsManager;
 }(CardManager));
-/**
- *------
- * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * Festivibes implementation : © Séverine Kamycki <mizutismask@gmail.com>
- *
- * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
- * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- *
- * festivibes.ts
- *
- * Festivibes user interface script
- *
- * In this file, you are describing the logic of your user interface, in Typescript language.
- *
- */
 var ANIMATION_MS = 500;
 var SCORE_MS = 1500;
 var IMAGE_FESTIVALS_PER_ROW = 6;
@@ -3015,8 +2999,7 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.playCustomSound = function (sound, playNextMoveSound) {
         if (playNextMoveSound === void 0) { playNextMoveSound = true; }
         if (this.isCustomSoundsOn()) {
-            ;
-            this.playSound(sound);
+            playSound(sound);
             playNextMoveSound && this.disableNextMoveSound();
         }
     };
@@ -3394,6 +3377,7 @@ var Festivibes = /** @class */ (function () {
             case 'FESTIVAL':
                 if (notif.args.fromArg == notif.args.toArg) {
                     this.festivalStocks[notif.args.toArg].flipCard(card);
+                    this.playCustomSound('clap', false);
                 }
                 else {
                     this.festivalStocks[notif.args.toArg].addCard(card);
@@ -3554,7 +3538,7 @@ var PlayerTable = /** @class */ (function () {
         }
     }
     PlayerTable.prototype.initHand = function (player, cards) {
-        var smallWidth = window.matchMedia('(max-width: 830px)').matches;
+        var smallWidth = window.matchMedia('(max-width: 1120px)').matches;
         var baseSettings = {
             center: true,
             gap: '10px'
@@ -3564,7 +3548,7 @@ var PlayerTable = /** @class */ (function () {
             baseSettings['wrap'] = 'nowrap';
         }
         else {
-            baseSettings['direction'] = 'col';
+            baseSettings['direction'] = 'column';
             baseSettings['wrap'] = 'wrap';
         }
         //log('smallWidth', smallWidth, baseSettings)

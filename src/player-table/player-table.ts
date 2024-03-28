@@ -24,7 +24,7 @@ class PlayerTable {
 	}
 
 	private initHand(player: FestivibesPlayer, cards: Array<EventCard>) {
-		const smallWidth = window.matchMedia('(max-width: 830px)').matches
+		const smallWidth = window.matchMedia('(max-width: 1120px)').matches
 		var baseSettings = {
 			center: true,
 			gap: '10px'
@@ -33,7 +33,7 @@ class PlayerTable {
 			baseSettings['direction'] = 'row' as 'row'
 			baseSettings['wrap'] = 'nowrap' as 'nowrap'
 		} else {
-			baseSettings['direction'] = 'col' as 'col'
+			baseSettings['direction'] = 'column' as 'column'
 			baseSettings['wrap'] = 'wrap' as 'wrap'
 		}
 
