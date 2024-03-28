@@ -185,9 +185,14 @@
   color: inherit;
 }
 
+.player-tables {
+  max-width: fit-content;
+}
+
 .player-table {
   display: flex;
   z-index: 25;
+  max-width: fit-content;
 }
 
 .player-name {
@@ -535,6 +540,7 @@ html {
   display: flex;
   justify-items: center;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .festival-wrapper {
