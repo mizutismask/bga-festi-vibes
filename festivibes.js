@@ -2495,6 +2495,9 @@ var Festivibes = /** @class */ (function () {
         this.displayTickets(this.gamedatas.tickets);
         this.displayEvents(this.gamedatas.events);
         this.updateTicketsInPlayerBoard();
+        if (this.isNotSpectator()) {
+            window.addEventListener('resize', function () { return _this.playerTables[_this.getPlayerId()].adaptHandOrientation(); });
+        }
         log('Ending game setup');
     };
     Festivibes.prototype.setupFestivals = function (festivals) {
@@ -3538,7 +3541,7 @@ var PlayerTable = /** @class */ (function () {
         }
     }
     PlayerTable.prototype.initHand = function (player, cards) {
-        var smallWidth = window.matchMedia('(max-width: 1120px)').matches;
+        var smallWidth = this.isSmallWidth();
         var baseSettings = {
             center: true,
             gap: '10px'
@@ -3555,6 +3558,18 @@ var PlayerTable = /** @class */ (function () {
         this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
         this.handStock.addCards(cards);
+    };
+    PlayerTable.prototype.isSmallWidth = function () {
+        return window.matchMedia('(max-width: 1400px)').matches;
+    };
+    PlayerTable.prototype.adaptHandOrientation = function () {
+        var hand = $('hand-' + this.game.getPlayerId());
+        if (this.isSmallWidth()) {
+            hand.style.setProperty('--direction', 'row');
+        }
+        else {
+            hand.style.setProperty('--direction', 'column');
+        }
     };
     PlayerTable.prototype.getSelection = function () {
         return this.handStock.getSelection();

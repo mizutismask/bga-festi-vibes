@@ -102,6 +102,10 @@ class Festivibes implements FestivibesGame {
 		this.displayTickets(this.gamedatas.tickets)
 		this.displayEvents(this.gamedatas.events)
 		this.updateTicketsInPlayerBoard()
+
+		if (this.isNotSpectator()) {
+			window.addEventListener('resize', () => this.playerTables[this.getPlayerId()].adaptHandOrientation());
+		}
 		log('Ending game setup')
 	}
 

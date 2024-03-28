@@ -4,7 +4,7 @@
 class PlayerTable {
 	private handStock: LineStock<EventCard>
 
-	constructor(private game: FestivibesGame, player: FestivibesPlayer, cards: Array<EventCard>) {
+	constructor(private game: FestivibesGame, player: FestivibesPlayer, cards: Array<EventCard>) {
 		const isMyTable = player.id === game.getPlayerId().toString()
 		const ownClass = isMyTable ? 'own' : ''
 		let html = `
@@ -23,8 +23,8 @@ class PlayerTable {
 		}
 	}
 
-	private initHand(player: FestivibesPlayer, cards: Array<EventCard>) {
-		const smallWidth = window.matchMedia('(max-width: 1120px)').matches
+	private initHand(player: FestivibesPlayer, cards: Array<EventCard>) {
+		const smallWidth = this.isSmallWidth()
 		var baseSettings = {
 			center: true,
 			gap: '10px'
@@ -44,8 +44,21 @@ class PlayerTable {
 		this.handStock.addCards(cards)
 	}
 
+	private isSmallWidth() {
+		return window.matchMedia('(max-width: 1400px)').matches
+	}
+
+	public adaptHandOrientation() {
+		const hand = $('hand-' + this.game.getPlayerId())
+		if (this.isSmallWidth()) {
+			hand.style.setProperty('--direction', 'row')
+		} else {
+			hand.style.setProperty('--direction', 'column')
+		}
+	}
+
 	public getSelection() {
-		return this.handStock.getSelection();
+		return this.handStock.getSelection()
 	}
 
 	public addCard(card: EventCard) {
