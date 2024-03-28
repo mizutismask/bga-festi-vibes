@@ -47,6 +47,7 @@ interface FestivibesGamedatas {
 	winners: number[]
 	version: string
 	festivals: Array<FestivalCard>
+	soldOutfestivals: Array<FestivalCard>
 	tickets: { [festivalId: number]: Array<TicketCard> }
 	events: { [festivalId: number]: Array<EventCard> }
 	hand: Array<EventCard>

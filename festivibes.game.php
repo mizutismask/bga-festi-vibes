@@ -162,6 +162,7 @@ class Festivibes extends Table {
         $result['festivals'] = $this->getFestivalsFromDb($this->festivals->getCardsInLocation("festival", null, "type_arg"));
         $result['tickets'] = $this->getTicketsOnFestivals();
         $result['events'] = $this->getEventsOnFestivals();
+        $result['soldOutfestivals'] = array_values(array_filter($result['festivals'], fn ($fest) => $this->isFestivalSoldOut($fest->id)));
 
         // private data : current player hidden informations
         $result['hand'] = $this->getEventsFromDb($this->events->getCardsInLocation('hand', $currentPlayerId));

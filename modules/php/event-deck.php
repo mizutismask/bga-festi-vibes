@@ -160,15 +160,20 @@ trait EventDeckTrait {
      * place a number of events cards to pick$playerId.
      */
     private function pickEvents($playerId, int $number) {
-        $cards = $this->getEventsFromDb($this->events->pickCardsForLocation($number, 'deck', "hand", "$playerId"));
+        $cards = $this->events->pickCardsForLocation($number, 'deck', "hand", "$playerId");
+        if ($cards) {
+            $cards = $this->getEventsFromDb($cards);
 
-        $this->notifyPlayer($playerId, 'materialMove', "", [
-            'type' => MATERIAL_TYPE_EVENT,
-            'from' => MATERIAL_LOCATION_DECK,
-            'to' => MATERIAL_LOCATION_HAND,
-            'toArg' => $playerId,
-            'material' => $cards
-        ]);
+            $this->notifyPlayer($playerId, 'materialMove', "", [
+                'type' => MATERIAL_TYPE_EVENT,
+                'from' => MATERIAL_LOCATION_DECK,
+                'to' => MATERIAL_LOCATION_HAND,
+                'toArg' => $playerId,
+                'material' => $cards
+            ]);
+        } else {
+            $this->notifyAllPlayers('msg', clienttranslate('No more events in the deck'), []);
+        }
         return $cards;
     }
 }

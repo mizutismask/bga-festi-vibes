@@ -22,9 +22,9 @@ trait ActionTrait {
 
         //  if ($keptEventsId)
         //self::incStat(1, STAT_KEPT_ADDITIONAL_DESTINATION_CARDS, $playerId);
-        if ($action === ACTION_PLAY_TICKET) {
+        if ($action === "placeTicket") {
             $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
-        } else if ($action === ACTION_REPLACE_TICKET) {
+        } else if ($action === "repositionTicket") {
             $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
         }
         $this->changeNextStateFromContext();
@@ -47,34 +47,46 @@ trait ActionTrait {
         $this->dbInsertContextLog(ACTION_PLAY_CARD, $cardId, $festivalId, $card->action);
 
         if ($this->isFestivalSoldOut($festivalId)) {
-            $festival = $this->getFestivalFromDB($this->festivals->getCard($festivalId));
-            $this->notifyWithName('materialMove', clienttranslate('Festival ${festivalOrder} is sold out'), [
-                'type' => MATERIAL_TYPE_FESTIVAL,
-                'from' => MATERIAL_LOCATION_FESTIVAL,
-                'fromArg' => $festival->id,
-                'to' => MATERIAL_LOCATION_FESTIVAL,
-                'toArg' =>  $festival->id,
-                'material' => [$festival],
-                'festivalOrder' =>  $this->getFestivalOrder($festival),
-            ]);
+            $this->notifySoldOutChange($festivalId, true);
         }
 
         $this->changeNextStateFromContext();
     }
 
+    private function notifySoldOutChange($festivalId, $soldOut) {
+        $festival = $this->getFestivalFromDB($this->festivals->getCard($festivalId));
+        $msg = $soldOut ? clienttranslate('Festival ${festivalOrder} is sold out') : clienttranslate('Festival ${festivalOrder} is not sold out anymore');
+        $this->notifyWithName('materialMove', $msg, [
+            'type' => MATERIAL_TYPE_FESTIVAL,
+            'from' => MATERIAL_LOCATION_FESTIVAL,
+            'fromArg' => $festival->id,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'toArg' =>  $festival->id,
+            'material' => [$festival],
+            'festivalOrder' =>  $this->getFestivalOrder($festival),
+        ]);
+    }
+
     public function discardEvent($cardId) {
         self::checkAction('discardEvent');
         $playerId = $this->getActivePlayerId();
-
+        
         $args = $this->argDiscardEvent();
         $selectableCards = reset($args['selectableCardsByFestival']);
         $card = $this->array_find($selectableCards, fn ($card) => $card->id == $cardId);
         $this->userAssertTrue(self::_("You can’t discard this card"), $card != null);
-
+        
+        $festivalId = $this->getFestivalIdFromCardLocation($card->location);
+        $wasSoldOut = $this->isFestivalSoldOut($festivalId);
         $this->discardEventAndReorderFestival($card);
 
         $this->resolveLastContextIfAction(ACTION_DISCARD_EVENT);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+
+        if ($wasSoldOut && !$this->isFestivalSoldOut($festivalId)) {
+            $this->notifySoldOutChange($festivalId, false);
+        }
+
         $this->changeNextStateFromContext();
     }
 

@@ -36,7 +36,7 @@ trait StateTrait {
 
         $owner = $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER);
         if ($owner) {
-            $context = $this->dbGetLastContextToResolve();
+            $context = $this->dbGetLastResolvedContext();
             $this->gamestate->changeActivePlayer($context["player"]);
             $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, null);
         }

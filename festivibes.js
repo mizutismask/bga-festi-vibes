@@ -2549,6 +2549,7 @@ var Festivibes = /** @class */ (function () {
             };
             _this.festivalStocks[fest.id].addCard(fest);
         });
+        this.gamedatas.soldOutfestivals.forEach(function (f) { return _this.festivalStocks[f.id].flipCard(f); });
         festivals.forEach(function (fest) {
             var divId = 'events-' + fest.id;
             dojo.place(_this.createDiv('event-slot', divId), 'festivals');
@@ -2854,7 +2855,7 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.onEnteringChooseAction = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.setSelectionModeOnEvents('single');
+            this.setSelectionModeOnEvents('none');
             this.setSelectionModeOnTickets('none');
             this.setSelectionModeOnFestivals('single');
         }

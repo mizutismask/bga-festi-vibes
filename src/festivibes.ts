@@ -141,6 +141,7 @@ class Festivibes implements FestivibesGame {
 			}
 			this.festivalStocks[fest.id].addCard(fest)
 		})
+		this.gamedatas.soldOutfestivals.forEach(f=>this.festivalStocks[f.id].flipCard(f))
 
 		festivals.forEach((fest) => {
 			const divId = 'events-' + fest.id
@@ -506,7 +507,7 @@ class Festivibes implements FestivibesGame {
 
 	private onEnteringChooseAction(args: EnteringChooseActionArgs) {
 		if ((this as any).isCurrentPlayerActive()) {
-			this.setSelectionModeOnEvents('single')
+			this.setSelectionModeOnEvents('none')
 			this.setSelectionModeOnTickets('none')
 			this.setSelectionModeOnFestivals('single')
 		}
