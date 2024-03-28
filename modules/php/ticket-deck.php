@@ -38,7 +38,7 @@ trait TicketDeckTrait {
         return $this->tickets->countCardInLocation("hand", $playerId) > 0;
     }
 
-    public function getTicketsInHandCount($playerId){
+    public function getTicketsInHandCount($playerId) {
         return $this->tickets->countCardInLocation("hand", $playerId);
     }
 
@@ -69,6 +69,12 @@ trait TicketDeckTrait {
     public function getTicketsOnFestival($festivalId) {
         return $this->getEventsFromDb($this->tickets->getCardsInLocation("festival_${festivalId}"));
     }
+
+    public function getTicketsFromOtherPlayersOnFestival($playerId, $festivalId) {
+        $color = $this->getColorFromHexValue($this->getPlayerColor($playerId));
+        return array_values(array_filter($this->getTicketsOnFestival($festivalId), fn ($t) => $t->type_arg != $color));
+    }
+
     public function getTicketsFromPlayerOnFestival($playerId, $festivalId) {
         $color = $this->getColorFromHexValue($this->getPlayerColor($playerId));
         return $this->getEventsFromDb($this->getCardsOfTypeArgFromLocation("ticket", $color, "festival_${festivalId}"));
@@ -111,8 +117,9 @@ trait TicketDeckTrait {
         $this->notifyWithName('materialMove', clienttranslate('${player_name} removes a ticket from ${other_player_name}'), [
             'type' => MATERIAL_TYPE_TICKET,
             'from' => MATERIAL_LOCATION_FESTIVAL,
-            'to' => MATERIAL_LOCATION_HAND,
             'fromArg' => $festivalId,
+            'to' => MATERIAL_LOCATION_HAND,
+            'toArg' => $playerId,
             'material' => [$removedTicket],
             'other_player_name' => $this->getPlayerName($playerId),
         ]);

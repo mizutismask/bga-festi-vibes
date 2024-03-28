@@ -532,6 +532,8 @@ class Festivibes implements FestivibesGame {
 				this.eventStocks[festId].setSelectableCards(events)
 			})
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
 
@@ -544,6 +546,8 @@ class Festivibes implements FestivibesGame {
 				this.ticketStocks[festId].setSelectableCards(events)
 			})
 			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
 
@@ -555,6 +559,8 @@ class Festivibes implements FestivibesGame {
 
 			this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
 
@@ -574,6 +580,8 @@ class Festivibes implements FestivibesGame {
 			//this.playerTables[this.getPlayerId()].set
 			this.eventStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
 
@@ -1163,8 +1171,8 @@ class Festivibes implements FestivibesGame {
 		const card = cards.at(0)
 		switch (notif.args.to) {
 			case 'HAND':
-				this.ticketStocks[notif.args.toArg].removeCard(card)
-				dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket.used`).pop().classList.remove('used')
+				this.ticketStocks[notif.args.fromArg].removeCard(card)
+				dojo.query(`#tickets-${notif.args.toArg}-wrapper .ticket.used`).pop().classList.remove('used')
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)

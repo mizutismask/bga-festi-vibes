@@ -101,7 +101,7 @@ trait ArgsTrait {
         $festId = $situation["param2"];
         return [
             'mandatoryFestivalId' => $festId,
-            'mandatoryCardAmong' =>  $this->getTicketsOnFestival($festId),
+            'mandatoryCardAmong' =>  $this->getTicketsFromOtherPlayersOnFestival($playerId, $festId),
         ];
     }
 }

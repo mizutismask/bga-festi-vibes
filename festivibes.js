@@ -2882,6 +2882,8 @@ var Festivibes = /** @class */ (function () {
                 _this.eventStocks[festId].setSelectableCards(events);
             });
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
     Festivibes.prototype.onEnteringSwapTicket = function (args) {
@@ -2895,6 +2897,8 @@ var Festivibes = /** @class */ (function () {
                 _this.ticketStocks[festId].setSelectableCards(events);
             });
             this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
     Festivibes.prototype.onEnteringReplaceTicket = function (args) {
@@ -2904,6 +2908,8 @@ var Festivibes = /** @class */ (function () {
             this.setSelectionModeOnTickets('none');
             this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
     Festivibes.prototype.onEnteringRepositionTicket = function () {
@@ -2921,6 +2927,8 @@ var Festivibes = /** @class */ (function () {
             //this.playerTables[this.getPlayerId()].set
             this.eventStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
     Festivibes.prototype.setSelectionModeOnEvents = function (mode) {
@@ -3399,8 +3407,8 @@ var Festivibes = /** @class */ (function () {
         var card = cards.at(0);
         switch (notif.args.to) {
             case 'HAND':
-                this.ticketStocks[notif.args.toArg].removeCard(card);
-                dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket.used")).pop().classList.remove('used');
+                this.ticketStocks[notif.args.fromArg].removeCard(card);
+                dojo.query("#tickets-".concat(notif.args.toArg, "-wrapper .ticket.used")).pop().classList.remove('used');
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);

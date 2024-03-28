@@ -22,7 +22,11 @@ trait ActionTrait {
 
         //  if ($keptEventsId)
         //self::incStat(1, STAT_KEPT_ADDITIONAL_DESTINATION_CARDS, $playerId);
-        $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
+        if ($action === ACTION_PLAY_TICKET) {
+            $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
+        } else if ($action === ACTION_REPLACE_TICKET) {
+            $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
+        }
         $this->changeNextStateFromContext();
     }
 
