@@ -228,7 +228,7 @@ class Festivibes extends Table {
         if ($state['type'] === "activeplayer") {
             switch ($statename) {
                 default:
-                    $this->gamestate->nextState("zombiePass");
+                    $this->gamestate->jumpToState(ST_NEXT_PLAYER);
                     break;
             }
 
@@ -244,6 +244,7 @@ class Festivibes extends Table {
 
         throw new feException("Zombie mode not supported at this game state: " . $statename);
     }
+
 
     ///////////////////////////////////////////////////////////////////////////////////:
     ////////// DB upgrade
