@@ -132,4 +132,11 @@ trait ContextTrait {
         if (count($res)) return $res[0];
         return $res;
     }
+
+    function dbGetLastContextForPlayer($playerId) {
+        $sql = "select * from context_log where player = $playerId order by id desc limit 1";
+        $res = self::getObjectListFromDB($sql);
+        if (count($res)) return $res[0];
+        return $res;
+    }
 }

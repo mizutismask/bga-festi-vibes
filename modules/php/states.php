@@ -69,7 +69,7 @@ trait StateTrait {
         $this->notifyWithName('msg', clienttranslate('&#10148; Start of ${player_name}\'s turn'));
     }
 
-    function getPlayerIdFromTicketColor($ticketColor) : string {
+    function getPlayerIdFromTicketColor($ticketColor): string {
         $player = $this->array_find($this->getPlayers(), fn ($p) => $this->getColorFromHexValue($p["player_color"]) == $ticketColor);
         return $player["player_id"];
     }
@@ -95,6 +95,11 @@ trait StateTrait {
         }
 
         foreach ($players as $playerId => $playerDb) {
+            $lastMove = $this->dbGetLastContextForPlayer($playerId);
+            if ($lastMove["action"] === ACTION_REPLACE_TICKET || $lastMove["action"] === ACTION_PLAY_CARD && $lastMove["param3"] === ACTION_REPLACE_TICKET) {
+                $totalScore[$playerId] += -2;
+                $this->incPlayerScore($playerId, -2, clienttranslate('${player_name} scores ${delta} points as a malus for playing "replace a ticket with mine" as last action'), []);
+            }
             self::DbQuery("UPDATE player SET `player_score` = $totalScore[$playerId] where `player_id` = $playerId");
         }
 
