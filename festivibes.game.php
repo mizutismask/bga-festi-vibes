@@ -186,8 +186,14 @@ class Festivibes extends Table {
             // game is over
             return 100;
         }
-        //return 100 * $this->getHighestCompletedEventsCount() / $this->getInitialEventCardNumber();
-        return 0;
+        $cardsToPlay = 0;
+        if ($this->getPlayerCount() === 2) {
+            $cardsToPlay = array_sum(array_map(fn ($fest) => $fest->cardsCount, $this->FESTIVALS_2PLAYERS[1]));
+        } else {
+            $cardsToPlay = array_sum(array_map(fn ($fest) => $fest->cardsCount, $this->FESTIVALS[1]));
+        }
+        $cardsPlayed = array_sum(array_map(fn ($events) => count($events), $this->getEventsOnFestivals()));
+        return 100 * $cardsPlayed / $cardsToPlay;
     }
 
 
