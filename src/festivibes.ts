@@ -1147,8 +1147,11 @@ class Festivibes implements FestivibesGame {
 		const card = cards.at(0)
 		switch (notif.args.to) {
 			case 'FESTIVAL':
-				//from deck to river
-				this.festivalStocks[notif.args.toArg].addCard(card)
+				if (notif.args.fromArg == notif.args.toArg) {
+					this.festivalStocks[notif.args.toArg].flipCard(card)
+				} else {
+					this.festivalStocks[notif.args.toArg].addCard(card)
+				}
 				break
 
 			default:

@@ -47,7 +47,7 @@ trait ActionTrait {
             $this->notifyWithName('materialMove', clienttranslate('Festival ${festivalOrder} is sold out'), [
                 'type' => MATERIAL_TYPE_FESTIVAL,
                 'from' => MATERIAL_LOCATION_FESTIVAL,
-                'fromArg' =>  true,
+                'fromArg' => $festival->id,
                 'to' => MATERIAL_LOCATION_FESTIVAL,
                 'toArg' =>  $festival->id,
                 'material' => [$festival],
@@ -68,7 +68,7 @@ trait ActionTrait {
         $this->userAssertTrue(self::_("You can’t discard this card"), $card != null);
 
         $this->discardEventAndReorderFestival($card);
-        
+
         $this->resolveLastContextIfAction(ACTION_DISCARD_EVENT);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
         $this->changeNextStateFromContext();

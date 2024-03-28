@@ -2290,17 +2290,16 @@ var FestivalCardsManager = /** @class */ (function (_super) {
                 div.style.height = FESTIVAL_CARD_HEIGHT;
             },
             setupFrontDiv: function (card, div) {
-                _this.setFrontBackground(div, card.type_arg);
+                _this.setBackground(div, card.type_arg, "".concat(g_gamethemeurl, "img/festivalCardsFront.jpg"));
             },
             setupBackDiv: function (card, div) {
-                div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/festivibes-card-background.jpg')");
+                _this.setBackground(div, card.type_arg, "".concat(g_gamethemeurl, "img/festivalCardsBack.jpg"));
             }
         }) || this;
         _this.game = game;
         return _this;
     }
-    FestivalCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
-        var eventsUrl = "".concat(g_gamethemeurl, "img/festivalCardsFront.jpg");
+    FestivalCardsManager.prototype.setBackground = function (cardDiv, cardType, eventsUrl) {
         cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
         var imagePosition = cardType - 1;
         var row = Math.floor(imagePosition / IMAGE_FESTIVALS_PER_ROW);
@@ -3384,8 +3383,12 @@ var Festivibes = /** @class */ (function () {
         var card = cards.at(0);
         switch (notif.args.to) {
             case 'FESTIVAL':
-                //from deck to river
-                this.festivalStocks[notif.args.toArg].addCard(card);
+                if (notif.args.fromArg == notif.args.toArg) {
+                    this.festivalStocks[notif.args.toArg].flipCard(card);
+                }
+                else {
+                    this.festivalStocks[notif.args.toArg].addCard(card);
+                }
                 break;
             default:
                 console.error('Festival move destination not handled', notif);
