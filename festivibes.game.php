@@ -276,19 +276,4 @@ class Festivibes extends Table {
         }
         self::warn("upgradeTableDb complete: from_version=$from_version");
     }
-
-    function notifyMaterialMove($material, $msg = "") {
-
-        $this->notifyAllPlayers('materialMove', $msg, [
-            'type' => MATERIAL_TYPE_CARD,
-            'material' => is_array($material) ? $material : [$material],
-            'from' => MATERIAL_LOCATION_DECK,
-            'to' => MATERIAL_LOCATION_HAND,
-            'toArg' => $this->getMostlyActivePlayerId(),
-        ]);
-    }
-
-    function toto() {
-        $this->notifyMaterialMove("token");
-    }
 }
