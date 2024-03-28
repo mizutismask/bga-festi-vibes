@@ -93,11 +93,11 @@ $gameinfos = array(
 // Note: game interface = space on the left side, without the column on the right
 'game_interface_width' => array(
 
-    // Minimum width
-    //  default: 740
-    //  maximum possible value: 740 (ie: your game interface should fit with a 740px width (correspond to a 1024px screen)
-    //  minimum possible value: 320 (the lowest value you specify, the better the display is on mobile)
-    'min' => 740,
+        // Minimum width
+        //  default: 740
+        //  maximum possible value: 740 (ie: your game interface should fit with a 740px width (correspond to a 1024px screen)
+        //  minimum possible value: 320 (the lowest value you specify, the better the display is on mobile)
+        'min' => 975,
 
     // Maximum width
     //  default: null (ie: no limit, the game interface is as big as the player's screen allows it).
