@@ -34,11 +34,11 @@ trait StateTrait {
             return;
         }
 
-        $owner = $this->getGlobalVariable(GS_REPLACED_TICKET_OWNER);
+        $owner = $this->getGlobalVariable(GS_REPOSITIONNING_PLAYER);
         if ($owner) {
             $context = $this->dbGetLastResolvedContext();
             $this->gamestate->changeActivePlayer($context["player"]);
-            $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, null);
+            $this->setGlobalVariable(GS_REPOSITIONNING_PLAYER, null);
         }
 
         if ($this->hasReachedEndOfGameRequirements($playerId)) {
@@ -54,7 +54,7 @@ trait StateTrait {
     }
 
     function stActivateReplacedTicketOwner() {
-        $this->gamestate->changeActivePlayer($this->getGlobalVariable(GS_REPLACED_TICKET_OWNER));
+        $this->gamestate->changeActivePlayer($this->getGlobalVariable(GS_REPOSITIONNING_PLAYER));
         $this->gamestate->nextState('repositionTicket');
     }
 

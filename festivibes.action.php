@@ -47,10 +47,7 @@ class action_festivibes extends APP_GameAction {
         $festivalId = self::getArg("festivalId", AT_posint, true);
         $slotId = self::getArg("slotId", AT_posint, true);
 
-        $this->game->placeTicket("placeTicket",
-            $festivalId,
-            $slotId
-        );
+        $this->game->placeTicket($festivalId,$slotId);
 
         self::ajaxResponse();
     }
@@ -62,7 +59,7 @@ class action_festivibes extends APP_GameAction {
         $festivalId = self::getArg("festivalId", AT_posint, true);
         $slotId = self::getArg("slotId", AT_posint, true);
 
-        $this->game->placeTicket("repositionTicket", $festivalId, $slotId);
+        $this->game->repositionTicket($festivalId, $slotId);
 
         self::ajaxResponse();
     }

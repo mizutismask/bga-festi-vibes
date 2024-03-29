@@ -2,7 +2,7 @@
 
 require_once(__DIR__ . '/objects/ticket.php');
 
-const FAKE_PLAYER = 0;//id, must be int
+const FAKE_PLAYER = 0; //id, must be int
 
 trait TicketDeckTrait {
 
@@ -33,7 +33,7 @@ trait TicketDeckTrait {
             $festivals = $this->getFestivals();
             for ($i = 0; $i < 3; $i++) {
                 $ticket = array_pop($otherTickets);
-                $this->botPlaceTicketOnFestivalSlot($ticket, $festivals[$i], 1);
+                $this->placeTicketFromFakePlayerOnFestivalSlot($ticket, $festivals[$i], 1);
             }
         }
     }
@@ -52,7 +52,7 @@ trait TicketDeckTrait {
         return $this->tickets->countCardInLocation("hand", $playerId);
     }
 
-    public function botPlaceTicketOnFestivalSlot($ticket, $festival, $slotId) {
+    public function placeTicketFromFakePlayerOnFestivalSlot($ticket, $festival, $slotId) {
         $this->tickets->moveCard($ticket->id, "festival_" . $festival->id, $slotId);
         $this->notifyWithName('materialMove', "", [
             'type' => MATERIAL_TYPE_TICKET,
@@ -65,9 +65,13 @@ trait TicketDeckTrait {
         ]);
     }
 
-    public function placeTicketOnFestivalSlot($playerId, $festivalId, $slotId) {
+    public function placeFreeTicketOnFestivalSlot($playerId, $festivalId, $slotId) {
         $freeTickets = $this->getTicketsFromDb($this->tickets->getCardsInLocation("hand", $playerId));
         $ticket = array_pop($freeTickets);
+        $this->placeTicketOnFestivalSlot($playerId, $festivalId,$slotId, $ticket);
+    }
+
+    public function placeTicketOnFestivalSlot($playerId, $festivalId, $slotId, $ticket) {
         $this->tickets->moveCard($ticket->id, "festival_" . $festivalId, $slotId);
 
         $card = $this->getTicketFromDb($this->tickets->getCard($ticket->id));
@@ -83,6 +87,21 @@ trait TicketDeckTrait {
         ]);
     }
 
+    public function repositionTicketOnFestivalSlot($festivalId, $slotId) {
+        $playerId = $this->getMostlyActivePlayerId();
+        $ticket = $this->getTicketFromGlobal($this->getGlobalVariable(GS_TICKET_TO REPOSITION));
+        $festival = $this->getFestivalFromDb($this->festivals->getCard($festivalId));
+        if ($ticket->type_arg == $this->getColorFromHexValue($this->getPlayerColor($playerId))) {
+            $this->placeTicketOnFestivalSlot($playerId, $festivalId, $slotId, $ticket);
+        } else {
+            $this->placeTicketFromFakePlayerOnFestivalSlot($ticket, $festival, $slotId);
+            $this->notifyWithName('msg', clienttranslate('🎟️ ${player_name} places a ticket in the festival ${festivalOrder}'), [
+                'festivalOrder' =>  $this->getFestivalOrder($festival),
+            ]);
+        }
+
+    }
+
     public function getTicketsOnFestivals() {
         $tickets = $this->getFestivalsFromDb($this->getCardsFromLocationLike("ticket", "festival_%"));
         $ticketsByFestivalId = $this->arrayGroupBy($tickets, fn ($t) => self::getPart($t->location, -1));
@@ -90,7 +109,7 @@ trait TicketDeckTrait {
     }
 
     public function getTicketsOnFestival($festivalId) {
-        return $this->getEventsFromDb($this->tickets->getCardsInLocation("festival_${festivalId}"));
+        return $this->getTicketsFromDb($this->tickets->getCardsInLocation("festival_${festivalId}"));
     }
 
     public function getTicketsFromOtherPlayersOnFestival($playerId, $festivalId) {
@@ -152,16 +171,11 @@ trait TicketDeckTrait {
             'material' => [$removedTicket],
             'other_player_name' => $otherPlayerName,
         ]);
-        $this->placeTicketOnFestivalSlot($this->getMostlyActivePlayerId(), $festivalId, $removedTicket->location_arg);
+        $this->placeFreeTicketOnFestivalSlot($this->getMostlyActivePlayerId(), $festivalId, $removedTicket->location_arg);
 
         if (!$playerId) {
-            //reposition ticket for fake player
-            $emptySlots = $this->findEmptySlots();
-            $randIndex = bga_rand(0, count($emptySlots) - 1);
-            $slot = $emptySlots[$randIndex];
-            $this->botPlaceTicketOnFestivalSlot($removedTicket, $this->getFestivalFromDB($this->festivals->getCard($slot[0])), $slot[1]);
-            $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
-            $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+            $opponents = array_diff($this->getPlayersIds(), [$this->getMostlyActivePlayerId()]);
+            $playerId = array_pop($opponents);
         }
         return $playerId;
     }

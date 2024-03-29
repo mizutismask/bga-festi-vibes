@@ -182,23 +182,20 @@ trait UtilTrait {
     }
 
     /**
-     * Transforms a ClaimedRoute json decoded object to ClaimedRoute class.
+     * Transforms a Ticket json decoded object to TicketCard class.
      */
-    /* function getClaimedRouteFromGlobal($dbObject) {
-        //self::dump('*******************getClaimedRouteFromGlobal', $dbObject);
-        if (
-            $dbObject === null
-        ) {
+    function getTicketFromGlobal($dbObject) {
+        if ($dbObject === null) {
             return null;
         }
         if (!$dbObject) {
-            throw new BgaSystemException("Claimed route doesn't exists " . json_encode($dbObject));
+            throw new BgaSystemException("Ticket doesn't exists " . json_encode($dbObject));
         }
 
-        $class = new ClaimedRoute([]);
+        $class = new TicketCard([]);
         foreach ($dbObject as $key => $value) $class->{$key} = $value;
         return $class;
-    }*/
+    }
 
 
     function getNonZombiePlayersIds() {

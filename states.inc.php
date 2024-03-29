@@ -156,7 +156,6 @@ $playerActionsGameStates = [
         ],
         "transitions" => [
             "repositionTicket" => ST_PREPARE_REPOSITION_TICKET,
-            "nextPlayer" => ST_NEXT_PLAYER,//2 players only, if the replaced ticket is from the fake player
         ]
     ],
 
@@ -178,8 +177,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_REPOSITION_TICKET => [
         "name" => "repositionTicket",
-        "description" => clienttranslate('${actplayer} must reposition his ticket on an empty festival slot'),
-        "descriptionmyturn" => clienttranslate('${you} must reposition your ticket on an empty festival slot'),
+        "description" => clienttranslate('${actplayer} must reposition a ticket on an empty festival slot'),
+        "descriptionmyturn" => clienttranslate('${you} must reposition a ticket on an empty festival slot'),
         "type" => "activeplayer",
         "possibleactions" => [
             "repositionTicket",

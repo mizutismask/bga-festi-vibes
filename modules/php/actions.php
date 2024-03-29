@@ -10,23 +10,35 @@ trait ActionTrait {
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in yourgamename.action.php)
     */
-    public function placeTicket($action, $festivalId, $slotId) {
+    public function placeTicket($festivalId, $slotId) {
 
-        self::checkAction($action);
+        self::checkAction("placeTicket");
         $playerId = intval(self::getActivePlayerId());
         $this->userAssertTrue(self::_("You’ve already played all your tickets"), $this->hasTicketInHand($playerId));
         $this->userAssertTrue(self::_("This festival already has 2 tickets"), !$this->isFestivalFull($festivalId));
 
-
-        $this->placeTicketOnFestivalSlot($playerId, $festivalId, $slotId);
+        $this->placeFreeTicketOnFestivalSlot($playerId, $festivalId, $slotId);
 
         //  if ($keptEventsId)
         //self::incStat(1, STAT_KEPT_ADDITIONAL_DESTINATION_CARDS, $playerId);
-        if ($action === "placeTicket") {
-            $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
-        } else if ($action === "repositionTicket") {
-            $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
-        }
+        $this->dbInsertContextLog(ACTION_PLAY_TICKET, $festivalId, $slotId);
+
+        $this->changeNextStateFromContext();
+    }
+
+    /**
+     * Reposition a removed ticket with the action replace ticket from my hand
+     */
+    public function repositionTicket($festivalId, $slotId) {
+
+        self::checkAction("repositionTicket");
+        $playerId = intval(self::getActivePlayerId());
+        $this->userAssertTrue(self::_("This festival already has 2 tickets"), !$this->isFestivalFull($festivalId));
+
+
+        $this->repositionTicketOnFestivalSlot($festivalId, $slotId);
+        $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
+
         $this->changeNextStateFromContext();
     }
 
@@ -159,10 +171,9 @@ trait ActionTrait {
         $this->userAssertTrue(self::_("You have to replace a ticket from the column you just played"), $ticket != null);
         $this->userAssertTrue(self::_("The ticket must belong to another player"), $ticket->type_arg != $this->getColorFromHexValue($this->getPlayerColor($playerId)));
 
-        $removedTicketowner = $this->playTicketInsteadOfThisOne($ticket);
-        if ($removedTicketowner != FAKE_PLAYER) {
-            $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, $removedTicketowner);
-        }
+        $playerRepositionning = $this->playTicketInsteadOfThisOne($ticket);
+        $this->setGlobalVariable(GS_REPOSITIONNING_PLAYER, $playerRepositionning);
+        $this->setGlobalVariable(GS_TICKET_TO REPOSITION, $ticket);
 
         $this->changeNextStateFromContext();
     }

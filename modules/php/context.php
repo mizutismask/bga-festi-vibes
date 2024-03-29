@@ -37,11 +37,7 @@ trait ContextTrait {
                     break;
 
                 case ACTION_REPLACE_TICKET:
-                    if ($this->getGlobalVariable(GS_REPLACED_TICKET_OWNER)){
-                        $nextState = "repositionTicket";
-                    }else{
-                        $nextState = "nextPlayer";
-                    }
+                    $nextState = "repositionTicket";
                     break;
 
                 default:

@@ -202,7 +202,7 @@ class Festivibes implements FestivibesGame {
 		Object.values(this.ticketStocks).forEach((s) => s.unselectAll(true))
 	}
 
-	private checkIfPlayCardPossible() {
+	public checkIfPlayCardPossible() {
 		if ((this as any).isCurrentPlayerActive()) {
 			const selectedFestival = this.getSelectedFestival()
 			const selectedEvents = this.getAllSelectedEvents()

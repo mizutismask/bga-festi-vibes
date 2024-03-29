@@ -4,7 +4,8 @@
  * BGA constants 
  */
 define("GS_PLAYER_TURN_NUMBER", 'playerturn_nbr');
-define("GS_REPLACED_TICKET_OWNER", 'GS_REPLACED_TICKET_OWNER');
+define("GS_REPOSITIONNING_PLAYER", 'GS_REPOSITIONNING_PLAYER');
+define("GS_TICKET_TO REPOSITION", 'GS_TICKET_TO REPOSITION');
 
 /*
  * Custom framework constants
