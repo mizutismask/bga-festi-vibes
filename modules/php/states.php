@@ -98,7 +98,7 @@ trait StateTrait {
 
         foreach ($players as $playerId => $playerDb) {
             $lastMove = $this->dbGetLastContextForPlayer($playerId);
-            if ($lastMove["action"] === ACTION_REPLACE_TICKET || $lastMove["action"] === ACTION_PLAY_CARD && $lastMove["param3"] === ACTION_REPLACE_TICKET) {
+            if ($lastMove["action"] === ACTION_REPLACE_TICKET) {
                 $totalScore[$playerId] += -2;
                 $this->incPlayerScore($playerId, -2, clienttranslate('${player_name} scores ${delta} points as a malus for playing "replace a ticket with mine" as last action'), []);
             }
