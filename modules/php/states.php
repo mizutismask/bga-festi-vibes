@@ -89,8 +89,10 @@ trait StateTrait {
             $tickets = $this->getTicketsOnFestival($fest->id);
             foreach ($tickets as $tick) {
                 $playerId = $this->getPlayerIdFromTicketColor($tick->type_arg);
-                $totalScore[$playerId] += $festScore;
-                $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${festivalOrder}'), ["festivalOrder" => $this->getFestivalOrder($fest)]);
+                if ($playerId) {
+                    $totalScore[$playerId] += $festScore;
+                    $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${festivalOrder}'), ["festivalOrder" => $this->getFestivalOrder($fest)]);
+                }
             }
         }
 
