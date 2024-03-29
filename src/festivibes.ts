@@ -356,7 +356,7 @@ class Festivibes implements FestivibesGame {
 		if (this.gameFeatures.showPlayerOrderHints) {
 			this.setupPlayerOrderHints(player)
 		}
-		if (this.isNotSpectator()) {
+		if (this.isPlayerNotSpectator(player.id)) {
 			this.setupMiniPlayerBoard(player)
 		}
 		this.playerTables[player.id] = new PlayerTable(this, player, this.gamedatas.hand)
@@ -795,6 +795,13 @@ class Festivibes implements FestivibesGame {
 		return (
 			(this as any).isSpectator == false ||
 			Object.keys(this.gamedatas.players).includes(this.getPlayerId().toString())
+		)
+	}
+
+	public isPlayerNotSpectator(playerId) {
+		//log(Object.keys(this.gamedatas.players))
+		return (
+			Object.keys(this.gamedatas.players).includes(playerId.toString())
 		)
 	}
 

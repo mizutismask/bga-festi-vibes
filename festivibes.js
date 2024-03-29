@@ -2737,7 +2737,7 @@ var Festivibes = /** @class */ (function () {
         if (this.gameFeatures.showPlayerOrderHints) {
             this.setupPlayerOrderHints(player);
         }
-        if (this.isNotSpectator()) {
+        if (this.isPlayerNotSpectator(player.id)) {
             this.setupMiniPlayerBoard(player);
         }
         this.playerTables[player.id] = new PlayerTable(this, player, this.gamedatas.hand);
@@ -3073,6 +3073,10 @@ var Festivibes = /** @class */ (function () {
         //log('isSpectator', (this as any).isSpectator)
         return (this.isSpectator == false ||
             Object.keys(this.gamedatas.players).includes(this.getPlayerId().toString()));
+    };
+    Festivibes.prototype.isPlayerNotSpectator = function (playerId) {
+        //log(Object.keys(this.gamedatas.players))
+        return (Object.keys(this.gamedatas.players).includes(playerId.toString()));
     };
     Festivibes.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
