@@ -3542,6 +3542,7 @@ var PlayerTable = /** @class */ (function () {
         }
     }
     PlayerTable.prototype.initHand = function (player, cards) {
+        var _this = this;
         var smallWidth = this.isSmallWidth();
         var baseSettings = {
             center: true,
@@ -3559,6 +3560,9 @@ var PlayerTable = /** @class */ (function () {
         this.handStock = new LineStock(this.game.eventCardsManager, $('hand-' + player.id), baseSettings);
         this.handStock.setSelectionMode('single');
         this.handStock.addCards(cards);
+        this.handStock.onSelectionChange = function (selection, lastChange) {
+            _this.game.checkIfPlayCardPossible();
+        };
     };
     PlayerTable.prototype.isSmallWidth = function () {
         return window.matchMedia('(max-width: 1400px)').matches;

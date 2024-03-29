@@ -42,6 +42,10 @@ class PlayerTable {
 		this.handStock = new LineStock<EventCard>(this.game.eventCardsManager, $('hand-' + player.id), baseSettings)
 		this.handStock.setSelectionMode('single')
 		this.handStock.addCards(cards)
+
+		this.handStock.onSelectionChange = (selection: EventCard[], lastChange: EventCard) => {
+			this.game.checkIfPlayCardPossible()
+		}
 	}
 
 	private isSmallWidth() {

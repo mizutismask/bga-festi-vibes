@@ -65,6 +65,7 @@ interface FestivibesGame extends Game {
 	setTooltipToClass(className: string, html: string): void
 	clientActionData: ClientActionData
 	resetClientActionData(): void
+	checkIfPlayCardPossible(): void
 }
 
 interface EnteringChooseActionArgs {
