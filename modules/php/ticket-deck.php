@@ -2,6 +2,8 @@
 
 require_once(__DIR__ . '/objects/ticket.php');
 
+const FAKE_PLAYER = 0;//id, must be int
+
 trait TicketDeckTrait {
 
     /**
@@ -26,6 +28,14 @@ trait TicketDeckTrait {
             $cardIds = array_keys($this->getCollectionFromDb($sql, true));
             $this->tickets->moveCards($cardIds, "hand", $playerId);
         }
+        if ($this->getPlayerCount() == 2) {
+            $otherTickets = $this->getTicketsFromDb($this->tickets->getCardsInLocation("deck"));
+            $festivals = $this->getFestivals();
+            for ($i = 0; $i < 3; $i++) {
+                $ticket = array_pop($otherTickets);
+                $this->botPlaceTicketOnFestivalSlot($ticket, $festivals[$i], 1);
+            }
+        }
     }
 
     public function getColorFromHexValue($hexColor) {
@@ -40,6 +50,19 @@ trait TicketDeckTrait {
 
     public function getTicketsInHandCount($playerId) {
         return $this->tickets->countCardInLocation("hand", $playerId);
+    }
+
+    public function botPlaceTicketOnFestivalSlot($ticket, $festival, $slotId) {
+        $this->tickets->moveCard($ticket->id, "festival_" . $festival->id, $slotId);
+        $this->notifyWithName('materialMove', "", [
+            'type' => MATERIAL_TYPE_TICKET,
+            'from' => MATERIAL_LOCATION_HAND,
+            'fromArg' => FAKE_PLAYER,
+            'to' => MATERIAL_LOCATION_FESTIVAL,
+            'toArg' =>  $festival->id,
+            'material' => [$this->getTicketFromDb($this->tickets->getCard($ticket->id))],
+            'festivalOrder' =>  $this->getFestivalOrder($festival),
+        ]);
     }
 
     public function placeTicketOnFestivalSlot($playerId, $festivalId, $slotId) {
@@ -110,7 +133,13 @@ trait TicketDeckTrait {
 
     public function playTicketInsteadOfThisOne($removedTicket) {
         $playerId = $this->getPlayerIdFromTicketColor($removedTicket->type_arg);
-        //self::dump('*******************player', $player);
+        if (!$playerId) {
+            $playerId = FAKE_PLAYER;
+            $otherPlayerName = clienttranslate('bot');
+        } else {
+            $otherPlayerName = $this->getPlayerName($playerId);
+        }
+        //self::dump('*******************player', $playerId);
         $this->tickets->moveCard($removedTicket->id, "toReposition", $playerId);
 
         $festivalId = $this->getFestivalIdFromCardLocation($removedTicket->location);
@@ -121,10 +150,38 @@ trait TicketDeckTrait {
             'to' => MATERIAL_LOCATION_HAND,
             'toArg' => $playerId,
             'material' => [$removedTicket],
-            'other_player_name' => $this->getPlayerName($playerId),
+            'other_player_name' => $otherPlayerName,
         ]);
         $this->placeTicketOnFestivalSlot($this->getMostlyActivePlayerId(), $festivalId, $removedTicket->location_arg);
+
+        if (!$playerId) {
+            //reposition ticket for fake player
+            $emptySlots = $this->findEmptySlots();
+            $randIndex = bga_rand(0, count($emptySlots) - 1);
+            $slot = $emptySlots[$randIndex];
+            $this->botPlaceTicketOnFestivalSlot($removedTicket, $this->getFestivalFromDB($this->festivals->getCard($slot[0])), $slot[1]);
+            $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
+            $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
+        }
         return $playerId;
+    }
+
+    private function findEmptySlots(): array {
+        $slots = [];
+        $ticketsByFestivalId = $this->getTicketsOnFestivals();
+        foreach ($ticketsByFestivalId as $festivalId => $tickets) {
+            if (count($tickets) != 2) {
+                $possibleSlots = [1, 2];
+                foreach ($tickets as $t) {
+                    $possibleSlots = array_diff($possibleSlots, [$t->location_arg]);
+                }
+                foreach ($possibleSlots as $slot) {
+                    $slots[] = [$festivalId, $slot];
+                }
+            }
+        }
+        self::dump('*******************solts', $slots);
+        return $slots;
     }
 
     public function isFestivalFull($festivalId) {

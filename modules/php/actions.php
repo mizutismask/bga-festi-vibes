@@ -70,12 +70,12 @@ trait ActionTrait {
     public function discardEvent($cardId) {
         self::checkAction('discardEvent');
         $playerId = $this->getActivePlayerId();
-        
+
         $args = $this->argDiscardEvent();
         $selectableCards = reset($args['selectableCardsByFestival']);
         $card = $this->array_find($selectableCards, fn ($card) => $card->id == $cardId);
         $this->userAssertTrue(self::_("You can’t discard this card"), $card != null);
-        
+
         $festivalId = $this->getFestivalIdFromCardLocation($card->location);
         $wasSoldOut = $this->isFestivalSoldOut($festivalId);
         $this->discardEventAndReorderFestival($card);
@@ -160,7 +160,9 @@ trait ActionTrait {
         $this->userAssertTrue(self::_("The ticket must belong to another player"), $ticket->type_arg != $this->getColorFromHexValue($this->getPlayerColor($playerId)));
 
         $removedTicketowner = $this->playTicketInsteadOfThisOne($ticket);
-        $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, $removedTicketowner);
+        if ($removedTicketowner != FAKE_PLAYER) {
+            $this->setGlobalVariable(GS_REPLACED_TICKET_OWNER, $removedTicketowner);
+        }
 
         $this->changeNextStateFromContext();
     }

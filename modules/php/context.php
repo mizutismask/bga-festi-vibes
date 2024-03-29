@@ -37,7 +37,11 @@ trait ContextTrait {
                     break;
 
                 case ACTION_REPLACE_TICKET:
-                    $nextState = "repositionTicket";
+                    if ($this->getGlobalVariable(GS_REPLACED_TICKET_OWNER)){
+                        $nextState = "repositionTicket";
+                    }else{
+                        $nextState = "nextPlayer";
+                    }
                     break;
 
                 default:
@@ -74,7 +78,7 @@ trait ContextTrait {
             case ACTION_SWAP_MY_TICKET:
                 $color = $this->getPlayerColor($playerId);
                 $ticketsByFest = $this->getTicketsOnFestivals();
-                return $this->hasTicketInHand($playerId) && count($this->getTicketsFromPlayerOnFestival($playerId, $festivalId))>0 && $this->array_some(array_keys($ticketsByFest), fn ($festId) => $festId != $festivalId && $this->array_some($ticketsByFest[$festId], fn ($t) => $t->type_arg != $this->getColorFromHexValue($color)));
+                return $this->hasTicketInHand($playerId) && count($this->getTicketsFromPlayerOnFestival($playerId, $festivalId)) > 0 && $this->array_some(array_keys($ticketsByFest), fn ($festId) => $festId != $festivalId && $this->array_some($ticketsByFest[$festId], fn ($t) => $t->type_arg != $this->getColorFromHexValue($color)));
                 break;
             case ACTION_SWAP_ANY_TICKETS:
                 $color = $this->getPlayerColor($playerId);

@@ -120,8 +120,8 @@ class Festivibes extends Table {
 
     function setupTable($players) {
         $this->createEvents();
-        $this->createTickets();
         $this->createFestivals();
+        $this->createTickets();
         foreach ($players as $playerId => $player) {
             $this->dealEvents($playerId);
         }

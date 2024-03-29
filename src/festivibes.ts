@@ -14,8 +14,8 @@
  * In this file, you are describing the logic of your user interface, in Typescript language.
  *
  */
-declare const playSound;
- 
+declare const playSound
+
 const ANIMATION_MS = 500
 const SCORE_MS = 1500
 const IMAGE_FESTIVALS_PER_ROW = 6
@@ -104,7 +104,7 @@ class Festivibes implements FestivibesGame {
 		this.updateTicketsInPlayerBoard()
 
 		if (this.isNotSpectator()) {
-			window.addEventListener('resize', () => this.playerTables[this.getPlayerId()].adaptHandOrientation());
+			window.addEventListener('resize', () => this.playerTables[this.getPlayerId()].adaptHandOrientation())
 		}
 		log('Ending game setup')
 	}
@@ -147,7 +147,7 @@ class Festivibes implements FestivibesGame {
 			}
 			this.festivalStocks[fest.id].addCard(fest)
 		})
-		this.gamedatas.soldOutfestivals.forEach(f=>this.festivalStocks[f.id].flipCard(f))
+		this.gamedatas.soldOutfestivals.forEach((f) => this.festivalStocks[f.id].flipCard(f))
 
 		festivals.forEach((fest) => {
 			const divId = 'events-' + fest.id
@@ -539,7 +539,7 @@ class Festivibes implements FestivibesGame {
 				this.eventStocks[festId].setSelectableCards(events)
 			})
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
-			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
@@ -553,7 +553,7 @@ class Festivibes implements FestivibesGame {
 				this.ticketStocks[festId].setSelectableCards(events)
 			})
 			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
-			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
@@ -566,7 +566,7 @@ class Festivibes implements FestivibesGame {
 
 			this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
-			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
@@ -587,7 +587,7 @@ class Festivibes implements FestivibesGame {
 			//this.playerTables[this.getPlayerId()].set
 			this.eventStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
-			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single")
+			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.festivalStocks[args.mandatoryFestivalId].selectAll()
 		}
 	}
@@ -1180,11 +1180,12 @@ class Festivibes implements FestivibesGame {
 		switch (notif.args.to) {
 			case 'HAND':
 				this.ticketStocks[notif.args.fromArg].removeCard(card)
-				dojo.query(`#tickets-${notif.args.toArg}-wrapper .ticket.used`).pop().classList.remove('used')
+				if (notif.args.toArg)
+					dojo.query(`#tickets-${notif.args.toArg}-wrapper .ticket.used`).pop().classList.remove('used')
 				break
 			case 'FESTIVAL':
 				this.ticketStocks[notif.args.toArg].addCard(card)
-				if (notif.args.from == 'HAND') {
+				if (notif.args.from == 'HAND' && notif.args.fromArg) {
 					log(`tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`)
 					dojo.query(`#tickets-${notif.args.fromArg}-wrapper .ticket:not(.used)`).pop().classList.add('used')
 				}

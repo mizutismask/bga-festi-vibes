@@ -69,9 +69,9 @@ trait StateTrait {
         $this->notifyWithName('msg', clienttranslate('&#10148; Start of ${player_name}\'s turn'));
     }
 
-    function getPlayerIdFromTicketColor($ticketColor): string {
+    function getPlayerIdFromTicketColor($ticketColor): ?string {
         $player = $this->array_find($this->getPlayers(), fn ($p) => $this->getColorFromHexValue($p["player_color"]) == $ticketColor);
-        return $player["player_id"];
+        return $player["player_id"] ?? null;
     }
 
     function stEndScore() {

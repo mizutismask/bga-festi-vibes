@@ -2870,7 +2870,7 @@ var Festivibes = /** @class */ (function () {
                 _this.eventStocks[festId].setSelectableCards(events);
             });
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
-            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
@@ -2885,7 +2885,7 @@ var Festivibes = /** @class */ (function () {
                 _this.ticketStocks[festId].setSelectableCards(events);
             });
             this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
-            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
@@ -2896,7 +2896,7 @@ var Festivibes = /** @class */ (function () {
             this.setSelectionModeOnTickets('none');
             this.ticketStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.ticketStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
-            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
@@ -2915,7 +2915,7 @@ var Festivibes = /** @class */ (function () {
             //this.playerTables[this.getPlayerId()].set
             this.eventStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
-            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode("single");
+            this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.festivalStocks[args.mandatoryFestivalId].selectAll();
         }
     };
@@ -3396,11 +3396,12 @@ var Festivibes = /** @class */ (function () {
         switch (notif.args.to) {
             case 'HAND':
                 this.ticketStocks[notif.args.fromArg].removeCard(card);
-                dojo.query("#tickets-".concat(notif.args.toArg, "-wrapper .ticket.used")).pop().classList.remove('used');
+                if (notif.args.toArg)
+                    dojo.query("#tickets-".concat(notif.args.toArg, "-wrapper .ticket.used")).pop().classList.remove('used');
                 break;
             case 'FESTIVAL':
                 this.ticketStocks[notif.args.toArg].addCard(card);
-                if (notif.args.from == 'HAND') {
+                if (notif.args.from == 'HAND' && notif.args.fromArg) {
                     log("tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)"));
                     dojo.query("#tickets-".concat(notif.args.fromArg, "-wrapper .ticket:not(.used)")).pop().classList.add('used');
                 }

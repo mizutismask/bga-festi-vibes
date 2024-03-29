@@ -156,6 +156,7 @@ $playerActionsGameStates = [
         ],
         "transitions" => [
             "repositionTicket" => ST_PREPARE_REPOSITION_TICKET,
+            "nextPlayer" => ST_NEXT_PLAYER,//2 players only, if the replaced ticket is from the fake player
         ]
     ],
 
