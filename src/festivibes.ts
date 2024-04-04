@@ -22,7 +22,7 @@ const IMAGE_FESTIVALS_PER_ROW = 6
 const IMAGE_EVENTS_PER_ROW = 13
 const IMAGE_TICKETS_PER_ROW = 4
 
-const isDebug = window.location.host == 'studio.boardgamearena.com'
+const isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1
 const log = isDebug ? console.log.bind(window.console) : function () {}
 
 class Festivibes implements FestivibesGame {
@@ -130,7 +130,7 @@ class Festivibes implements FestivibesGame {
 
 		festivals.forEach((fest) => {
 			const divId = 'festival-' + fest.id
-			dojo.place(this.createDiv('', divId), 'festivals')
+			dojo.place(this.createDiv('festival-slot', divId), 'festivals')
 
 			this.festivalStocks[fest.id] = new SlotStock<FestivalCard>(this.festivalCardsManager, $(divId), {
 				center: true,
