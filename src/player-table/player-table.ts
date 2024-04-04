@@ -27,7 +27,7 @@ class PlayerTable {
 		const smallWidth = this.isSmallWidth()
 		var baseSettings = {
 			center: true,
-			gap: '10px'
+			gap: '8px'
 		}
 		if (smallWidth) {
 			baseSettings['direction'] = 'row' as 'row'

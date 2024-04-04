@@ -575,7 +575,7 @@ html {
 
 .card-stock .slot {
   border-radius: 8px;
-  height: 263px;
+  height: 160px;
   width: 143px;
   background: hsla(0, 0%, 100%, 0.4);
   outline: 1px solid hsla(0, 0%, 100%, 0.4);
@@ -584,7 +584,13 @@ html {
   height: 104.8px;
   width: 68.4px;
 }
+.card-stock.festival-slot .slot {
+  height: 160px;
+  width: 143px;
+}
 .card-stock.event-slot .slot {
+  height: 263px;
+  width: 143px;
   margin-top: -206px;
 }
 .card-stock.event-slot .slot:first-child {

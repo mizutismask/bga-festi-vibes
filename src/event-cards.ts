@@ -20,8 +20,8 @@ class EventCardsManager extends CardManager<EventCard> {
 				div.dataset.cardType = '' + card.type
 				div.style.position = 'relative'
 
-				div.style.width = FESTIVAL_CARD_WIDTH
-				div.style.height = FESTIVAL_CARD_HEIGHT
+				div.style.width = EVENT_CARD_WIDTH
+				div.style.height = EVENT_CARD_HEIGHT
 			},
 			setupFrontDiv: (card: EventCard, div: HTMLElement) => {
 				this.setFrontBackground(div as HTMLDivElement, card.type_arg)

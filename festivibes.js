@@ -2290,24 +2290,24 @@ var FestivalCardsManager = /** @class */ (function (_super) {
                 div.style.height = FESTIVAL_CARD_HEIGHT;
             },
             setupFrontDiv: function (card, div) {
-                _this.setBackground(div, card.type_arg, "".concat(g_gamethemeurl, "img/festivalCardsFront.jpg"));
+                _this.setBackground(div, card.type_arg, "".concat(g_gamethemeurl, "img/smallFestivalCardsFront.jpg"), IMAGE_FESTIVALS_PER_ROW);
             },
             setupBackDiv: function (card, div) {
-                _this.setBackground(div, card.type_arg, "".concat(g_gamethemeurl, "img/festivalCardsBack.jpg"));
+                _this.setBackground(div, 1, "".concat(g_gamethemeurl, "img/smallFestivalCardsBack.jpg"), 1);
             }
         }) || this;
         _this.game = game;
         return _this;
     }
-    FestivalCardsManager.prototype.setBackground = function (cardDiv, cardType, eventsUrl) {
+    FestivalCardsManager.prototype.setBackground = function (cardDiv, cardType, eventsUrl, imagesPerRow) {
         cardDiv.style.backgroundImage = "url('".concat(eventsUrl, "')");
         var imagePosition = cardType - 1;
-        var row = Math.floor(imagePosition / IMAGE_FESTIVALS_PER_ROW);
-        var xBackgroundPercent = (imagePosition - row * IMAGE_FESTIVALS_PER_ROW) * 100;
+        var row = Math.floor(imagePosition / imagesPerRow);
+        var xBackgroundPercent = (imagePosition - row * imagesPerRow) * 100;
         var yBackgroundPercent = row * 100;
         cardDiv.style.backgroundPositionX = "-".concat(xBackgroundPercent, "%");
         cardDiv.style.backgroundPositionY = "-".concat(yBackgroundPercent, "%");
-        cardDiv.style.backgroundSize = "".concat(IMAGE_FESTIVALS_PER_ROW * 100, "%");
+        cardDiv.style.backgroundSize = "".concat(imagesPerRow * 100, "%");
     };
     return FestivalCardsManager;
 }(CardManager));
@@ -2331,8 +2331,8 @@ var EventCardsManager = /** @class */ (function (_super) {
                 div.dataset.cardId = '' + card.id;
                 div.dataset.cardType = '' + card.type;
                 div.style.position = 'relative';
-                div.style.width = FESTIVAL_CARD_WIDTH;
-                div.style.height = FESTIVAL_CARD_HEIGHT;
+                div.style.width = EVENT_CARD_WIDTH;
+                div.style.height = EVENT_CARD_HEIGHT;
             },
             setupFrontDiv: function (card, div) {
                 _this.setFrontBackground(div, card.type_arg);
@@ -2439,7 +2439,7 @@ var SCORE_MS = 1500;
 var IMAGE_FESTIVALS_PER_ROW = 6;
 var IMAGE_EVENTS_PER_ROW = 13;
 var IMAGE_TICKETS_PER_ROW = 4;
-var isDebug = window.location.host == 'studio.boardgamearena.com';
+var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var Festivibes = /** @class */ (function () {
     function Festivibes() {
@@ -2520,7 +2520,7 @@ var Festivibes = /** @class */ (function () {
         dojo.query('.ticket-slot .slot').connect('click', this, function (evt) { return _this.onSlotClick(evt); });
         festivals.forEach(function (fest) {
             var divId = 'festival-' + fest.id;
-            dojo.place(_this.createDiv('', divId), 'festivals');
+            dojo.place(_this.createDiv('festival-slot', divId), 'festivals');
             _this.festivalStocks[fest.id] = new SlotStock(_this.festivalCardsManager, $(divId), {
                 center: true,
                 gap: '7px',
@@ -3483,7 +3483,9 @@ var FestivibesAnimation = /** @class */ (function () {
     return FestivibesAnimation;
 }());
 var FESTIVAL_CARD_WIDTH = '143px'; //also change in scss
-var FESTIVAL_CARD_HEIGHT = '263px';
+var FESTIVAL_CARD_HEIGHT = '160px';
+var EVENT_CARD_WIDTH = '143px'; //also change in scss
+var EVENT_CARD_HEIGHT = '263px';
 var modifierTicketSize = 0.4;
 var TICKET_CARD_WIDTH = 171 * modifierTicketSize + 'px'; //also change in scss
 var TICKET_CARD_HEIGHT = 262 * modifierTicketSize + 'px';
@@ -3491,7 +3493,7 @@ function getBackgroundInlineStyleForFestivalCard(destination) {
     var file;
     switch (destination.type) {
         case 1:
-            file = 'festivalCardsFront.jpg';
+            file = 'smallFestivalCardsFront.jpg';
             break;
     }
     var imagePosition = destination.type_arg - 1;
@@ -3550,7 +3552,7 @@ var PlayerTable = /** @class */ (function () {
         var smallWidth = this.isSmallWidth();
         var baseSettings = {
             center: true,
-            gap: '10px'
+            gap: '8px'
         };
         if (smallWidth) {
             baseSettings['direction'] = 'row';
