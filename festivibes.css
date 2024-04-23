@@ -584,9 +584,13 @@ html {
   height: 263px;
   width: 143px;
   margin-top: -206px;
+  background: #fae1c1;
 }
 .card-stock.event-slot .slot:first-child {
   margin-top: unset;
+}
+.card-stock.event-slot .slot:nth-child(even) {
+  background: #fbd29e;
 }
 
 .festivibes-card .card-side {
