@@ -184,7 +184,7 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private takeSlotAction(action: 'placeTicket' | 'repositionTicket', evt) {
-		if ("slotId" in evt.target.dataset) {
+		if ('slotId' in evt.target.dataset) {
 			const festivalId = getPart(evt.target.dataset.slotId, 0)
 			const slotId = getPart(evt.target.dataset.slotId, -1)
 			log('click on festival', festivalId, ' slot ', slotId)
@@ -1190,7 +1190,7 @@ class Festivibes implements FestivibesGame {
 			case 'FESTIVAL':
 				if (notif.args.fromArg == notif.args.toArg) {
 					this.festivalStocks[notif.args.toArg].flipCard(card)
-					this.playCustomSound('clap', false)
+					if (notif.args?.soldOut) this.playCustomSound('clap', false)
 				} else {
 					this.festivalStocks[notif.args.toArg].addCard(card)
 				}

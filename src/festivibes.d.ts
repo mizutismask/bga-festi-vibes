@@ -104,7 +104,7 @@ interface ReplaceTicketActionArgs {
 interface NotifPointsArgs {
 	playerId: number
 	points: number
-	delta: number
+	delta?: number
 	scoreType: string
 }
 
@@ -130,6 +130,7 @@ interface NotifMaterialMove {
 	fromArg: number
 	toArg: number
 	material: Array<any | string> //elements (cards for exemple), or tokenIds
+	soldOut?:boolean
 }
 
 interface ClientActionData {
