@@ -38,6 +38,7 @@ trait ActionTrait {
 
         $this->repositionTicketOnFestivalSlot($festivalId, $slotId);
         $this->resolveLastContextIfAction(ACTION_REPLACE_TICKET);
+        $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
 
         $this->changeNextStateFromContext();
     }
@@ -76,6 +77,7 @@ trait ActionTrait {
             'toArg' =>  $festival->id,
             'material' => [$festival],
             'festivalOrder' =>  $this->getFestivalOrder($festival),
+            'soldOut' =>  $soldOut,
         ]);
     }
 
