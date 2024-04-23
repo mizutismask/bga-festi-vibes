@@ -35,7 +35,7 @@ html {
 	justify-items: center;
 	align-items: flex-start;
 	flex-wrap: wrap;
-	justify-content:center;
+	justify-content: center;
 	gap: 20px;
 }
 
@@ -136,4 +136,57 @@ html {
 
 .card .card-sides .card-side.front .card-info {
 	pointer-events: all;
+}
+
+.tooltip-wrapper{
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	row-gap: 5px;
+	span{
+		margin-left: 5px;
+		grid-column: 2;
+	}
+}
+.event-action {
+	background-image: url(img/icones.png);
+	background-repeat: no-repeat;
+	grid-column: 1;
+
+	
+	&.DISCARD_EVENT {
+		width: 120px;
+		height: 62px;
+		background-position: 0 0;
+	}
+
+	&.REPLACE_TICKET {
+		width: 192px;
+		height: 46px;
+		background-position: 0 -62px;
+	}
+
+	&.SWAP_ANY_TICKETS {
+		width: 150px;
+		height: 40px;
+		background-position: 0 -108px;
+	}
+
+	&.SWAP_EVENT {
+		width: 142px;
+		height: 62px;
+		background-position: 0 -148px;
+	}
+
+	&.SWAP_EVENT_WITH_HAND {
+		width: 180px;
+		height: 62px;
+		background-position: 0 -210px;
+	}
+
+	&.SWAP_MY_TICKET {
+		width: 154px;
+		height: 46px;
+		background-position: 0 -272px;
+	}
 }

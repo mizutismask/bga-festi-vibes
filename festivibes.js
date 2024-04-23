@@ -2380,7 +2380,9 @@ var EventCardsManager = /** @class */ (function (_super) {
         )}"></div>
         */
     EventCardsManager.prototype.getTooltip = function (card, cardUniqueId) {
-        var tooltip = "\n\t\t\n\t\t\t<div class=\"xpd-city-zoom-desc-wrapper\">\n\t\t\t\t<div class=\"xpd-city\">".concat(this.actionHelps.get(card.action), "</div>\n\t\t\t</div>\n\t\t</div>");
+        var tooltip = "\n\t\t<div class=\"tooltip-wrapper\">\n\t\t\t\t<div class=\"\">".concat(dojo.string.substitute(_('Score: ${score} point(s)'), {
+            score: card.points
+        }), "</div><br/>\n\t\t\t\t<div class=\"event-action ").concat(card.action, "\"></div>\n\t\t\t\t<span>").concat(this.actionHelps.get(card.action), "</span>\n\t\t</div>");
         return tooltip;
     };
     EventCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {

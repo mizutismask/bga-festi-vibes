@@ -21,6 +21,7 @@ interface FestivalCard extends Card {
 }
 interface EventCard extends Card {
 	action: string
+	points: number
 }
 interface TicketCard extends Card {}
 

@@ -104,10 +104,12 @@ class EventCardsManager extends CardManager<EventCard> {
 		*/
 	public getTooltip(card: EventCard, cardUniqueId: number) {
 		let tooltip = `
-		
-			<div class="xpd-city-zoom-desc-wrapper">
-				<div class="xpd-city">${this.actionHelps.get(card.action)}</div>
-			</div>
+		<div class="tooltip-wrapper">
+				<div class="">${dojo.string.substitute(_('Score: ${score} point(s)'), {
+					score: card.points
+				})}</div><br/>
+				<div class="event-action ${card.action}"></div>
+				<span>${this.actionHelps.get(card.action)}</span>
 		</div>`
 		return tooltip
 	}
