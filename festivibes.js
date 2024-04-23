@@ -2796,6 +2796,12 @@ var Festivibes = /** @class */ (function () {
     //
     Festivibes.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args);
+        this.setSelectionModeOnEvents('none');
+        this.setSelectionModeOnTickets('none');
+        this.setSelectionModeOnFestivals('none');
+        if (this.isNotSpectator()) {
+            this.playerTables[this.getPlayerId()].setSelectionMode('none');
+        }
         switch (stateName) {
             case 'chooseAction':
                 if (args === null || args === void 0 ? void 0 : args.args) {
@@ -2849,6 +2855,7 @@ var Festivibes = /** @class */ (function () {
             this.setSelectionModeOnEvents('none');
             this.setSelectionModeOnTickets('none');
             this.setSelectionModeOnFestivals('single');
+            this.playerTables[this.getPlayerId()].setSelectionMode('single');
         }
     };
     Festivibes.prototype.onEnteringDiscardEvent = function (args) {
@@ -2921,6 +2928,7 @@ var Festivibes = /** @class */ (function () {
             this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong);
             this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single');
             this.festivalStocks[args.mandatoryFestivalId].selectAll();
+            this.playerTables[this.getPlayerId()].setSelectionMode('single');
         }
     };
     Festivibes.prototype.setSelectionModeOnEvents = function (mode) {
@@ -3603,6 +3611,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.addCard = function (card) {
         this.handStock.addCard(card);
+    };
+    PlayerTable.prototype.setSelectionMode = function (mode) {
+        this.handStock.setSelectionMode(mode);
     };
     return PlayerTable;
 }());

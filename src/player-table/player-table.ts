@@ -68,4 +68,8 @@ class PlayerTable {
 	public addCard(card: EventCard) {
 		this.handStock.addCard(card)
 	}
+
+	public setSelectionMode(mode: CardSelectionMode) {
+		this.handStock.setSelectionMode(mode)
+	}
 }

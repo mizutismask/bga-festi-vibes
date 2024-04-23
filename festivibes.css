@@ -573,6 +573,9 @@ html {
   height: 104.8px;
   width: 68.4px;
 }
+.card-stock.ticket-slot .slot:empty {
+  cursor: pointer;
+}
 .card-stock.festival-slot .slot {
   height: 160px;
   width: 143px;

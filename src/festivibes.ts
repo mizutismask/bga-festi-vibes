@@ -349,13 +349,13 @@ class Festivibes implements FestivibesGame {
 		//this.setTooltipToClass('tickets-counter', _('counter2 tooltip'))
 
 		let content = ''
-			ACTIONS.forEach(
-				(a) =>
-					(content += `
+		ACTIONS.forEach(
+			(a) =>
+				(content += `
 			<div class="event-action ${a}"></div>
 			<span>${this.actionHelps.get(a)}</span>
 			`)
-			)
+		)
 		this.setTooltipToClass('xpd-help-icon', `<div class="help-card">${content}</div>`)
 
 		//this.setTooltipToClass('xpd-help-icon-mini', `<div class="help-card verso"></div>`)
@@ -472,6 +472,12 @@ class Festivibes implements FestivibesGame {
 	//
 	public onEnteringState(stateName: string, args: any) {
 		log('Entering state: ' + stateName, args)
+		this.setSelectionModeOnEvents('none')
+		this.setSelectionModeOnTickets('none')
+		this.setSelectionModeOnFestivals('none')
+		if (this.isNotSpectator()) {
+			this.playerTables[this.getPlayerId()].setSelectionMode('none')
+		}
 
 		switch (stateName) {
 			case 'chooseAction':
@@ -527,6 +533,7 @@ class Festivibes implements FestivibesGame {
 			this.setSelectionModeOnEvents('none')
 			this.setSelectionModeOnTickets('none')
 			this.setSelectionModeOnFestivals('single')
+			this.playerTables[this.getPlayerId()].setSelectionMode('single')
 		}
 	}
 
@@ -600,6 +607,7 @@ class Festivibes implements FestivibesGame {
 			this.eventStocks[args.mandatoryFestivalId].setSelectableCards(args.mandatoryCardAmong)
 			this.festivalStocks[args.mandatoryFestivalId].setSelectionMode('single')
 			this.festivalStocks[args.mandatoryFestivalId].selectAll()
+			this.playerTables[this.getPlayerId()].setSelectionMode('single')
 		}
 	}
 
