@@ -79,6 +79,9 @@ html {
 		.slot {
 			height: $TICKET_CARD_HEIGHT;
 			width: $TICKET_CARD_WIDTH;
+			&:empty{
+				cursor: pointer;
+			}
 		}
 	}
 
