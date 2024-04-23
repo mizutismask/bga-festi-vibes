@@ -184,10 +184,12 @@ class Festivibes implements FestivibesGame {
 	}
 
 	private takeSlotAction(action: 'placeTicket' | 'repositionTicket', evt) {
-		const festivalId = getPart(evt.target.dataset.slotId, 0)
-		const slotId = getPart(evt.target.dataset.slotId, -1)
-		log('click on festival', festivalId, ' slot ', slotId)
-		this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId })
+		if ("slotId" in evt.target.dataset) {
+			const festivalId = getPart(evt.target.dataset.slotId, 0)
+			const slotId = getPart(evt.target.dataset.slotId, -1)
+			log('click on festival', festivalId, ' slot ', slotId)
+			this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId })
+		}
 	}
 
 	private ensureOnlyOneFestivalSelected(festivalId: number) {

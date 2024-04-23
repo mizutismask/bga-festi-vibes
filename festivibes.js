@@ -2567,10 +2567,12 @@ var Festivibes = /** @class */ (function () {
         }
     };
     Festivibes.prototype.takeSlotAction = function (action, evt) {
-        var festivalId = getPart(evt.target.dataset.slotId, 0);
-        var slotId = getPart(evt.target.dataset.slotId, -1);
-        log('click on festival', festivalId, ' slot ', slotId);
-        this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId });
+        if ("slotId" in evt.target.dataset) {
+            var festivalId = getPart(evt.target.dataset.slotId, 0);
+            var slotId = getPart(evt.target.dataset.slotId, -1);
+            log('click on festival', festivalId, ' slot ', slotId);
+            this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId });
+        }
     };
     Festivibes.prototype.ensureOnlyOneFestivalSelected = function (festivalId) {
         if (this.festivalStocks[festivalId].getSelection()) {
