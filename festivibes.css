@@ -37,17 +37,6 @@
   margin-left: 5px;
 }
 
-.help-card {
-  width: 355px;
-  height: 480px;
-}
-.help-card.recto {
-  background: url("img/help1.jpg") no-repeat;
-}
-.help-card.verso {
-  background: url("img/help2.jpg") no-repeat;
-}
-
 .counters {
   display: flex;
   align-items: center;
@@ -629,21 +618,33 @@ html {
   pointer-events: all;
 }
 
-.tooltip-wrapper {
+.tooltip-wrapper,
+.help-card {
   display: grid;
   justify-content: center;
   align-items: center;
   row-gap: 5px;
 }
-.tooltip-wrapper span {
+.tooltip-wrapper span,
+.help-card span {
   margin-left: 5px;
   grid-column: 2;
+}
+
+.help-card {
+  grid-template-columns: 130px auto;
+  font-size: smaller;
+  justify-items: center;
+}
+.help-card .event-action {
+  scale: 0.7;
 }
 
 .event-action {
   background-image: url(img/icones.png);
   background-repeat: no-repeat;
   grid-column: 1;
+  scale: 0.8;
 }
 .event-action.DISCARD_EVENT {
   width: 120px;
@@ -674,4 +675,9 @@ html {
   width: 154px;
   height: 46px;
   background-position: 0 -272px;
+}
+.event-action.INC_FESTIVAL_SIZE {
+  width: 110px;
+  height: 62px;
+  background-position: 0 -318px;
 }

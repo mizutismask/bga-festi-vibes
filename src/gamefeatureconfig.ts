@@ -15,7 +15,7 @@ class GameFeatureConfig {
     private _showPlayerOrderHints: boolean = true;
 
     /** Shows a player help card in the player miniboard. */
-    private _showPlayerHelp: boolean = false;
+    private _showPlayerHelp: boolean = true;
 
     /** Shows a first player icon in the player miniboard */
 	private _showFirstPlayer: boolean = false;

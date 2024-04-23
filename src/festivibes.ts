@@ -50,6 +50,8 @@ class Festivibes implements FestivibesGame {
 	private eventStocks: { [festId: number]: SlotStock<EventCard> } = []
 	private ticketStocks: { [festId: number]: SlotStock<TicketCard> } = []
 
+	actionHelps: Map<string, string> = this.initActionHelps()
+
 	constructor() {
 		log('festivibes constructor')
 
@@ -343,12 +345,21 @@ class Festivibes implements FestivibesGame {
 
 	private setupTooltips() {
 		//todo change counter names
-		this.setTooltipToClass('revealed-tokens-back-counter', _('counter1 tooltip'))
-		this.setTooltipToClass('tickets-counter', _('counter2 tooltip'))
+		//this.setTooltipToClass('revealed-tokens-back-counter', _('counter1 tooltip'))
+		//this.setTooltipToClass('tickets-counter', _('counter2 tooltip'))
 
-		this.setTooltipToClass('xpd-help-icon', `<div class="help-card recto"></div>`)
-		this.setTooltipToClass('xpd-help-icon-mini', `<div class="help-card verso"></div>`)
-		this.setTooltipToClass('player-turn-order', _('First player'))
+		let content = ''
+			ACTIONS.forEach(
+				(a) =>
+					(content += `
+			<div class="event-action ${a}"></div>
+			<span>${this.actionHelps.get(a)}</span>
+			`)
+			)
+		this.setTooltipToClass('xpd-help-icon', `<div class="help-card">${content}</div>`)
+
+		//this.setTooltipToClass('xpd-help-icon-mini', `<div class="help-card verso"></div>`)
+		//this.setTooltipToClass('player-turn-order', _('First player'))
 	}
 
 	private setupPlayer(player: FestivibesPlayer) {
@@ -800,9 +811,7 @@ class Festivibes implements FestivibesGame {
 
 	public isPlayerNotSpectator(playerId) {
 		//log(Object.keys(this.gamedatas.players))
-		return (
-			Object.keys(this.gamedatas.players).includes(playerId.toString())
-		)
+		return Object.keys(this.gamedatas.players).includes(playerId.toString())
 	}
 
 	private setGamestateDescription(property: string = '') {
@@ -1256,5 +1265,51 @@ class Festivibes implements FestivibesGame {
 	 */
 	public getCurrentPlayer(): FestivibesPlayer {
 		return this.gamedatas.players[this.getPlayerId()]
+	}
+
+	public initActionHelps() {
+		const map = new Map<string, string>()
+		map.set(
+			ACTION_DISCARD_EVENT,
+			_(
+				'Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'
+			)
+		)
+		map.set(
+			ACTION_INC_FESTIVAL_SIZE,
+			_(
+				'This card increases the Event card limit by one in whichever column it is used, for as long as it stays there.'
+			)
+		)
+		map.set(
+			ACTION_REPLACE_TICKET,
+			_(
+				'Replace another player’s Ticket card in this column with one of your own that has not yet been played. The removed Ticket card is placed in another open spot chosen by the other player. <bold>If it is their last card played, two points are taken from their final score.</bold>'
+			)
+		)
+		map.set(
+			ACTION_SWAP_ANY_TICKETS,
+			_(
+				'Swap one Ticket card from this column, whether it is one of your own or from an opposing player, with a Ticket card taken from another Festival column, whether it belongs to you or not.'
+			)
+		)
+		map.set(
+			ACTION_SWAP_EVENT,
+			_(
+				'Place this card in the column of your choice, then select another Event card from that column and swap it with one from a different column.'
+			)
+		)
+		map.set(
+			ACTION_SWAP_EVENT_WITH_HAND,
+			_(
+				'Place this card in the column of your choice, then select another Event card from that column and swap it with one from your hand.'
+			)
+		)
+		map.set(
+			ACTION_SWAP_MY_TICKET,
+			_('Swap one of your Ticket cards from this column with another player’s Ticket card from another column.')
+		)
+		map.set(NO_ACTION, _('This card has no action.'))
+		return map
 	}
 }

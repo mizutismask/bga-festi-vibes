@@ -2320,6 +2320,15 @@ var ACTION_DISCARD_EVENT = 'DISCARD_EVENT';
 var ACTION_INC_FESTIVAL_SIZE = 'INC_FESTIVAL_SIZE';
 var ACTION_SWAP_EVENT_WITH_HAND = 'SWAP_EVENT_WITH_HAND';
 var NO_ACTION = 'NO_ACTION';
+var ACTIONS = [
+    ACTION_SWAP_ANY_TICKETS,
+    ACTION_SWAP_MY_TICKET,
+    ACTION_REPLACE_TICKET,
+    ACTION_SWAP_EVENT,
+    ACTION_DISCARD_EVENT,
+    ACTION_INC_FESTIVAL_SIZE,
+    ACTION_SWAP_EVENT_WITH_HAND
+];
 var EventCardsManager = /** @class */ (function (_super) {
     __extends(EventCardsManager, _super);
     function EventCardsManager(game) {
@@ -2355,21 +2364,8 @@ var EventCardsManager = /** @class */ (function (_super) {
             }
         }) || this;
         _this.game = game;
-        _this.actionHelps = _this.initActionHelps();
         return _this;
     }
-    EventCardsManager.prototype.initActionHelps = function () {
-        var map = new Map();
-        map.set(ACTION_DISCARD_EVENT, _('Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'));
-        map.set(ACTION_INC_FESTIVAL_SIZE, _('This card increases the Event card limit by one in whichever column it is used, for as long as it stays there.'));
-        map.set(ACTION_REPLACE_TICKET, _('Replace another player’s Ticket card in this column with one of your own that has not yet been played. The removed Ticket card is placed in another open spot chosen by the other player. <bold>If it is their last card played, two points are taken from their final score.</bold>'));
-        map.set(ACTION_SWAP_ANY_TICKETS, _('Swap one Ticket card from this column, whether it is one of your own or from an opposing player, with a Ticket card taken from another Festival column, whether it belongs to you or not.'));
-        map.set(ACTION_SWAP_EVENT, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from a different column.'));
-        map.set(ACTION_SWAP_EVENT_WITH_HAND, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from your hand.'));
-        map.set(ACTION_SWAP_MY_TICKET, _('Swap one of your Ticket cards from this column with another player’s Ticket card from another column.'));
-        map.set(NO_ACTION, _('This card has no action.'));
-        return map;
-    };
     EventCardsManager.prototype.getCardName = function (cardTypeId) {
         return 'todo';
     };
@@ -2382,7 +2378,7 @@ var EventCardsManager = /** @class */ (function (_super) {
     EventCardsManager.prototype.getTooltip = function (card, cardUniqueId) {
         var tooltip = "\n\t\t<div class=\"tooltip-wrapper\">\n\t\t\t\t<div class=\"\">".concat(dojo.string.substitute(_('Score: ${score} point(s)'), {
             score: card.points
-        }), "</div><br/>\n\t\t\t\t<div class=\"event-action ").concat(card.action, "\"></div>\n\t\t\t\t<span>").concat(this.actionHelps.get(card.action), "</span>\n\t\t</div>");
+        }), "</div><br/>\n\t\t\t\t<div class=\"event-action ").concat(card.action, "\"></div>\n\t\t\t\t<span>").concat(this.game.actionHelps.get(card.action), "</span>\n\t\t</div>");
         return tooltip;
     };
     EventCardsManager.prototype.setFrontBackground = function (cardDiv, cardType) {
@@ -2455,6 +2451,7 @@ var Festivibes = /** @class */ (function () {
         this.festivalStocks = [];
         this.eventStocks = [];
         this.ticketStocks = [];
+        this.actionHelps = this.initActionHelps();
         log('festivibes constructor');
         // Here, you can init the global variables of your user interface
         // Example:
@@ -2728,11 +2725,16 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.setupTooltips = function () {
         //todo change counter names
-        this.setTooltipToClass('revealed-tokens-back-counter', _('counter1 tooltip'));
-        this.setTooltipToClass('tickets-counter', _('counter2 tooltip'));
-        this.setTooltipToClass('xpd-help-icon', "<div class=\"help-card recto\"></div>");
-        this.setTooltipToClass('xpd-help-icon-mini', "<div class=\"help-card verso\"></div>");
-        this.setTooltipToClass('player-turn-order', _('First player'));
+        //this.setTooltipToClass('revealed-tokens-back-counter', _('counter1 tooltip'))
+        //this.setTooltipToClass('tickets-counter', _('counter2 tooltip'))
+        var _this = this;
+        var content = '';
+        ACTIONS.forEach(function (a) {
+            return (content += "\n\t\t\t<div class=\"event-action ".concat(a, "\"></div>\n\t\t\t<span>").concat(_this.actionHelps.get(a), "</span>\n\t\t\t"));
+        });
+        this.setTooltipToClass('xpd-help-icon', "<div class=\"help-card\">".concat(content, "</div>"));
+        //this.setTooltipToClass('xpd-help-icon-mini', `<div class="help-card verso"></div>`)
+        //this.setTooltipToClass('player-turn-order', _('First player'))
     };
     Festivibes.prototype.setupPlayer = function (player) {
         document.getElementById("overall_player_board_".concat(player.id)).dataset.playerColor = player.color;
@@ -3078,7 +3080,7 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.isPlayerNotSpectator = function (playerId) {
         //log(Object.keys(this.gamedatas.players))
-        return (Object.keys(this.gamedatas.players).includes(playerId.toString()));
+        return Object.keys(this.gamedatas.players).includes(playerId.toString());
     };
     Festivibes.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
@@ -3464,6 +3466,18 @@ var Festivibes = /** @class */ (function () {
     Festivibes.prototype.getCurrentPlayer = function () {
         return this.gamedatas.players[this.getPlayerId()];
     };
+    Festivibes.prototype.initActionHelps = function () {
+        var map = new Map();
+        map.set(ACTION_DISCARD_EVENT, _('Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'));
+        map.set(ACTION_INC_FESTIVAL_SIZE, _('This card increases the Event card limit by one in whichever column it is used, for as long as it stays there.'));
+        map.set(ACTION_REPLACE_TICKET, _('Replace another player’s Ticket card in this column with one of your own that has not yet been played. The removed Ticket card is placed in another open spot chosen by the other player. <bold>If it is their last card played, two points are taken from their final score.</bold>'));
+        map.set(ACTION_SWAP_ANY_TICKETS, _('Swap one Ticket card from this column, whether it is one of your own or from an opposing player, with a Ticket card taken from another Festival column, whether it belongs to you or not.'));
+        map.set(ACTION_SWAP_EVENT, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from a different column.'));
+        map.set(ACTION_SWAP_EVENT_WITH_HAND, _('Place this card in the column of your choice, then select another Event card from that column and swap it with one from your hand.'));
+        map.set(ACTION_SWAP_MY_TICKET, _('Swap one of your Ticket cards from this column with another player’s Ticket card from another column.'));
+        map.set(NO_ACTION, _('This card has no action.'));
+        return map;
+    };
     return Festivibes;
 }());
 define([
@@ -3613,7 +3627,7 @@ var GameFeatureConfig = /** @class */ (function () {
         /** Adds colored <> around the player name in miniboards to show who are the previous and next players. */
         this._showPlayerOrderHints = true;
         /** Shows a player help card in the player miniboard. */
-        this._showPlayerHelp = false;
+        this._showPlayerHelp = true;
         /** Shows a first player icon in the player miniboard */
         this._showFirstPlayer = false;
     }

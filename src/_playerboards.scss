@@ -44,19 +44,6 @@
 	}
 }
 
-.help-card {
-	width: 355px;
-	height: 480px;
-
-	&.recto {
-		background: url('img/help1.jpg') no-repeat;
-	}
-
-	&.verso {
-		background: url('img/help2.jpg') no-repeat;
-	}
-}
-
 .counters {
 	display: flex;
 	align-items: center;

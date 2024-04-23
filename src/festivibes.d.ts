@@ -67,6 +67,7 @@ interface FestivibesGame extends Game {
 	clientActionData: ClientActionData
 	resetClientActionData(): void
 	checkIfPlayCardPossible(): void
+	actionHelps: Map<string, string>
 }
 
 interface EnteringChooseActionArgs {
