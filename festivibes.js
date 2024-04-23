@@ -2567,7 +2567,7 @@ var Festivibes = /** @class */ (function () {
         }
     };
     Festivibes.prototype.takeSlotAction = function (action, evt) {
-        if ("slotId" in evt.target.dataset) {
+        if ('slotId' in evt.target.dataset) {
             var festivalId = getPart(evt.target.dataset.slotId, 0);
             var slotId = getPart(evt.target.dataset.slotId, -1);
             log('click on festival', festivalId, ' slot ', slotId);
@@ -3393,12 +3393,14 @@ var Festivibes = /** @class */ (function () {
         }
     };
     Festivibes.prototype.notif_festivalMove = function (cards, notif) {
+        var _a;
         var card = cards.at(0);
         switch (notif.args.to) {
             case 'FESTIVAL':
                 if (notif.args.fromArg == notif.args.toArg) {
                     this.festivalStocks[notif.args.toArg].flipCard(card);
-                    this.playCustomSound('clap', false);
+                    if ((_a = notif.args) === null || _a === void 0 ? void 0 : _a.soldOut)
+                        this.playCustomSound('clap', false);
                 }
                 else {
                     this.festivalStocks[notif.args.toArg].addCard(card);

@@ -48,6 +48,7 @@ trait StateTrait {
             if (count($this->getPlayerEvents($playerId)) < 3) {
                 $this->pickAdditionalEvent($playerId);
             }
+            $this->stEndScore(true);
             $this->activateNextPlayerCustom();
             $this->gamestate->nextState('nextPlayer');
         }
@@ -74,13 +75,17 @@ trait StateTrait {
         return $player["player_id"] ?? null;
     }
 
-    function stEndScore() {
+    /**
+     * If silent, score called at the end of each turn, otherwise, it’s the end of the game
+     */
+    function stEndScore($silent = false) {
         $sql = "SELECT player_id id, player_score score, player_no playerNo FROM player ORDER BY player_no ASC";
         $players = self::getCollectionFromDb($sql);
 
         $totalScore = [];
         foreach ($players as $playerId => $playerDb) {
             $totalScore[$playerId] = 0;
+            $this->setPlayerScore($playerId, 0);
         }
 
         $festivals = $this->getFestivals();
@@ -91,24 +96,33 @@ trait StateTrait {
                 $playerId = $this->getPlayerIdFromTicketColor($tick->type_arg);
                 if ($playerId) {
                     $totalScore[$playerId] += $festScore;
-                    $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${festivalOrder}'), ["festivalOrder" => $this->getFestivalOrder($fest)]);
+                    if (!$silent) {
+                        $this->incPlayerScore($playerId, $festScore, clienttranslate('${player_name} scores ${delta} points with the festival ${festivalOrder}'), ["festivalOrder" => $this->getFestivalOrder($fest)]);
+                    }
                 }
             }
         }
-
-        foreach ($players as $playerId => $playerDb) {
-            $lastMove = $this->dbGetLastContextForPlayer($playerId);
-            if ($lastMove["action"] === ACTION_REPLACE_TICKET) {
-                $totalScore[$playerId] += -2;
-                $this->incPlayerScore($playerId, -2, clienttranslate('${player_name} scores ${delta} points as a malus for playing "replace a ticket with mine" as last action'), []);
+        if ($silent) {
+            foreach ($players as $playerId => $playerDb) {
+                $this->setPlayerScore($playerId, $totalScore[$playerId], "", ["festivalOrder" => $this->getFestivalOrder($fest)]);
             }
-            self::DbQuery("UPDATE player SET `player_score` = $totalScore[$playerId] where `player_id` = $playerId");
         }
 
-        if ($this->isStudio()) {
-            $this->gamestate->nextState('debugEndGame');
-        } else {
-            $this->gamestate->nextState('endGame');
+        if (!$silent) {
+            foreach ($players as $playerId => $playerDb) {
+                $lastMove = $this->dbGetLastContextForPlayer($playerId);
+                if ($lastMove["action"] === ACTION_REPLACE_TICKET) {
+                    $totalScore[$playerId] += -2;
+                    $this->incPlayerScore($playerId, -2, clienttranslate('${player_name} scores ${delta} points as a malus for playing "replace a ticket with mine" as last action'), []);
+                }
+                self::DbQuery("UPDATE player SET `player_score` = $totalScore[$playerId] where `player_id` = $playerId");
+            }
+
+            if ($this->isStudio()) {
+                $this->gamestate->nextState('debugEndGame');
+            } else {
+                $this->gamestate->nextState('endGame');
+            }
         }
     }
 }
