@@ -125,7 +125,7 @@ class Festivibes implements FestivibesGame {
 				mapCardToSlot: (card) => `${fest.id}-${card.location_arg}`
 			})
 			this.ticketStocks[fest.id].onSelectionChange = (selection: TicketCard[], lastChange: TicketCard) => {
-				this.checkIfPlayCardPossible()
+				this.toggleActionButtons()
 			}
 		})
 		dojo.query('.ticket-slot .slot').connect('click', this, (evt) => this.onSlotClick(evt))
@@ -145,7 +145,7 @@ class Festivibes implements FestivibesGame {
 			this.festivalStocks[fest.id].setSelectionMode('single')
 			this.festivalStocks[fest.id].onSelectionChange = (selection: FestivalCard[], lastChange: FestivalCard) => {
 				this.ensureOnlyOneFestivalSelected(fest.id)
-				this.checkIfPlayCardPossible()
+				this.toggleActionButtons()
 			}
 			this.festivalStocks[fest.id].addCard(fest)
 		})
@@ -164,7 +164,7 @@ class Festivibes implements FestivibesGame {
 				mapCardToSlot: (card) => `evt-${fest.id}-${card.location_arg}`
 			})
 			this.eventStocks[fest.id].onSelectionChange = (selection: EventCard[], lastChange: EventCard) => {
-				this.checkIfPlayCardPossible()
+				this.toggleActionButtons()
 			}
 		})
 		dojo.query('.event-slot .slot').forEach(function (node: HTMLElement, index, arr) {
@@ -175,20 +175,11 @@ class Festivibes implements FestivibesGame {
 
 	private onSlotClick(evt) {
 		if ((this as any).isCurrentPlayerActive()) {
-			if (this.gamedatas.gamestate.name === 'chooseAction') {
-				this.takeSlotAction('placeTicket', evt)
-			} else if (this.gamedatas.gamestate.name === 'repositionTicket') {
-				this.takeSlotAction('repositionTicket', evt)
+			if ('slotId' in evt.target.dataset) {
+				evt.target.classList.toggle('slot-selected')
+				this.unselectAll()
+				this.toggleActionButtons(true)
 			}
-		}
-	}
-
-	private takeSlotAction(action: 'placeTicket' | 'repositionTicket', evt) {
-		if ('slotId' in evt.target.dataset) {
-			const festivalId = getPart(evt.target.dataset.slotId, 0)
-			const slotId = getPart(evt.target.dataset.slotId, -1)
-			log('click on festival', festivalId, ' slot ', slotId)
-			this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId })
 		}
 	}
 
@@ -204,71 +195,109 @@ class Festivibes implements FestivibesGame {
 		Object.values(this.eventStocks).forEach((s) => s.unselectAll(true))
 		Object.values(this.festivalStocks).forEach((s) => s.unselectAll(true))
 		Object.values(this.ticketStocks).forEach((s) => s.unselectAll(true))
+		if (this.isNotSpectator) this.playerTables[this.getPlayerId()].unselectAll(true)
 	}
 
-	public checkIfPlayCardPossible() {
+	public toggleActionButtons(fromSlotClick = false) {
 		if ((this as any).isCurrentPlayerActive()) {
+			if (!fromSlotClick) {
+				removeClass('slot-selected')
+			}
 			const selectedFestival = this.getSelectedFestival()
 			const selectedEvents = this.getAllSelectedEvents()
 			const selectedTickets = this.getAllSelectedTickets()
 			switch (this.gamedatas.gamestate.name) {
 				case 'chooseAction':
-					if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
-						this.takeAction('playCard', {
-							'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
-							'festivalId': selectedFestival.id
-						})
-						this.unselectAll()
-					}
+					const selectedSlot = document.querySelectorAll('.slot.slot-selected')
+					this.toggleConfirmButtonDisability(
+						!(
+							(selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) ||
+							selectedSlot.length == 1
+						)
+					)
 					break
 				case 'discardEvent':
-					if (selectedEvents.length == 1) {
-						this.takeAction('discardEvent', {
-							'cardId': selectedEvents[0].id
-						})
-						this.unselectAll()
-					}
+					this.toggleConfirmButtonDisability(!(selectedEvents.length == 1))
 					break
 				case 'swapEvent':
-					if (this.getSelectedEventsByFestival().size == 2) {
-						this.takeAction('swapEvent', {
-							'cardId1': selectedEvents[0].id,
-							'cardId2': selectedEvents[1].id
-						})
-						this.unselectAll()
-					}
+					this.toggleConfirmButtonDisability(!(this.getSelectedEventsByFestival().size == 2))
 					break
 				case 'swapEventWithHand':
 					const handSelection = this.playerTables[this.getPlayerId()].getSelection()
-					if (selectedEvents.length == 1 && handSelection.length == 1) {
-						this.takeAction('swapEventWithHand', {
-							'cardFromFestivalId': selectedEvents[0].id,
-							'cardFromHandId': handSelection[0].id
-						})
-						this.unselectAll()
-					}
+					this.toggleConfirmButtonDisability(!(selectedEvents.length == 1 && handSelection.length == 1))
 					break
 				case 'swapTicket':
-					if (this.getSelectedTicketsByFestival().size == 2) {
-						this.takeAction('swapTicket', {
-							'cardId1': selectedTickets[0].id,
-							'cardId2': selectedTickets[1].id
-						})
-						this.unselectAll()
-					}
+					this.toggleConfirmButtonDisability(!(this.getSelectedTicketsByFestival().size == 2))
 					break
 				case 'replaceTicket':
-					if (selectedTickets.length == 1) {
-						this.takeAction('replaceTicket', {
-							'ticketId': selectedTickets[0].id
-						})
-						this.unselectAll()
-					}
+					this.toggleConfirmButtonDisability(!(selectedTickets.length == 1))
 					break
 				default:
 					break
 			}
 		}
+	}
+
+	private toggleConfirmButtonDisability(value: boolean) {
+		dojo.toggleClass('confirm_button', 'disabled', value)
+	}
+
+	public autoPlayCard() {
+		const selectedFestival = this.getSelectedFestival()
+		const selectedEvents = this.getAllSelectedEvents()
+		const selectedTickets = this.getAllSelectedTickets()
+		const selectedSlot = document.querySelectorAll('.slot.slot-selected')
+		switch (this.gamedatas.gamestate.name) {
+			case 'chooseAction':
+				if (selectedSlot.length == 1) {
+					const festivalId = getPart((selectedSlot[0] as HTMLElement).dataset.slotId, 0)
+					const slotId = getPart((selectedSlot[0] as HTMLElement).dataset.slotId, -1)
+					this.takeAction('placeTicket', { 'festivalId': festivalId, 'slotId': slotId })
+				} else {
+					this.takeAction('playCard', {
+						'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+						'festivalId': selectedFestival.id
+					})
+				}
+				break
+			case 'discardEvent':
+				this.takeAction('discardEvent', {
+					'cardId': selectedEvents[0].id
+				})
+				break
+			case 'swapEvent':
+				this.takeAction('swapEvent', {
+					'cardId1': selectedEvents[0].id,
+					'cardId2': selectedEvents[1].id
+				})
+				break
+			case 'swapEventWithHand':
+				const handSelection = this.playerTables[this.getPlayerId()].getSelection()
+				this.takeAction('swapEventWithHand', {
+					'cardFromFestivalId': selectedEvents[0].id,
+					'cardFromHandId': handSelection[0].id
+				})
+				break
+			case 'swapTicket':
+				this.takeAction('swapTicket', {
+					'cardId1': selectedTickets[0].id,
+					'cardId2': selectedTickets[1].id
+				})
+				break
+			case 'replaceTicket':
+				this.takeAction('replaceTicket', {
+					'ticketId': selectedTickets[0].id
+				})
+				break
+			case 'repositionTicket':
+				const festivalId = getPart((selectedSlot[0] as HTMLElement).dataset.slotId, 0)
+				const slotId = getPart((selectedSlot[0] as HTMLElement).dataset.slotId, -1)
+				this.takeAction('repositionTicket', { 'festivalId': festivalId, 'slotId': slotId })
+				break
+			default:
+				break
+		}
+		this.unselectAll()
 	}
 	private getSelectedEventsByFestival() {
 		const eventsByFest = new Map<string, EventCard[]>()
@@ -630,7 +659,7 @@ class Festivibes implements FestivibesGame {
 	//
 	public onLeavingState(stateName: string) {
 		log('Leaving state: ' + stateName)
-
+		removeClass('slot-selected')
 		switch (stateName) {
 			/* Example:
         
@@ -654,6 +683,8 @@ class Festivibes implements FestivibesGame {
 		log('onUpdateActionButtons: ' + stateName)
 
 		if ((this as any).isCurrentPlayerActive()) {
+			;(this as any).addActionButton('confirm_button', _('Confirm'), () => this.autoPlayCard())
+			this.toggleConfirmButtonDisability(true)
 			switch (
 				stateName
 				/*               

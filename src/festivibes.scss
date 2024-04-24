@@ -82,6 +82,9 @@ html {
 			&:empty{
 				cursor: pointer;
 			}
+			&.slot-selected{
+				box-shadow: 0 0 5px 5px greenyellow;
+			}
 		}
 	}
 

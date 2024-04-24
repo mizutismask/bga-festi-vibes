@@ -2513,7 +2513,7 @@ var Festivibes = /** @class */ (function () {
                 mapCardToSlot: function (card) { return "".concat(fest.id, "-").concat(card.location_arg); }
             });
             _this.ticketStocks[fest.id].onSelectionChange = function (selection, lastChange) {
-                _this.checkIfPlayCardPossible();
+                _this.toggleActionButtons();
             };
         });
         dojo.query('.ticket-slot .slot').connect('click', this, function (evt) { return _this.onSlotClick(evt); });
@@ -2531,7 +2531,7 @@ var Festivibes = /** @class */ (function () {
             _this.festivalStocks[fest.id].setSelectionMode('single');
             _this.festivalStocks[fest.id].onSelectionChange = function (selection, lastChange) {
                 _this.ensureOnlyOneFestivalSelected(fest.id);
-                _this.checkIfPlayCardPossible();
+                _this.toggleActionButtons();
             };
             _this.festivalStocks[fest.id].addCard(fest);
         });
@@ -2548,7 +2548,7 @@ var Festivibes = /** @class */ (function () {
                 mapCardToSlot: function (card) { return "evt-".concat(fest.id, "-").concat(card.location_arg); }
             });
             _this.eventStocks[fest.id].onSelectionChange = function (selection, lastChange) {
-                _this.checkIfPlayCardPossible();
+                _this.toggleActionButtons();
             };
         });
         dojo.query('.event-slot .slot').forEach(function (node, index, arr) {
@@ -2558,20 +2558,11 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.onSlotClick = function (evt) {
         if (this.isCurrentPlayerActive()) {
-            if (this.gamedatas.gamestate.name === 'chooseAction') {
-                this.takeSlotAction('placeTicket', evt);
+            if ('slotId' in evt.target.dataset) {
+                evt.target.classList.toggle('slot-selected');
+                this.unselectAll();
+                this.toggleActionButtons(true);
             }
-            else if (this.gamedatas.gamestate.name === 'repositionTicket') {
-                this.takeSlotAction('repositionTicket', evt);
-            }
-        }
-    };
-    Festivibes.prototype.takeSlotAction = function (action, evt) {
-        if ('slotId' in evt.target.dataset) {
-            var festivalId = getPart(evt.target.dataset.slotId, 0);
-            var slotId = getPart(evt.target.dataset.slotId, -1);
-            log('click on festival', festivalId, ' slot ', slotId);
-            this.takeAction(action, { 'festivalId': festivalId, 'slotId': slotId });
         }
     };
     Festivibes.prototype.ensureOnlyOneFestivalSelected = function (festivalId) {
@@ -2587,70 +2578,105 @@ var Festivibes = /** @class */ (function () {
         Object.values(this.eventStocks).forEach(function (s) { return s.unselectAll(true); });
         Object.values(this.festivalStocks).forEach(function (s) { return s.unselectAll(true); });
         Object.values(this.ticketStocks).forEach(function (s) { return s.unselectAll(true); });
+        if (this.isNotSpectator)
+            this.playerTables[this.getPlayerId()].unselectAll(true);
     };
-    Festivibes.prototype.checkIfPlayCardPossible = function () {
+    Festivibes.prototype.toggleActionButtons = function (fromSlotClick) {
+        if (fromSlotClick === void 0) { fromSlotClick = false; }
         if (this.isCurrentPlayerActive()) {
+            if (!fromSlotClick) {
+                removeClass('slot-selected');
+            }
             var selectedFestival = this.getSelectedFestival();
             var selectedEvents = this.getAllSelectedEvents();
             var selectedTickets = this.getAllSelectedTickets();
             switch (this.gamedatas.gamestate.name) {
                 case 'chooseAction':
-                    if (selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) {
-                        this.takeAction('playCard', {
-                            'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
-                            'festivalId': selectedFestival.id
-                        });
-                        this.unselectAll();
-                    }
+                    var selectedSlot = document.querySelectorAll('.slot.slot-selected');
+                    this.toggleConfirmButtonDisability(!((selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) ||
+                        selectedSlot.length == 1));
                     break;
                 case 'discardEvent':
-                    if (selectedEvents.length == 1) {
-                        this.takeAction('discardEvent', {
-                            'cardId': selectedEvents[0].id
-                        });
-                        this.unselectAll();
-                    }
+                    this.toggleConfirmButtonDisability(!(selectedEvents.length == 1));
                     break;
                 case 'swapEvent':
-                    if (this.getSelectedEventsByFestival().size == 2) {
-                        this.takeAction('swapEvent', {
-                            'cardId1': selectedEvents[0].id,
-                            'cardId2': selectedEvents[1].id
-                        });
-                        this.unselectAll();
-                    }
+                    this.toggleConfirmButtonDisability(!(this.getSelectedEventsByFestival().size == 2));
                     break;
                 case 'swapEventWithHand':
                     var handSelection = this.playerTables[this.getPlayerId()].getSelection();
-                    if (selectedEvents.length == 1 && handSelection.length == 1) {
-                        this.takeAction('swapEventWithHand', {
-                            'cardFromFestivalId': selectedEvents[0].id,
-                            'cardFromHandId': handSelection[0].id
-                        });
-                        this.unselectAll();
-                    }
+                    this.toggleConfirmButtonDisability(!(selectedEvents.length == 1 && handSelection.length == 1));
                     break;
                 case 'swapTicket':
-                    if (this.getSelectedTicketsByFestival().size == 2) {
-                        this.takeAction('swapTicket', {
-                            'cardId1': selectedTickets[0].id,
-                            'cardId2': selectedTickets[1].id
-                        });
-                        this.unselectAll();
-                    }
+                    this.toggleConfirmButtonDisability(!(this.getSelectedTicketsByFestival().size == 2));
                     break;
                 case 'replaceTicket':
-                    if (selectedTickets.length == 1) {
-                        this.takeAction('replaceTicket', {
-                            'ticketId': selectedTickets[0].id
-                        });
-                        this.unselectAll();
-                    }
+                    this.toggleConfirmButtonDisability(!(selectedTickets.length == 1));
                     break;
                 default:
                     break;
             }
         }
+    };
+    Festivibes.prototype.toggleConfirmButtonDisability = function (value) {
+        dojo.toggleClass('confirm_button', 'disabled', value);
+    };
+    Festivibes.prototype.autoPlayCard = function () {
+        var selectedFestival = this.getSelectedFestival();
+        var selectedEvents = this.getAllSelectedEvents();
+        var selectedTickets = this.getAllSelectedTickets();
+        var selectedSlot = document.querySelectorAll('.slot.slot-selected');
+        switch (this.gamedatas.gamestate.name) {
+            case 'chooseAction':
+                if (selectedSlot.length == 1) {
+                    var festivalId_1 = getPart(selectedSlot[0].dataset.slotId, 0);
+                    var slotId_1 = getPart(selectedSlot[0].dataset.slotId, -1);
+                    this.takeAction('placeTicket', { 'festivalId': festivalId_1, 'slotId': slotId_1 });
+                }
+                else {
+                    this.takeAction('playCard', {
+                        'cardId': this.playerTables[this.getPlayerId()].getSelection()[0].id,
+                        'festivalId': selectedFestival.id
+                    });
+                }
+                break;
+            case 'discardEvent':
+                this.takeAction('discardEvent', {
+                    'cardId': selectedEvents[0].id
+                });
+                break;
+            case 'swapEvent':
+                this.takeAction('swapEvent', {
+                    'cardId1': selectedEvents[0].id,
+                    'cardId2': selectedEvents[1].id
+                });
+                break;
+            case 'swapEventWithHand':
+                var handSelection = this.playerTables[this.getPlayerId()].getSelection();
+                this.takeAction('swapEventWithHand', {
+                    'cardFromFestivalId': selectedEvents[0].id,
+                    'cardFromHandId': handSelection[0].id
+                });
+                break;
+            case 'swapTicket':
+                this.takeAction('swapTicket', {
+                    'cardId1': selectedTickets[0].id,
+                    'cardId2': selectedTickets[1].id
+                });
+                break;
+            case 'replaceTicket':
+                this.takeAction('replaceTicket', {
+                    'ticketId': selectedTickets[0].id
+                });
+                break;
+            case 'repositionTicket':
+                var festivalId = getPart(selectedSlot[0].dataset.slotId, 0);
+                var slotId = getPart(selectedSlot[0].dataset.slotId, -1);
+                this.takeAction('repositionTicket', { 'festivalId': festivalId, 'slotId': slotId });
+                break;
+            default:
+                break;
+        }
+        this.unselectAll();
     };
     Festivibes.prototype.getSelectedEventsByFestival = function () {
         var eventsByFest = new Map();
@@ -2947,6 +2973,7 @@ var Festivibes = /** @class */ (function () {
     //
     Festivibes.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
+        removeClass('slot-selected');
         switch (stateName) {
             /* Example:
         
@@ -2965,8 +2992,12 @@ var Festivibes = /** @class */ (function () {
     //                        action status bar (ie: the HTML links in the status bar).
     //
     Festivibes.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
         log('onUpdateActionButtons: ' + stateName);
         if (this.isCurrentPlayerActive()) {
+            ;
+            this.addActionButton('confirm_button', _('Confirm'), function () { return _this.autoPlayCard(); });
+            this.toggleConfirmButtonDisability(true);
             switch (stateName
             /*
             Example:
@@ -3595,7 +3626,7 @@ var PlayerTable = /** @class */ (function () {
         this.handStock.setSelectionMode('single');
         this.handStock.addCards(cards);
         this.handStock.onSelectionChange = function (selection, lastChange) {
-            _this.game.checkIfPlayCardPossible();
+            _this.game.toggleActionButtons();
         };
     };
     PlayerTable.prototype.isSmallWidth = function () {
@@ -3618,6 +3649,10 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setSelectionMode = function (mode) {
         this.handStock.setSelectionMode(mode);
+    };
+    PlayerTable.prototype.unselectAll = function (silent) {
+        if (silent === void 0) { silent = false; }
+        this.handStock.unselectAll(silent);
     };
     return PlayerTable;
 }());

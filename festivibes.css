@@ -576,6 +576,9 @@ html {
 .card-stock.ticket-slot .slot:empty {
   cursor: pointer;
 }
+.card-stock.ticket-slot .slot.slot-selected {
+  box-shadow: 0 0 5px 5px greenyellow;
+}
 .card-stock.festival-slot .slot {
   height: 160px;
   width: 143px;

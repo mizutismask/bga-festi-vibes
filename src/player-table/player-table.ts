@@ -44,7 +44,7 @@ class PlayerTable {
 		this.handStock.addCards(cards)
 
 		this.handStock.onSelectionChange = (selection: EventCard[], lastChange: EventCard) => {
-			this.game.checkIfPlayCardPossible()
+			this.game.toggleActionButtons()
 		}
 	}
 
@@ -71,5 +71,9 @@ class PlayerTable {
 
 	public setSelectionMode(mode: CardSelectionMode) {
 		this.handStock.setSelectionMode(mode)
+	}
+
+	public unselectAll(silent: boolean=false) {
+		this.handStock.unselectAll(silent)
 	}
 }
