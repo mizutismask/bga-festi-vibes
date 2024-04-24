@@ -559,7 +559,7 @@ html {
 }
 
 .bga-cards_selected-card {
-  box-shadow: 0 0 5px 5px greenyellow;
+  box-shadow: 0 0 5px 5px rgb(200, 255, 47);
 }
 
 .card-stock .slot {
@@ -577,7 +577,7 @@ html {
   cursor: pointer;
 }
 .card-stock.ticket-slot .slot.slot-selected {
-  box-shadow: 0 0 5px 5px greenyellow;
+  box-shadow: 0 0 5px 5px rgb(200, 255, 47);
 }
 .card-stock.festival-slot .slot {
   height: 160px;

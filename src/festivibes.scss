@@ -30,6 +30,10 @@ html {
 	background-size: 100%;
 }
 
+@mixin selected-element {
+	box-shadow: 0 0 5px 5px rgb(200, 255, 47);
+}
+
 .festivibes-game-area {
 	display: flex;
 	justify-items: center;
@@ -63,7 +67,7 @@ html {
 	}
 }
 .bga-cards_selected-card {
-	box-shadow: 0 0 5px 5px greenyellow;
+	@include selected-element;
 }
 
 .card-stock {
@@ -83,7 +87,7 @@ html {
 				cursor: pointer;
 			}
 			&.slot-selected{
-				box-shadow: 0 0 5px 5px greenyellow;
+				@include selected-element;
 			}
 		}
 	}
