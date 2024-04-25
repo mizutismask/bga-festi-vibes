@@ -83,10 +83,10 @@ html {
 		.slot {
 			height: $TICKET_CARD_HEIGHT;
 			width: $TICKET_CARD_WIDTH;
-			&:empty{
+			&:empty {
 				cursor: pointer;
 			}
-			&.slot-selected{
+			&.slot-selected {
 				@include selected-element;
 			}
 		}
@@ -142,10 +142,11 @@ html {
 		width: 25px;
 		height: 25px;
 		position: relative;
-		top: 3%;
+		top: 1.5%;
 		left: 78%;
 		color: white;
-		background-color: rgb(58 21 134);
+		background-color: #692685;
+		border: 2px solid #e9cca0;
 	}
 }
 
