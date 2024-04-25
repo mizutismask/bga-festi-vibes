@@ -603,14 +603,15 @@ html {
 .css-icon {
   width: 25px;
   height: 25px;
-  background-color: white;
+  color: white;
+  background-color: #692685;
+  border: 2px solid #e9cca0;
   border-radius: 15px;
   text-align: center;
   font-weight: bolder;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  color: rgb(21, 104, 134);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -620,9 +621,6 @@ html {
   position: relative;
   top: 1.5%;
   left: 78%;
-  color: white;
-  background-color: #692685;
-  border: 2px solid #e9cca0;
 }
 
 .card .card-sides .card-side.front .card-info {
