@@ -137,11 +137,32 @@ trait ActionTrait {
             $this->array_some($selectableCards, fn ($possibleCards) => $this->array_contains_card($possibleCards, $isCard1Mandatory ? $cardId2 : $cardId1))
         );
 
+        $festival1Id = $this->getFestivalFromEvent($cardId1);
+        $festival2Id = $this->getFestivalFromEvent($cardId2);
+        $was1SoldOut = $this->isFestivalSoldOut($festival1Id);
+        $was2SoldOut = $this->isFestivalSoldOut($festival2Id);
+
         $this->swapEventLocations($cardId1, $cardId2);
+
+        $this->notifyIfSoldOutChange($festival1Id, $was1SoldOut);
+        $this->notifyIfSoldOutChange($festival2Id, $was2SoldOut);
+
         $this->resolveLastContextIfAction(ACTION_SWAP_EVENT);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
 
         $this->changeNextStateFromContext();
+    }
+
+    private function getFestivalFromEvent($eventId) {
+        $evt1 = $this->getEventFromDb($this->events->getCard($eventId));
+        return $this->getFestivalIdFromCardLocation($evt1->location);
+    }
+
+    private function notifyIfSoldOutChange($festivalId, $wasSoldOut) {
+        $isSoldOut = $this->isFestivalSoldOut($festivalId);
+        if ($wasSoldOut != $isSoldOut) {
+            $this->notifySoldOutChange($festivalId, $isSoldOut);
+        }
     }
 
     public function swapEventWithHand($cardId, $cardFromHandId) {
@@ -155,7 +176,11 @@ trait ActionTrait {
         $this->userAssertTrue(self::_("This card is not in your hand"), $card->location === "hand");
         $this->userAssertTrue(self::_("This card is not yours"), $card->location_arg === $playerId);
 
+        $festivalId = $this->getFestivalFromEvent($cardId);
+        $wasSoldOut = $this->isFestivalSoldOut($festivalId);
+
         $this->swapEventLocationsWithHand($cardId, $cardFromHandId);
+        $this->notifyIfSoldOutChange($festivalId, $wasSoldOut);
         $this->resolveLastContextIfAction(ACTION_SWAP_EVENT_WITH_HAND);
         $this->resolveLastContextIfAction(ACTION_PLAY_CARD);
 
