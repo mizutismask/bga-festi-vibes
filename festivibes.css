@@ -520,7 +520,7 @@ body > .card {
 }
 
 html {
-  background: #ffe4c2;
+  background: #fee9d1;
   background-repeat: no-repeat;
   background-size: 100%;
 }
@@ -587,13 +587,13 @@ html {
   height: 263px;
   width: 143px;
   margin-top: -206px;
-  background: #f7d7ad;
+  background: #f5dec0;
 }
 .card-stock.event-slot .slot:first-child {
   margin-top: unset;
 }
 .card-stock.event-slot .slot:nth-child(even) {
-  background: #fbd29e;
+  background: #efd8ba;
 }
 
 .festivibes-card .card-side {
