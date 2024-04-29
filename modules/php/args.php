@@ -43,6 +43,10 @@ trait ArgsTrait {
         $festId = $situation["param2"];
         $mandatory = $this->getEventsOnFestival($festId);
         $mandatory = array_values(array_filter($mandatory, fn ($c) => $c->id != $cardId));
+        if($this->isFestivalSoldOut($festId)){
+            //prevents from swapping the +1 and making the festival in incorrect state
+            $mandatory = array_values(array_filter($mandatory, fn ($c) =>$c->action != ACTION_INC_FESTIVAL_SIZE));
+        }
         $possible = $this->getEventsOnFestivals();
         unset($possible[$festId]);
         return [
@@ -58,6 +62,10 @@ trait ArgsTrait {
         $festId = $situation["param2"];
         $mandatory = $this->getEventsOnFestival($festId);
         $mandatory = array_values(array_filter($mandatory, fn ($c) => $c->id != $cardId));
+        if($this->isFestivalSoldOut($festId)){
+            //prevents from swapping the +1 and making the festival in incorrect state
+            $mandatory = array_values(array_filter($mandatory, fn ($c) =>$c->action != ACTION_INC_FESTIVAL_SIZE));
+        }
 
         return [
             'mandatoryFestivalId' => $festId,
