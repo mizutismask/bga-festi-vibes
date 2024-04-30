@@ -25,7 +25,7 @@ $player-colors: (
 @import '../node_modules/bga-cards/bga-cards';
 
 html {
-	background: #fee9d1;//#e4dffd
+	background: #e4dffd;
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
@@ -108,9 +108,9 @@ html {
 				margin-top: unset;
 			}
 
-			background: #f5dec0;
+			background: #f1efff;
 			&:nth-child(even) {
-				background: #efd8ba;
+				background: #d4d0ed;
 			}
 		}
 	}

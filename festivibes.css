@@ -1,3 +1,6 @@
+.player-board {
+  background-color: #b4addb;
+}
 .player-board .tickets-counter {
   display: flex;
   column-gap: 10px;
@@ -520,7 +523,7 @@ body > .card {
 }
 
 html {
-  background: #fee9d1;
+  background: #e4dffd;
   background-repeat: no-repeat;
   background-size: 100%;
 }
@@ -587,13 +590,13 @@ html {
   height: 263px;
   width: 143px;
   margin-top: -206px;
-  background: #f5dec0;
+  background: #f1efff;
 }
 .card-stock.event-slot .slot:first-child {
   margin-top: unset;
 }
 .card-stock.event-slot .slot:nth-child(even) {
-  background: #efd8ba;
+  background: #d4d0ed;
 }
 
 .festivibes-card .card-side {
@@ -605,7 +608,7 @@ html {
   height: 25px;
   color: white;
   background-color: #692685;
-  border: 2px solid #e9cca0;
+  border: 2px solid #f1efff;
   border-radius: 15px;
   text-align: center;
   font-weight: bolder;
