@@ -1313,7 +1313,7 @@ class Festivibes implements FestivibesGame {
 		map.set(
 			ACTION_DISCARD_EVENT,
 			_(
-				'Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'
+				'Place this card in the column of your choice, then replace and discard the Event card of your choice from that column. (except this one)'
 			)
 		)
 		map.set(

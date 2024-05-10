@@ -3511,7 +3511,7 @@ var Festivibes = /** @class */ (function () {
     };
     Festivibes.prototype.initActionHelps = function () {
         var map = new Map();
-        map.set(ACTION_DISCARD_EVENT, _('Place this card in the column of your choice, then replace and discard the Event card of your choice from that column.'));
+        map.set(ACTION_DISCARD_EVENT, _('Place this card in the column of your choice, then replace and discard the Event card of your choice from that column. (except this one)'));
         map.set(ACTION_INC_FESTIVAL_SIZE, _('This card increases the Event card limit by one in whichever column it is used, for as long as it stays there.'));
         map.set(ACTION_REPLACE_TICKET, _('Replace another player’s Ticket card in this column with one of your own that has not yet been played. The removed Ticket card is placed in another open spot chosen by the other player. <bold>If it is their last card played, two points are taken from their final score.</bold>'));
         map.set(ACTION_SWAP_ANY_TICKETS, _('Swap one Ticket card from this column, whether it is one of your own or from an opposing player, with a Ticket card taken from another Festival column, whether it belongs to you or not.'));

@@ -65,7 +65,7 @@ trait ContextTrait {
                 return count($evtsByFest[$festivalId]) > 1 && $this->array_some(array_keys($evtsByFest), fn ($festId) => $festId != $festivalId && count($evtsByFest[$festId]) > 0);
                 break;
             case ACTION_DISCARD_EVENT:
-                return true;
+                return count($this->getEventsOnFestival($festivalId)) > 1;
                 break;
             case ACTION_REPLACE_TICKET:
                 $color = $this->getPlayerColor($playerId);
