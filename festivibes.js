@@ -2590,9 +2590,9 @@ var Festivibes = /** @class */ (function () {
             var selectedFestival = this.getSelectedFestival();
             var selectedEvents = this.getAllSelectedEvents();
             var selectedTickets = this.getAllSelectedTickets();
+            var selectedSlot = document.querySelectorAll('.slot.slot-selected');
             switch (this.gamedatas.gamestate.name) {
                 case 'chooseAction':
-                    var selectedSlot = document.querySelectorAll('.slot.slot-selected');
                     this.toggleConfirmButtonDisability(!((selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) ||
                         selectedSlot.length == 1));
                     break;
@@ -2611,6 +2611,9 @@ var Festivibes = /** @class */ (function () {
                     break;
                 case 'replaceTicket':
                     this.toggleConfirmButtonDisability(!(selectedTickets.length == 1));
+                    break;
+                case 'repositionTicket':
+                    this.toggleConfirmButtonDisability(!(selectedSlot.length == 1));
                     break;
                 default:
                     break;

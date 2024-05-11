@@ -206,9 +206,9 @@ class Festivibes implements FestivibesGame {
 			const selectedFestival = this.getSelectedFestival()
 			const selectedEvents = this.getAllSelectedEvents()
 			const selectedTickets = this.getAllSelectedTickets()
+			const selectedSlot = document.querySelectorAll('.slot.slot-selected')
 			switch (this.gamedatas.gamestate.name) {
 				case 'chooseAction':
-					const selectedSlot = document.querySelectorAll('.slot.slot-selected')
 					this.toggleConfirmButtonDisability(
 						!(
 							(selectedFestival && this.playerTables[this.getPlayerId()].getSelection().length > 0) ||
@@ -231,6 +231,9 @@ class Festivibes implements FestivibesGame {
 					break
 				case 'replaceTicket':
 					this.toggleConfirmButtonDisability(!(selectedTickets.length == 1))
+					break
+				case 'repositionTicket':
+					this.toggleConfirmButtonDisability(!(selectedSlot.length == 1))
 					break
 				default:
 					break
