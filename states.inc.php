@@ -64,7 +64,7 @@ $basicGameStates = [
 
     ST_DEBUG_END_GAME => [
         "name" => "debugGameEnd",
-        "description" => clienttranslate("Debug end of game"),
+        "description" => "Debug end of game",
         "type" => "manager",
         "args" => "argGameEnd",
         "transitions" => ["endGame" => ST_END_GAME],
@@ -178,7 +178,7 @@ $playerActionsGameStates = [
     ST_PLAYER_REPOSITION_TICKET => [
         "name" => "repositionTicket",
         "description" => clienttranslate('${actplayer} must reposition a ticket on an empty festival slot'),
-        "descriptionmyturn" => clienttranslate('${you} must reposition a ticket on an empty festival slot'),
+        "descriptionmyturn" => clienttranslate('${you} must select an empty festival slot to reposition the removed ticket'),
         "type" => "activeplayer",
         "possibleactions" => [
             "repositionTicket",
