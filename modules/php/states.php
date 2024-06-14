@@ -37,7 +37,8 @@ trait StateTrait {
         $owner = $this->getGlobalVariable(GS_REPOSITIONNING_PLAYER);
         if ($owner) {
             $context = $this->dbGetLastResolvedContext();
-            $this->gamestate->changeActivePlayer($context["player"]);
+            $playerId = $context["player"];
+            $this->gamestate->changeActivePlayer($playerId);
             $this->setGlobalVariable(GS_REPOSITIONNING_PLAYER, null);
         }
 
