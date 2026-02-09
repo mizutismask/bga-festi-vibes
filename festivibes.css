@@ -192,95 +192,6 @@
   font-weight: bold;
 }
 
-/*
- * Controls in the top bar
- */
-#player_config {
-  margin: 10px 0px;
-}
-#player_config #player_config_row {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-}
-#player_config #player_info_row {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  margin-bottom: 10px;
-}
-#player_config #show-settings {
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-#player_config #show-settings:hover {
-  color: grey;
-}
-#player_config #show-settings:hover .fa-primary {
-  transform: rotate(180deg);
-}
-#player_config #show-settings svg {
-  width: 23px;
-  height: 23px;
-  opacity: 0.5;
-}
-#player_config #show-settings .fa-primary {
-  transform-origin: 216px 255px;
-  transition: transform 1s;
-}
-
-#settings-controls-container {
-  position: relative;
-  text-align: center;
-  margin-top: 10px;
-  background: linear-gradient(180deg, #f8f8f8, #e7e9e8);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-top: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  padding: 10px 20px;
-}
-#settings-controls-container .row-data {
-  border: none;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid gray;
-}
-#settings-controls-container .row-data .row-label {
-  width: 100%;
-  float: none;
-  color: black;
-  padding-bottom: 0px;
-  text-overflow: initial;
-  white-space: normal;
-  padding: 2px 4px 0px;
-}
-#settings-controls-container .row-data .row-value {
-  width: 85%;
-  margin: 0;
-}
-#settings-controls-container .row-data #layout-control-card-animation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#settings-controls-container .row-data #layout-control-card-animation svg {
-  height: 30px;
-  width: auto;
-}
-#settings-controls-container .row-data #layout-control-card-animation #layout-control-card-animation-speed {
-  flex-grow: 1;
-  margin: 5px;
-}
-
-#settings-controls-container.settingsControlsHidden {
-  display: none;
-}
-
 body > .card {
   position: absolute;
   left: -9999px;
@@ -608,7 +519,7 @@ html {
   height: 25px;
   color: white;
   background-color: #692685;
-  border: 2px solid #f1efff;
+  border: 2px solid #e9cca0;
   border-radius: 15px;
   text-align: center;
   font-weight: bolder;
