@@ -474,7 +474,7 @@ trait UtilTrait {
     }
 
     public function checkVersion(int $clientVersion): void {
-        if ($clientVersion != intval($this->gamestate->table_globals[300])) {
+        if ($clientVersion != $this->tableOptions->getGameVersion()) {
             throw new BgaVisibleSystemException(self::_("A new version of this game is now available. Please reload the page (F5)."));
         }
     }

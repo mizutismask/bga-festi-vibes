@@ -150,7 +150,7 @@ class Festivibes extends Table {
         $result['players'] = self::getCollectionFromDb($sql);
         $result['playerOrderWorkingWithSpectators'] = $this->getPlayerIdsInOrder($currentPlayerId);
         $result['turnOrderClockwise'] = true;
-        $result['version'] = intval($this->gamestate->table_globals[300]);
+        $result['version'] = $this->tableOptions->getGameVersion();
 
         foreach ($result['players'] as $playerId => &$player) {
             $player['playerNo'] = intval($player['playerNo']);
